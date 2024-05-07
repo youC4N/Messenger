@@ -17,14 +17,14 @@ struct MessengerApp: App {
     var body: some Scene {
         WindowGroup {
             FlowView()
-            
+
         }
     }
 }
 
 struct Prikolyamba: View {
     @State var rotation: Angle = .zero
-    
+
     var body: some View {
         VStack {
             Spacer()
@@ -48,14 +48,11 @@ struct Prikolyamba: View {
             }
             Spacer()
         }
-        
+
     }
 }
 
 //struct TransitionDemo: View {
-//    
-//    
+//
+//
 //}
-
-
-
