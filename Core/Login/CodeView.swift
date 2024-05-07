@@ -10,18 +10,18 @@ import SwiftUI
 struct CodeView: View {
     @State var input = ""
     var onLoginComplete: () -> Void
-    
+
     var body: some View {
-        VStack{
+        VStack {
             Text("Enter the code")
-            HStack{
-                ZStack{
+            HStack {
+                ZStack {
                     TextField("", text: $input)
                         .frame(minWidth: 80, minHeight: 47)
-//                        .background(, in: RoundedRectangle(cornerRadius: 10))
+                    //                        .background(, in: RoundedRectangle(cornerRadius: 10))
                 }
             }
-            
+
             Button(action: onLoginComplete) {
                 Text("Next")
                     .frame(maxWidth: .infinity, minHeight: 47)
@@ -32,13 +32,11 @@ struct CodeView: View {
         }
         .navigationTitle("Authorization")
     }
-        
+
 }
 
-
 #Preview {
-    NavigationStack{
+    NavigationStack {
         CodeView(onLoginComplete: {})
     }
 }
-
