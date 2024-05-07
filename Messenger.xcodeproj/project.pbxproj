@@ -8,17 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		8515B1EA2BD2D36D00A7AD8A /* MessengerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8515B1E92BD2D36D00A7AD8A /* MessengerApp.swift */; };
-		8515B1EC2BD2D36D00A7AD8A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8515B1EB2BD2D36D00A7AD8A /* ContentView.swift */; };
 		8515B1EE2BD2D36F00A7AD8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */; };
 		8515B1F12BD2D36F00A7AD8A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8515B1F02BD2D36F00A7AD8A /* Preview Assets.xcassets */; };
+		853CC70C2BE1511F00B88C89 /* PhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853CC70B2BE1511F00B88C89 /* PhoneNumberView.swift */; };
+		85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CA2BE93B3100576055 /* CodeView.swift */; };
+		85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CC2BE9424400576055 /* MainChatsView.swift */; };
+		85FC07CF2BE94DC700576055 /* Registration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CE2BE94DC700576055 /* Registration.swift */; };
+		85FC07D32BE96CCD00576055 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 85FC07D22BE96CCD00576055 /* Algorithms */; };
+		85FC07D52BEA56C700576055 /* FlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07D42BEA56C700576055 /* FlowView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		8515B1E62BD2D36D00A7AD8A /* Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8515B1E92BD2D36D00A7AD8A /* MessengerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerApp.swift; sourceTree = "<group>"; };
-		8515B1EB2BD2D36D00A7AD8A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8515B1F02BD2D36F00A7AD8A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		853CC70B2BE1511F00B88C89 /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
+		85FC07CA2BE93B3100576055 /* CodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
+		85FC07CC2BE9424400576055 /* MainChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainChatsView.swift; sourceTree = "<group>"; };
+		85FC07CE2BE94DC700576055 /* Registration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registration.swift; sourceTree = "<group>"; };
+		85FC07D42BEA56C700576055 /* FlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85FC07D32BE96CCD00576055 /* Algorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -35,7 +45,10 @@
 		8515B1DD2BD2D36D00A7AD8A = {
 			isa = PBXGroup;
 			children = (
-				8515B1E82BD2D36D00A7AD8A /* Messenger */,
+				85FC07D02BE96C0800576055 /* Preview Content */,
+				8515B1E92BD2D36D00A7AD8A /* MessengerApp.swift */,
+				8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */,
+				8515B1F72BD2D39A00A7AD8A /* Core */,
 				8515B1E72BD2D36D00A7AD8A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -48,18 +61,27 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8515B1E82BD2D36D00A7AD8A /* Messenger */ = {
+		8515B1F72BD2D39A00A7AD8A /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				8515B1E92BD2D36D00A7AD8A /* MessengerApp.swift */,
-				8515B1EB2BD2D36D00A7AD8A /* ContentView.swift */,
-				8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */,
-				8515B1EF2BD2D36F00A7AD8A /* Preview Content */,
+				8515B2272BE14E7700A7AD8A /* Login */,
 			);
-			path = Messenger;
+			path = Core;
 			sourceTree = "<group>";
 		};
-		8515B1EF2BD2D36F00A7AD8A /* Preview Content */ = {
+		8515B2272BE14E7700A7AD8A /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				853CC70B2BE1511F00B88C89 /* PhoneNumberView.swift */,
+				85FC07D42BEA56C700576055 /* FlowView.swift */,
+				85FC07CA2BE93B3100576055 /* CodeView.swift */,
+				85FC07CC2BE9424400576055 /* MainChatsView.swift */,
+				85FC07CE2BE94DC700576055 /* Registration.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		85FC07D02BE96C0800576055 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
 				8515B1F02BD2D36F00A7AD8A /* Preview Assets.xcassets */,
@@ -83,6 +105,9 @@
 			dependencies = (
 			);
 			name = Messenger;
+			packageProductDependencies = (
+				85FC07D22BE96CCD00576055 /* Algorithms */,
+			);
 			productName = Messenger;
 			productReference = 8515B1E62BD2D36D00A7AD8A /* Messenger.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +136,9 @@
 				Base,
 			);
 			mainGroup = 8515B1DD2BD2D36D00A7AD8A;
+			packageReferences = (
+				85FC07D12BE96CCC00576055 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+			);
 			productRefGroup = 8515B1E72BD2D36D00A7AD8A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -137,8 +165,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8515B1EC2BD2D36D00A7AD8A /* ContentView.swift in Sources */,
+				85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */,
+				853CC70C2BE1511F00B88C89 /* PhoneNumberView.swift in Sources */,
+				85FC07D52BEA56C700576055 /* FlowView.swift in Sources */,
 				8515B1EA2BD2D36D00A7AD8A /* MessengerApp.swift in Sources */,
+				85FC07CF2BE94DC700576055 /* Registration.swift in Sources */,
+				85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,7 +303,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Messenger/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "Preview\\ Content";
 				DEVELOPMENT_TEAM = 7M43KV3PJP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -300,7 +332,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Messenger/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "Preview\\ Content";
 				DEVELOPMENT_TEAM = 7M43KV3PJP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -344,6 +376,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		85FC07D12BE96CCC00576055 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		85FC07D22BE96CCD00576055 /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 85FC07D12BE96CCC00576055 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8515B1DE2BD2D36D00A7AD8A /* Project object */;
 }
