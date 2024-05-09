@@ -22,37 +22,3 @@ struct MessengerApp: App {
     }
 }
 
-struct Prikolyamba: View {
-    @State var rotation: Angle = .zero
-
-    var body: some View {
-        VStack {
-            Spacer()
-            ZStack {
-                Circle()
-                    .foregroundStyle(Color.red)
-                Circle()
-                    .foregroundStyle(Color.white)
-                    .padding()
-                Text("卐")
-                    .font(.system(size: 144))
-                    .rotationEffect(rotation)
-                    .frame(minWidth: 144, minHeight: 144)
-            }
-            Button(action: {
-                withAnimation(.bouncy) {
-                    rotation += .degrees(90)
-                }
-            }) {
-                Text("Слава Україні")
-            }
-            Spacer()
-        }
-
-    }
-}
-
-//struct TransitionDemo: View {
-//
-//
-//}

@@ -8,28 +8,47 @@
 import SwiftUI
 
 struct CodeView: View {
-    @State var input = ""
+    @State var code = ""
     var onLoginComplete: () -> Void
-
+    @State private var nextView = false
+    func validate(_ code: String) -> Bool {
+        // TODO: validate the code
+        return false
+    }
     var body: some View {
         VStack {
             Text("Enter the code")
             HStack {
                 ZStack {
-                    TextField("", text: $input)
-                        .frame(minWidth: 80, minHeight: 47)
-                    //                        .background(, in: RoundedRectangle(cornerRadius: 10))
+
+                    TextField("", text: $code)
+                        .padding(.leading, 10)
+                        .frame(maxWidth: 160, minHeight: 47)
+                        .background(.secondary, in: RoundedRectangle(cornerRadius: 10))
+                        .autocorrectionDisabled(true)
                 }
             }
 
-            Button(action: onLoginComplete) {
-                Text("Next")
-                    .frame(maxWidth: .infinity, minHeight: 47)
-                    .background(
-                        .secondary,
-                        in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            Button(
+                action: {
+                    if validate(code) {
+                        onLoginComplete()
+                    } else {
+                        nextView = true
+                    }
+                },
+                label: {
+                    Text("Next")
+                        .frame(maxWidth: .infinity, minHeight: 47)
+                        .background(
+                            .secondary,
+                            in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                })
+            .navigationDestination(isPresented: $nextView) {
+                Registration(onLoginComplete: onLoginComplete)
             }
         }
+        .padding()
         .navigationTitle("Authorization")
     }
 

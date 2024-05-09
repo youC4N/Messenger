@@ -2,10 +2,12 @@ import OSLog
 import SwiftUI
 
 struct PhoneNumberView: View {
+
     var countryCode = "+380"
     var countryFlag = "🇺🇦"
     @State var phoneNumber = ""
     var onLoginComplete: () -> Void
+
 
     var body: some View {
         VStack(spacing: 10) {
@@ -39,10 +41,14 @@ struct PhoneNumberView: View {
                         .secondary,
                         in: RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
+
+
         }
+
         .navigationTitle("Login")
         .padding(.horizontal)
         .padding(.bottom, 80)
+
     }
 }
 

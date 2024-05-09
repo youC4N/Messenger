@@ -18,7 +18,7 @@ struct FlowView: View {
             NavigationStack {
                 MainChatsView()
             }
-            .transition(.slide)
+            .transition(.blurReplace)
         }
     }
 }
