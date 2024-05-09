@@ -1,17 +1,32 @@
 import SQLite
 
-enum BindingError: Error {
-    case datatypeAndSQLTypeIsNotTheSame
+enum BindingError: Error, CustomStringConvertible {
+    case datatypeAndSQLTypeIsNotTheSame(expected: Any.Type, got: Any.Type?, idx: Int)
+    
+    var description: String {
+        return switch self {
+        case .datatypeAndSQLTypeIsNotTheSame(expected: let expected, got: nil, idx: let idx):
+            "Cannot retrieve desired type \(expected) from Row at index \(idx). Got NULL from sqlite"
+        case .datatypeAndSQLTypeIsNotTheSame(expected: let expected, got: let got?, idx: let idx):
+            "Cannot retrieve desired type \(expected) from Row at index \(idx). Got \(got) from sqlite instead"
+        }
+    }
 }
 
 struct Row {
     var bindings: [(any Binding)?]
-    func get<T: Value>(_ as: T.Type, idx: Int) throws -> T.ValueType {
+    func get<T: Value>(at idx: Int, as: T.Type) throws -> T.ValueType {
         let raw = bindings[idx]
         guard let value = raw as? T.Datatype else {
-            throw BindingError.datatypeAndSQLTypeIsNotTheSame
+            let expected = T.Datatype.self
+            let got = raw.map { Mirror(reflecting: $0).subjectType }
+            throw BindingError.datatypeAndSQLTypeIsNotTheSame(expected: expected, got: got, idx: idx)
         }
         return try T.fromDatatypeValue(value)
+    }
+    
+    func get<T: Value>(at idx: Int) throws -> T where T.ValueType == T {
+        return try self.get(at: idx, as: T.self)
     }
 }
 
@@ -26,4 +41,3 @@ extension Statement {
 // Because the author of the library said so.
 // It has a serial queue per thread, as such it should be thread-safe
 extension Connection: @unchecked Sendable {}
-
