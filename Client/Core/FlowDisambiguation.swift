@@ -1,15 +1,20 @@
 import SwiftUI
 
-struct FlowView: View {
-    @State var flow = AppFlow.login
+enum AppFlow: Codable, Hashable {
+    case login
+    case regular
+}
+
+struct FlowDisambiguation: View {
+    @State var currentFlow = AppFlow.login
 
     var body: some View {
-        switch flow {
+        switch currentFlow {
         case .login:
             NavigationStack {
                 PhoneNumberView(onLoginComplete: {
                     withAnimation {
-                        flow = .regular
+                        currentFlow = .regular
                     }
                 })
             }
@@ -24,5 +29,5 @@ struct FlowView: View {
 }
 
 #Preview {
-    FlowView()
+    FlowDisambiguation()
 }

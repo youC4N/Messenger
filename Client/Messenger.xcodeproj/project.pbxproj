@@ -16,9 +16,8 @@
 		85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CA2BE93B3100576055 /* CodeView.swift */; };
 		85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CC2BE9424400576055 /* MainChatsView.swift */; };
 		85FC07CF2BE94DC700576055 /* Registration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CE2BE94DC700576055 /* Registration.swift */; };
-		85FC07D32BE96CCD00576055 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 85FC07D22BE96CCD00576055 /* Algorithms */; };
-		85FC07D52BEA56C700576055 /* FlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07D42BEA56C700576055 /* FlowView.swift */; };
 		85FC07D72BEA752100576055 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07D62BEA752000576055 /* ContentView.swift */; };
+		85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */; };
 		C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,8 +32,8 @@
 		85FC07CA2BE93B3100576055 /* CodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
 		85FC07CC2BE9424400576055 /* MainChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainChatsView.swift; sourceTree = "<group>"; };
 		85FC07CE2BE94DC700576055 /* Registration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registration.swift; sourceTree = "<group>"; };
-		85FC07D42BEA56C700576055 /* FlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowView.swift; sourceTree = "<group>"; };
 		85FC07D62BEA752000576055 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowDisambiguation.swift; sourceTree = "<group>"; };
 		C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -43,7 +42,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85FC07D32BE96CCD00576055 /* Algorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +70,7 @@
 		8515B1F72BD2D39A00A7AD8A /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */,
 				8515B2272BE14E7700A7AD8A /* Login */,
 			);
 			path = Core;
@@ -81,7 +80,6 @@
 			isa = PBXGroup;
 			children = (
 				853CC70B2BE1511F00B88C89 /* PhoneNumberView.swift */,
-				85FC07D42BEA56C700576055 /* FlowView.swift */,
 				8506BDBA2BEA9539002F2DC1 /* contactCardView.swift */,
 				8506BDBC2BEA95A8002F2DC1 /* mainVideoPlayerView.swift */,
 				C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */,
@@ -118,7 +116,6 @@
 			);
 			name = Messenger;
 			packageProductDependencies = (
-				85FC07D22BE96CCD00576055 /* Algorithms */,
 			);
 			productName = Messenger;
 			productReference = 8515B1E62BD2D36D00A7AD8A /* Messenger.app */;
@@ -183,7 +180,7 @@
 				853CC70C2BE1511F00B88C89 /* PhoneNumberView.swift in Sources */,
 				C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */,
 				85FC07D72BEA752100576055 /* ContentView.swift in Sources */,
-				85FC07D52BEA56C700576055 /* FlowView.swift in Sources */,
+				85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */,
 				8515B1EA2BD2D36D00A7AD8A /* MessengerApp.swift in Sources */,
 				85FC07CF2BE94DC700576055 /* Registration.swift in Sources */,
 				85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */,
@@ -403,14 +400,6 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		85FC07D22BE96CCD00576055 /* Algorithms */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 85FC07D12BE96CCC00576055 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
-			productName = Algorithms;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8515B1DE2BD2D36D00A7AD8A /* Project object */;
 }
