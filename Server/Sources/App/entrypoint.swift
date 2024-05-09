@@ -1,6 +1,6 @@
-import Vapor
 import Logging
 import SQLite
+import Vapor
 
 let migrations = [
     """
@@ -8,21 +8,24 @@ let migrations = [
         id integer primary key autoincrement,
         name text not null
     );
-    """,
+    """
 ]
 
 func migrate(db: Connection) throws {
-    try db.prepare("""
+    try db.prepare(
+        """
         create table if not exists migrations (
             idx integer not null,
             applied_at text not null
         )
-        """).run()
-    
+        """
+    ).run()
+
     let maxIdx = Int(try db.scalar("select max(idx) from migrations") as? Int64 ?? 0)
-    
+
     for (idx, migration) in migrations[maxIdx...].enumerated() {
-        try db.execute("""
+        try db.execute(
+            """
             begin;
             \(migration)
             insert into migrations (idx, applied_at) values (\(idx + maxIdx + 1), datetime());
@@ -36,7 +39,7 @@ enum Entrypoint {
     static func main() async throws {
         var env = try Environment.detect()
         try LoggingSystem.bootstrap(from: &env)
-        
+
         let dbpath = ProcessInfo.processInfo.environment["DB_PATH"] ?? "./db.sqlite"
 
         let db = try Connection(dbpath)
@@ -44,7 +47,7 @@ enum Entrypoint {
 
         let app = Application(env)
         defer { app.shutdown() }
-        
+
         if app.logger.logLevel == .trace {
             db.trace { app.logger.trace("\($0)") }
         }
