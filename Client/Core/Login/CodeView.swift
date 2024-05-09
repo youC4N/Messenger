@@ -18,7 +18,6 @@ struct CodeView: View {
                 ZStack {
                     TextField("", text: $input)
                         .frame(minWidth: 80, minHeight: 47)
-                    //                        .background(, in: RoundedRectangle(cornerRadius: 10))
                 }
             }
 
