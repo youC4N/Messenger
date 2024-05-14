@@ -1,5 +1,5 @@
 {
-  "originHash" : "bc72f61ee3b74a6ec50420cc7f2d95160d979cbe799caddd6ffd94db9d1f0356",
+  "originHash" : "4676036eaaf5de45c57c98e51430866f722f95f580dc191cf1fe420946ecaafb",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -38,21 +38,21 @@
       }
     },
     {
+      "identity" : "raw-dawg.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Malien/raw-dawg.swift",
+      "state" : {
+        "revision" : "56215e5a3c15c702ebd08b57f0d869e1c1d5dbff",
+        "version" : "0.0.3"
+      }
+    },
+    {
       "identity" : "routing-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/routing-kit.git",
       "state" : {
         "revision" : "8c9a227476555c55837e569be71944e02a056b72",
         "version" : "4.9.1"
-      }
-    },
-    {
-      "identity" : "sqlite.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/stephencelis/SQLite.swift.git",
-      "state" : {
-        "revision" : "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
-        "version" : "0.15.3"
       }
     },
     {

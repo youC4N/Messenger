@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Client/Messenger.xcodeproj">
+      location = "group:Client/MessengerClient.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Server">

@@ -1,6 +1,6 @@
-import Vapor
 import Logging
-import SQLite
+import RawDawg
+import Vapor
 
 let migrations = [
     """
@@ -8,21 +8,25 @@ let migrations = [
         id integer primary key autoincrement,
         name text not null
     );
-    """,
+    create table users(first_name text);
+    """
 ]
 
-func migrate(db: Connection) throws {
-    try db.prepare("""
+func migrate(db: Database) async throws {
+    try await db.prepare(
+        """
         create table if not exists migrations (
             idx integer not null,
             applied_at text not null
         )
-        """).run()
-    
-    let maxIdx = Int(try db.scalar("select max(idx) from migrations") as? Int64 ?? 0)
-    
+        """
+    ).run()
+
+    let maxIdx: Int = try await db.prepare("select max(idx) from migrations").fetchOne()
+
     for (idx, migration) in migrations[maxIdx...].enumerated() {
-        try db.execute("""
+        try await db.execute(
+            """
             begin;
             \(migration)
             insert into migrations (idx, applied_at) values (\(idx + maxIdx + 1), datetime());
@@ -36,18 +40,27 @@ enum Entrypoint {
     static func main() async throws {
         var env = try Environment.detect()
         try LoggingSystem.bootstrap(from: &env)
-        
+        let input = [
+            "Aaran", "Aaren", "Aarez", "Aarman", "Aaron", "Aaron-James", "Aarron", "Aaryan",
+            "Aaryn", "Aayan", "Aazaan", "Abaan", "Abbas", "Abdallah", "Abdalroof", "Abdihakim",
+            "Abdirahman", "Abdisalam", "Abdul", "Abdul-Aziz", "Abdulbasir", "Abdulkadir",
+            "Abdulkarem", "Abdulkhader", "Abdullah", "Abdul-Majeed", "Abdulmalik", "Abdul-Rehman",
+            "Abdur", "Abdurraheem", "Abdur-Rahman", "Abdur-Rehmaan", "Abel", "Abhinav",
+            "Abhisumant", "Abid", "Abir", "Abraham", "Abu", "Abubakar", "Ace", "Adain", "Adam",
+            "Adam-James", "Addison", "Addisson", "Adegbola", "Adegbolahan", "Aden", "Adenn", "Adie",
+            "Adil", "Aditya", "Adnan", "foo",
+        ]
+
         let dbpath = ProcessInfo.processInfo.environment["DB_PATH"] ?? "./db.sqlite"
 
-        let db = try Connection(dbpath)
-        try migrate(db: db)
+        let db = try Database(filename: dbpath)
+        for name in input {
+            try await db.prepare("insert into users(first_name) values(\(name)")
+        }
+        try await migrate(db: db)
 
         let app = Application(env)
         defer { app.shutdown() }
-        
-        if app.logger.logLevel == .trace {
-            db.trace { app.logger.trace("\($0)") }
-        }
 
         do {
             try routes(app, db: db)

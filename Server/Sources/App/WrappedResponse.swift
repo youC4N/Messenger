@@ -42,9 +42,8 @@ extension Content {
     func status(_ status: HTTPStatus) -> WithStatus<Self> {
         WithStatus(status: status, inner: self)
     }
-    
+
     func headers(_ headers: HTTPHeaders) -> WithHeaders<Self> {
         WithHeaders(headers: headers, inner: self)
     }
 }
-
