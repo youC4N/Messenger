@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct mainVideoPlayerView: View {
+struct MainVideoPlayerView: View {
     var body: some View {
         Text("Video")
     }
 }
 
 #Preview {
-    mainVideoPlayerView()
+    MainVideoPlayerView()
 }

@@ -7,33 +7,33 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8506BDBB2BEA9539002F2DC1 /* contactCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8506BDBA2BEA9539002F2DC1 /* contactCardView.swift */; };
-		8506BDBD2BEA95A8002F2DC1 /* mainVideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8506BDBC2BEA95A8002F2DC1 /* mainVideoPlayerView.swift */; };
+		8506BDBB2BEA9539002F2DC1 /* ContactCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8506BDBA2BEA9539002F2DC1 /* ContactCardView.swift */; };
+		8506BDBD2BEA95A8002F2DC1 /* MainVideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8506BDBC2BEA95A8002F2DC1 /* MainVideoPlayerView.swift */; };
 		8515B1EA2BD2D36D00A7AD8A /* MessengerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8515B1E92BD2D36D00A7AD8A /* MessengerApp.swift */; };
 		8515B1EE2BD2D36F00A7AD8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */; };
 		8515B1F12BD2D36F00A7AD8A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8515B1F02BD2D36F00A7AD8A /* Preview Assets.xcassets */; };
 		853CC70C2BE1511F00B88C89 /* PhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853CC70B2BE1511F00B88C89 /* PhoneNumberView.swift */; };
+		85CBD6592BF2415B00FC7B91 /* Foo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CBD6582BF2415B00FC7B91 /* Foo.swift */; };
 		85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CA2BE93B3100576055 /* CodeView.swift */; };
 		85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CC2BE9424400576055 /* MainChatsView.swift */; };
 		85FC07CF2BE94DC700576055 /* Registration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CE2BE94DC700576055 /* Registration.swift */; };
 		85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */; };
-		85FC07D72BEA752100576055 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07D62BEA752000576055 /* ContentView.swift */; };
 		C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8506BDBA2BEA9539002F2DC1 /* contactCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = contactCardView.swift; sourceTree = "<group>"; };
-		8506BDBC2BEA95A8002F2DC1 /* mainVideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mainVideoPlayerView.swift; sourceTree = "<group>"; };
-		8515B1E62BD2D36D00A7AD8A /* Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8506BDBA2BEA9539002F2DC1 /* ContactCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCardView.swift; sourceTree = "<group>"; };
+		8506BDBC2BEA95A8002F2DC1 /* MainVideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVideoPlayerView.swift; sourceTree = "<group>"; };
+		8515B1E62BD2D36D00A7AD8A /* MessengerClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MessengerClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8515B1E92BD2D36D00A7AD8A /* MessengerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerApp.swift; sourceTree = "<group>"; };
 		8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8515B1F02BD2D36F00A7AD8A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		853CC70B2BE1511F00B88C89 /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
+		85CBD6582BF2415B00FC7B91 /* Foo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foo.swift; sourceTree = "<group>"; };
 		85FC07CA2BE93B3100576055 /* CodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
 		85FC07CC2BE9424400576055 /* MainChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainChatsView.swift; sourceTree = "<group>"; };
 		85FC07CE2BE94DC700576055 /* Registration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registration.swift; sourceTree = "<group>"; };
 		85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowDisambiguation.swift; sourceTree = "<group>"; };
-		85FC07D62BEA752000576055 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -62,7 +62,7 @@
 		8515B1E72BD2D36D00A7AD8A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8515B1E62BD2D36D00A7AD8A /* Messenger.app */,
+				8515B1E62BD2D36D00A7AD8A /* MessengerClient.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -71,6 +71,7 @@
 			isa = PBXGroup;
 			children = (
 				85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */,
+				85CBD6572BF23FE500FC7B91 /* Main */,
 				8515B2272BE14E7700A7AD8A /* Login */,
 			);
 			path = Core;
@@ -80,15 +81,22 @@
 			isa = PBXGroup;
 			children = (
 				853CC70B2BE1511F00B88C89 /* PhoneNumberView.swift */,
-				8506BDBA2BEA9539002F2DC1 /* contactCardView.swift */,
-				8506BDBC2BEA95A8002F2DC1 /* mainVideoPlayerView.swift */,
 				C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */,
 				85FC07CA2BE93B3100576055 /* CodeView.swift */,
-				85FC07CC2BE9424400576055 /* MainChatsView.swift */,
 				85FC07CE2BE94DC700576055 /* Registration.swift */,
-				85FC07D62BEA752000576055 /* ContentView.swift */,
 			);
 			path = Login;
+			sourceTree = "<group>";
+		};
+		85CBD6572BF23FE500FC7B91 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				8506BDBA2BEA9539002F2DC1 /* ContactCardView.swift */,
+				8506BDBC2BEA95A8002F2DC1 /* MainVideoPlayerView.swift */,
+				85FC07CC2BE9424400576055 /* MainChatsView.swift */,
+				85CBD6582BF2415B00FC7B91 /* Foo.swift */,
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 		85FC07D02BE96C0800576055 /* Preview Content */ = {
@@ -102,9 +110,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8515B1E52BD2D36D00A7AD8A /* Messenger */ = {
+		8515B1E52BD2D36D00A7AD8A /* MessengerClient */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8515B1F42BD2D36F00A7AD8A /* Build configuration list for PBXNativeTarget "Messenger" */;
+			buildConfigurationList = 8515B1F42BD2D36F00A7AD8A /* Build configuration list for PBXNativeTarget "MessengerClient" */;
 			buildPhases = (
 				8515B1E22BD2D36D00A7AD8A /* Sources */,
 				8515B1E32BD2D36D00A7AD8A /* Frameworks */,
@@ -114,11 +122,11 @@
 			);
 			dependencies = (
 			);
-			name = Messenger;
+			name = MessengerClient;
 			packageProductDependencies = (
 			);
 			productName = Messenger;
-			productReference = 8515B1E62BD2D36D00A7AD8A /* Messenger.app */;
+			productReference = 8515B1E62BD2D36D00A7AD8A /* MessengerClient.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -136,7 +144,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8515B1E12BD2D36D00A7AD8A /* Build configuration list for PBXProject "Messenger" */;
+			buildConfigurationList = 8515B1E12BD2D36D00A7AD8A /* Build configuration list for PBXProject "MessengerClient" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -152,7 +160,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8515B1E52BD2D36D00A7AD8A /* Messenger */,
+				8515B1E52BD2D36D00A7AD8A /* MessengerClient */,
 			);
 		};
 /* End PBXProject section */
@@ -174,12 +182,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8506BDBD2BEA95A8002F2DC1 /* mainVideoPlayerView.swift in Sources */,
-				8506BDBB2BEA9539002F2DC1 /* contactCardView.swift in Sources */,
+				8506BDBD2BEA95A8002F2DC1 /* MainVideoPlayerView.swift in Sources */,
+				8506BDBB2BEA9539002F2DC1 /* ContactCardView.swift in Sources */,
+				85CBD6592BF2415B00FC7B91 /* Foo.swift in Sources */,
 				85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */,
 				853CC70C2BE1511F00B88C89 /* PhoneNumberView.swift in Sources */,
 				C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */,
-				85FC07D72BEA752100576055 /* ContentView.swift in Sources */,
 				85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */,
 				8515B1EA2BD2D36D00A7AD8A /* MessengerApp.swift in Sources */,
 				85FC07CF2BE94DC700576055 /* Registration.swift in Sources */,
@@ -317,7 +325,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "Preview\\ Content";
-				DEVELOPMENT_TEAM = GJ2GCHCH5D;
+				DEVELOPMENT_TEAM = 7M43KV3PJP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -325,12 +333,13 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = my.Messenger;
+				PRODUCT_BUNDLE_IDENTIFIER = my.Video.Messenger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -346,7 +355,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "Preview\\ Content";
-				DEVELOPMENT_TEAM = GJ2GCHCH5D;
+				DEVELOPMENT_TEAM = 7M43KV3PJP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -354,12 +363,13 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = my.Messenger;
+				PRODUCT_BUNDLE_IDENTIFIER = my.Video.Messenger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -370,7 +380,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8515B1E12BD2D36D00A7AD8A /* Build configuration list for PBXProject "Messenger" */ = {
+		8515B1E12BD2D36D00A7AD8A /* Build configuration list for PBXProject "MessengerClient" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8515B1F22BD2D36F00A7AD8A /* Debug */,
@@ -379,7 +389,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8515B1F42BD2D36F00A7AD8A /* Build configuration list for PBXNativeTarget "Messenger" */ = {
+		8515B1F42BD2D36F00A7AD8A /* Build configuration list for PBXNativeTarget "MessengerClient" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8515B1F52BD2D36F00A7AD8A /* Debug */,

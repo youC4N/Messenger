@@ -38,7 +38,7 @@ struct MainChatsView: View {
             ScrollView {
 
                 ForEach(names) { name in
-                    contactCardView(userName: name.name)
+                    ContactCardView(userName: name.name)
                 }
 
             }
@@ -47,6 +47,10 @@ struct MainChatsView: View {
         .navigationTitle("Chats")
 
     }
+}
+
+struct UserName: Codable{
+    let name: String
 }
 
 #Preview {

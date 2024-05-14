@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct contactCardView: View {
+struct ContactCardView: View {
     @State var userName: String
     var body: some View {
-        NavigationLink(destination: mainVideoPlayerView()) {
+        NavigationLink(destination: MainVideoPlayerView()) {
             HStack{
                 Image(systemName: "person")
                     .resizable()
@@ -39,5 +39,5 @@ struct contactCardView: View {
 }
 
 #Preview {
-    contactCardView(userName: "Yaroslave")
+    ContactCardView(userName: "Yaroslave")
 }
