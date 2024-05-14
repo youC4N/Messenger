@@ -10,7 +10,6 @@ let package = Package(
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.92.4"),
         .package(url: "https://github.com/Malien/raw-dawg.swift", from: "0.0.3"),
-
     ],
     targets: [
         .executableTarget(
@@ -18,7 +17,6 @@ let package = Package(
             dependencies: [
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "RawDawg", package: "raw-dawg.swift"),
-
             ],
             swiftSettings: swiftSettings
         ),
@@ -27,7 +25,6 @@ let package = Package(
             dependencies: [
                 .target(name: "App"),
                 .product(name: "XCTVapor", package: "vapor"),
-
             ],
             swiftSettings: swiftSettings
         ),

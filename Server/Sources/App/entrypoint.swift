@@ -50,7 +50,6 @@ enum Entrypoint {
             "Adam-James", "Addison", "Addisson", "Adegbola", "Adegbolahan", "Aden", "Adenn", "Adie",
             "Adil", "Aditya", "Adnan", "foo",
         ]
-
         let dbpath = ProcessInfo.processInfo.environment["DB_PATH"] ?? "./db.sqlite"
 
         let db = try Database(filename: dbpath)
