@@ -1,15 +1,16 @@
 import XCTVapor
+import RawDawg
 
 @testable import App
 
 final class AppTests: XCTestCase {
     var app: Application!
-    var db: Connection!
+    var db: Database!
 
     override func setUp() async throws {
-        self.db = try Connection(":memory:")
+        self.db = try Database(filename: ":memory:")
         self.app = Application(.testing)
-        try await routes(app, db: self.db)
+        try routes(app, db: self.db)
     }
     override func tearDown() async throws {
         self.app.shutdown()

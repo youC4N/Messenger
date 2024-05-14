@@ -54,7 +54,7 @@ enum Entrypoint {
 
         let db = try Database(filename: dbpath)
         for name in input {
-            try await db.prepare("insert into users(first_name) values(\(name)")
+            try await db.prepare("insert into users(first_name) values(\(name)").run()
         }
         try await migrate(db: db)
 
