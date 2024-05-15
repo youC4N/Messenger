@@ -8,8 +8,8 @@ let package = Package(
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.92.4"),
-        .package(url: "https://github.com/Malien/raw-dawg.swift", from: "0.0.3"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.99.3"),
+        .package(url: "https://github.com/Malien/raw-dawg.swift", from: "0.0.5"),
     ],
     targets: [
         .executableTarget(

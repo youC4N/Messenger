@@ -22,7 +22,7 @@ func migrate(db: Database) async throws {
         """
     ).run()
 
-    let maxIdx: Int = try await db.prepare("select max(idx) from migrations").fetchOne()
+    let maxIdx: Int = try await db.prepare("select max(idx) from migrations").fetchOne() ?? 0
 
     for (idx, migration) in migrations[maxIdx...].enumerated() {
         try await db.execute(
@@ -52,13 +52,13 @@ enum Entrypoint {
         ]
         let dbpath = ProcessInfo.processInfo.environment["DB_PATH"] ?? "./db.sqlite"
 
-        let db = try Database(filename: dbpath)
-        for name in input {
-            try await db.prepare("insert into users(first_name) values(\(name)").run()
-        }
+        let db = try Database(filename: dbpath, create: true)
         try await migrate(db: db)
+        for name in input {
+            try await db.prepare("insert into users(first_name) values(\(name))").run()
+        }
 
-        let app = Application(env)
+        let app = try await Application.make(env)
         defer { app.shutdown() }
 
         do {
