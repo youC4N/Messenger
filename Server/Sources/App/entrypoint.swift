@@ -8,7 +8,7 @@ let migrations = [
         id integer primary key autoincrement,
         name text not null
     );
-    create table users(first_name text);
+    create table users(id integer primary key autoincrement, first_name text);
     """
 ]
 

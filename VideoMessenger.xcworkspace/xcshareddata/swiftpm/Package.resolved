@@ -1,5 +1,5 @@
 {
-  "originHash" : "4676036eaaf5de45c57c98e51430866f722f95f580dc191cf1fe420946ecaafb",
+  "originHash" : "efc89bdb303c1c2b0b252a10f68411d7bd8b3bdfaded2af931a3e1243c54d6a5",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -29,6 +29,15 @@
       }
     },
     {
+      "identity" : "csqlite",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sbooth/CSQLite.git",
+      "state" : {
+        "revision" : "d230151b10c19cffb372b60d2fd2f797da473018",
+        "version" : "3.45.3"
+      }
+    },
+    {
       "identity" : "multipart-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/multipart-kit.git",
@@ -42,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Malien/raw-dawg.swift",
       "state" : {
-        "revision" : "56215e5a3c15c702ebd08b57f0d869e1c1d5dbff",
-        "version" : "0.0.3"
+        "revision" : "1480098244014728638f3d4ace1e44d85af26799",
+        "version" : "0.0.5"
       }
     },
     {
@@ -186,8 +195,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/vapor.git",
       "state" : {
-        "revision" : "cdbbd04f8d1f7d1cfb6a764480a56a611d0abdda",
-        "version" : "4.97.0"
+        "revision" : "90da64ad52ee595d199212338b89995bcab99d0e",
+        "version" : "4.100.0"
       }
     },
     {
