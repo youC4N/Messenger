@@ -7,7 +7,7 @@ struct MyResponse: Codable, Content {
 
 func routes(_ app: Application, db: Database) throws {
     app.get("json") { req async throws in
-        let a: [MyResponse] = try await db.prepare("select * from users as usernames").fetchAll()
+        let a: [MyResponse] = try await db.prepare("select first_name as usernames from users").fetchAll()
         return a
     }
 }
