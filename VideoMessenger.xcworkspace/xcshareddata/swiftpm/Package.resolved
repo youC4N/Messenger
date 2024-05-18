@@ -1,5 +1,5 @@
 {
-  "originHash" : "efc89bdb303c1c2b0b252a10f68411d7bd8b3bdfaded2af931a3e1243c54d6a5",
+  "originHash" : "91c8d069614c4fa1287f9255f8485452e056324f022327e270b0a68d1153861f",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -116,6 +116,15 @@
       "state" : {
         "revision" : "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
         "version" : "1.5.4"
+      }
+    },
+    {
+      "identity" : "swift-log-oslog",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/chrisaljoudi/swift-log-oslog.git",
+      "state" : {
+        "revision" : "176d41d46429e79c806333025b226e0c50a0c602",
+        "version" : "0.2.2"
       }
     },
     {
