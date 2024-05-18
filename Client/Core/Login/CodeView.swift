@@ -43,7 +43,8 @@ struct CodeView: View {
                         .background(
                             .secondary,
                             in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                })
+                }
+            )
             .navigationDestination(isPresented: $nextView) {
                 Registration(onLoginComplete: onLoginComplete)
             }

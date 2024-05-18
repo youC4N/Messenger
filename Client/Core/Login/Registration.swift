@@ -5,8 +5,8 @@
 //  Created by Егор Малыгин on 06.05.2024.
 //
 
-import SwiftUI
 import PhotosUI
+import SwiftUI
 
 struct Registration: View {
     @State private var selectedItem: PhotosPickerItem? = nil
@@ -18,23 +18,23 @@ struct Registration: View {
         return true
     }
     var body: some View {
-        VStack{
+        VStack {
             PhotosPicker(
                 selection: $selectedItem,
                 matching: .images,
                 photoLibrary: .shared()
             ) {
-                
-                if let selectedImage =  selectedImage {
-                    
+
+                if let selectedImage = selectedImage {
+
                     selectedImage
                         .resizable()
                         .scaledToFit()
                         .frame(minWidth: 80, minHeight: 80)
                         .clipShape(Circle())
-                        
+
                 } else {
-                    ZStack{
+                    ZStack {
                         Image(systemName: "person")
                             .resizable()
                             .frame(maxWidth: 80, maxHeight: 80)
@@ -42,14 +42,13 @@ struct Registration: View {
                             .fill(.clear)
                             .strokeBorder()
                             .frame(maxWidth: 160, maxHeight: 160)
-                        
+
                     }
                 }
-                
 
             }
             .onChange(of: selectedItem) {
-                Task { // Incase of multiple selection newValue is of array type
+                Task {  // Incase of multiple selection newValue is of array type
                     if let data = try? await selectedItem?.loadTransferable(type: Image.self) {
                         selectedImage = data
                     }
@@ -72,11 +71,7 @@ struct Registration: View {
                             .secondary,
                             in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 })
-            
-            
-            
-            
-            
+
         }
         .padding()
         .navigationTitle("Registration")

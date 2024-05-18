@@ -3,8 +3,10 @@ import SwiftUI
 
 struct PasswordRequest: Codable {
     let phoneNumber: String
-
 }
+
+let logger = Logger(subsystem: "com.github.youC4N.videomessenger", category: "UI")
+
 struct PhoneNumberView: View {
     func validate(_ code: String) -> Bool {
         // TODO: validate the code
@@ -40,14 +42,17 @@ struct PhoneNumberView: View {
                     .background(
                         .secondary, in: RoundedRectangle(cornerRadius: 10, style: .continuous)
                     )
-                    .onSubmit  {
+                    .onSubmit {
                         if validate(phoneNumber) {
-                            let address = "http://127.0.0.1:8080/otp"
-                            let url = URL(string: address)!
-                            let request = URLRequest(url: url)
-                            
+                            Task {
+                                do {
+                                    try await requestOTP(forPhoneNumber: phoneNumber)
+                                } catch let e {
+                                    
+                                }
+                            }
                         } else {
-                            // TODO: pop up alert wrong number
+                            // TODO:
                         }
                     }
 
@@ -70,12 +75,45 @@ struct PhoneNumberView: View {
     }
 }
 
+enum ServerRequestError: Error, CustomStringConvertible {
+    case nonHTTPResponse(got: Any.Type)
+    case serverError(status: Int, message: String?)
+    
+    var description: String {
+        
+    }
+}
+
+func requestOTP(forPhoneNumber phone: String) async throws -> OTPResponse {
+    let address = "http://127.0.0.1:8080/otp"
+    let url = URL(string: address)!
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.httpBody = try JSONEncoder().encode(OTPRequest(number: phone))
+    let (body, response) = try await URLSession.shared.data(for: request)
+    guard let httpResponse = response as? HTTPURLResponse else {
+        throw ServerRequestError.nonHTTPResponse(got: Mirror(reflecting: response).subjectType)
+    }
+    guard httpResponse.statusCode == 200 else {
+        throw ServerRequestError.serverError(
+            status: httpResponse.statusCode,
+            message: String(data: body, encoding: .utf8)
+        )
+    }
+    return try JSONDecoder().decode(OTPResponse.self, from: body)
+}
+
 struct OTPRequest: Codable {
     var number: String
 }
 
 enum OnClientErrors: Error {
     case WrongURLRequest
+}
+
+struct OTPResponse: Codable {
+    var otpToken: String
 }
 
 #Preview {

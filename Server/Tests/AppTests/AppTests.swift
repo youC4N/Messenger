@@ -1,5 +1,5 @@
-import XCTVapor
 import RawDawg
+import XCTVapor
 
 @testable import App
 
