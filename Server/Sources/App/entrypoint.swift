@@ -1,6 +1,9 @@
 import Logging
 import RawDawg
 import Vapor
+#if canImport(LoggingOSLog)
+import LoggingOSLog
+#endif
 
 let migrations = [
     """
@@ -40,7 +43,12 @@ func migrate(db: Database) async throws {
 enum Entrypoint {
     static func main() async throws {
         var env = try Environment.detect()
+        #if canImport(LoggingOSLog)
+        LoggingSystem.bootstrap(LoggingOSLog.init)
+        #else
         try LoggingSystem.bootstrap(from: &env)
+        #endif
+        
         let input = [
             "Aaran", "Aaren", "Aarez", "Aarman", "Aaron", "Aaron-James", "Aarron", "Aaryan",
             "Aaryn", "Aayan", "Aazaan", "Abaan", "Abbas", "Abdallah", "Abdalroof", "Abdihakim",
