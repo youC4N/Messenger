@@ -1,13 +1,20 @@
 import OSLog
 import SwiftUI
 
+struct PasswordRequest: Codable {
+    let phoneNumber: String
+
+}
 struct PhoneNumberView: View {
+    func validate(_ code: String) -> Bool {
+        // TODO: validate the code
+        return false
+    }
 
     var countryCode = "+380"
     var countryFlag = "🇺🇦"
     @State var phoneNumber = ""
     var onLoginComplete: () -> Void
-
 
     var body: some View {
         VStack(spacing: 10) {
@@ -31,7 +38,19 @@ struct PhoneNumberView: View {
                     .padding(.leading, 10)
                     .frame(minWidth: 80, maxHeight: 48)
                     .background(
-                        .secondary, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .secondary, in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    )
+                    .onSubmit  {
+                        if validate(phoneNumber) {
+                            let address = "http://127.0.0.1:8080/otp"
+                            let url = URL(string: address)!
+                            let request = URLRequest(url: url)
+                            
+                        } else {
+                            // TODO: pop up alert wrong number
+                        }
+                    }
+
             }
 
             NavigationLink(destination: CodeView(onLoginComplete: onLoginComplete)) {
@@ -42,7 +61,6 @@ struct PhoneNumberView: View {
                         in: RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
 
-
         }
 
         .navigationTitle("Login")
@@ -50,6 +68,14 @@ struct PhoneNumberView: View {
         .padding(.bottom, 80)
 
     }
+}
+
+struct OTPRequest: Codable {
+    var number: String
+}
+
+enum OnClientErrors: Error {
+    case WrongURLRequest
 }
 
 #Preview {

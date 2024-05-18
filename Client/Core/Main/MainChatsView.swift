@@ -7,19 +7,9 @@
 
 import SwiftUI
 
-struct Name: Identifiable {
-    var id: String { name }
 
-    let name: String
-}
 
-func foo(input: [String]) -> [Name] {
-    var res = [Name]()
-    for name in input {
-        res.append(Name(name: name))
-    }
-    return res
-}
+
 
 func getUsersInfo() async throws -> [User] {
     
@@ -42,7 +32,7 @@ func getUsersInfo() async throws -> [User] {
 
 
 struct MainChatsView: View {
-    @State private var users: [User]?
+    @State private var users: [User] = []
     
 
     
@@ -51,12 +41,11 @@ struct MainChatsView: View {
         
             ScrollView {
                
-                ForEach(users ?? [User(name: "noname")]){user in
-                    ContactCardView(userName: user.name)}
+                ForEach(users){user in
+                    ContactCardView(userName: user.username)}
 
 
             }
-            .padding()
             .task{
                 do {
                     users = try await getUsersInfo()
@@ -72,8 +61,8 @@ struct MainChatsView: View {
 }
 
 struct User: Codable, Identifiable{
-    var id: String {name}
-    let name: String
+    var id: String {username}
+    let username: String
 }
 
 enum MYError: Error {
