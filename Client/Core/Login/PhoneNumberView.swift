@@ -10,11 +10,14 @@ let logger = Logger(subsystem: "com.github.youC4N.videomessenger", category: "UI
 struct PhoneNumberView: View {
     func validate(_ code: String) -> Bool {
         // TODO: validate the code
-        return false
+        return true
     }
+    @State private var nextView: Bool = false
+    @State var token: OTPResponse?
 
     var countryCode = "+380"
     var countryFlag = "🇺🇦"
+
     @State var phoneNumber = ""
     var onLoginComplete: () -> Void
 
@@ -42,82 +45,101 @@ struct PhoneNumberView: View {
                     .background(
                         .secondary, in: RoundedRectangle(cornerRadius: 10, style: .continuous)
                     )
-                    .onSubmit {
+
+                Button(
+                    action: {
                         if validate(phoneNumber) {
                             Task {
                                 do {
-                                    try await requestOTP(forPhoneNumber: phoneNumber)
+                                    logger.debug("is post request working????")
+                                    let response: OTPResponse = try await requestOTP(
+                                        forPhoneNumber: phoneNumber)
+                                    logger.info("recived otp token -- \(response.otpToken)")
+                                    token = response
                                 } catch let e {
-                                    
+                                    logger.error(
+                                        "when requesting otp an error occured: \(e, privacy: .public)"
+                                    )
                                 }
                             }
                         } else {
                             // TODO:
                         }
+                    },
+                    label: {
+                        Text("Next")
+                            .frame(maxWidth: .infinity, minHeight: 47)
+                            .background(
+                                .secondary,
+                                in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    }
+                )
+                .navigationDestination(item: $token){
+                        CodeView(onLoginComplete: onLoginComplete, otpToken: $0.otpToken)
                     }
 
             }
 
-            NavigationLink(destination: CodeView(onLoginComplete: onLoginComplete)) {
-                Text("Next")
-                    .frame(maxWidth: .infinity, minHeight: 47)
-                    .background(
-                        .secondary,
-                        in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-            }
+            .navigationTitle("Login")
+            .padding(.horizontal)
+            .padding(.bottom, 80)
 
         }
-
-        .navigationTitle("Login")
-        .padding(.horizontal)
-        .padding(.bottom, 80)
-
     }
-}
 
-enum ServerRequestError: Error, CustomStringConvertible {
-    case nonHTTPResponse(got: Any.Type)
-    case serverError(status: Int, message: String?)
-    
-    var description: String {
-        
+    enum ServerRequestError: Error, CustomStringConvertible {
+
+        case nonHTTPResponse(got: Any.Type)
+        case serverError(status: Int, message: String?)
+
+        var description: String {
+            switch self {
+
+            case .nonHTTPResponse(let got):
+                return "Recived a non HTTP response of type \(got)"
+            case .serverError(let status, let message):
+                return
+                    "Recived a server error with a status: \(status) and body \(message ?? "<binary>")"
+            }
+        }
     }
-}
 
-func requestOTP(forPhoneNumber phone: String) async throws -> OTPResponse {
-    let address = "http://127.0.0.1:8080/otp"
-    let url = URL(string: address)!
-    var request = URLRequest(url: url)
-    request.httpMethod = "POST"
-    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.httpBody = try JSONEncoder().encode(OTPRequest(number: phone))
-    let (body, response) = try await URLSession.shared.data(for: request)
-    guard let httpResponse = response as? HTTPURLResponse else {
-        throw ServerRequestError.nonHTTPResponse(got: Mirror(reflecting: response).subjectType)
+    func requestOTP(forPhoneNumber phone: String) async throws -> OTPResponse {
+        let address = "http://127.0.0.1:8080/otp"
+        let url = URL(string: address)!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(OTPRequest(number: phone))
+        let (body, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw ServerRequestError.nonHTTPResponse(got: Mirror(reflecting: response).subjectType)
+        }
+        print("\(httpResponse.statusCode)")
+        guard httpResponse.statusCode == 200 else {
+            throw ServerRequestError.serverError(
+                status: httpResponse.statusCode,
+                message: String(data: body, encoding: .utf8)
+            )
+        }
+        return try JSONDecoder().decode(OTPResponse.self, from: body)
     }
-    guard httpResponse.statusCode == 200 else {
-        throw ServerRequestError.serverError(
-            status: httpResponse.statusCode,
-            message: String(data: body, encoding: .utf8)
-        )
+
+    struct OTPRequest: Codable {
+        var number: String
     }
-    return try JSONDecoder().decode(OTPResponse.self, from: body)
-}
 
-struct OTPRequest: Codable {
-    var number: String
-}
-
-enum OnClientErrors: Error {
-    case WrongURLRequest
-}
-
-struct OTPResponse: Codable {
-    var otpToken: String
-}
-
-#Preview {
-    NavigationStack {
-        PhoneNumberView(onLoginComplete: {})
+    enum OnClientErrors: Error {
+        case WrongURLRequest
     }
+
+    struct OTPResponse: Codable, Hashable {
+        var otpToken: String
+    }
+
+    //    #Preview{
+    //        NavigationStack {
+    //            PhoneNumberView(onLoginComplete: {})
+    //        }
+    //    }
 }

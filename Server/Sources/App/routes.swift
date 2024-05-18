@@ -7,8 +7,7 @@ struct MyResponse: Codable, Content {
     var number: String
 }
 
-struct OTPRequest: Codable, Content {
-    var id: Int
+struct OTPRequest: Content {
     var number: String
 }
 
@@ -43,12 +42,12 @@ func routes(_ app: Application, db: Database) throws {
     app.post("otp") { req async throws in
         let otpReq = try req.content.decode(OTPRequest.self)
         let code = generateOTPCode()
-        req.logger.info("Here is your code = \(code)", metadata: ["phoneNumber": otpReq.number])
+        req.logger.info("Here is your code = \(code)", metadata: ["phoneNumber": "\(otpReq.number)"])
         let token = nanoid()
         try await db.prepare(
             """
-            insert into users (number, code, token, expires_at)
-            values (\(otpReq.number), \(code), \(token), datetime('now', 'utc', 'subsecond', '+5 minutes')
+            insert into one_time_passwords (phone, code, token, expires_at)
+            values ( \(otpReq.number), \(code), \(token), datetime('now', 'utc', 'subsecond', '+5 minutes'));
             """
         ).run()
         return OTPResponse(otpToken: token)

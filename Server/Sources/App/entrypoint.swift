@@ -4,12 +4,18 @@ import Vapor
 
 let migrations = [
     """
-    create table bazinga (
-        id integer primary key autoincrement,
-        name text not null
-    );
     create table users(id integer primary key autoincrement, first_name text, phone_number text);
-    create table one_time_password(id integer primary key autoincrement, phone text, code text, token text, expires_at text)
+    """,
+    
+    """
+    create table one_time_passwords(
+        id integer primary key autoincrement,
+        phone text not null,
+        code text not null,
+        token text not null,
+        expires_at text not null
+    );
+    create index one_time_passwords_codes on one_time_passwords (code);
     """
 ]
 
@@ -58,7 +64,7 @@ enum Entrypoint {
         for name in input {
             try await db.prepare("insert into users(first_name) values(\(name))").run()
         }
-
+        
         let app = try await Application.make(env)
         defer { app.shutdown() }
 

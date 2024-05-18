@@ -10,6 +10,7 @@ import SwiftUI
 struct CodeView: View {
     @State var code = ""
     var onLoginComplete: () -> Void
+    let otpToken: String
     @State private var nextView = false
     func validate(_ code: String) -> Bool {
         // TODO: validate the code
@@ -57,6 +58,6 @@ struct CodeView: View {
 
 #Preview {
     NavigationStack {
-        CodeView(onLoginComplete: {})
+        CodeView(onLoginComplete: {}, otpToken: "ahdflkahfj")
     }
 }
