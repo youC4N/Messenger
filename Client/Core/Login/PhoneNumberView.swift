@@ -77,9 +77,7 @@ struct PhoneNumberView: View {
                 .navigationDestination(item: $token){
                         CodeView(onLoginComplete: onLoginComplete, otpToken: $0.otpToken)
                     }
-
             }
-
             .navigationTitle("Login")
             .padding(.horizontal)
             .padding(.bottom, 80)
@@ -88,13 +86,11 @@ struct PhoneNumberView: View {
     }
 
     enum ServerRequestError: Error, CustomStringConvertible {
-
-        case nonHTTPResponse(got: Any.Type)
+        case nonHTTPResponse(got: URLResponse.Type)
         case serverError(status: Int, message: String?)
 
         var description: String {
             switch self {
-
             case .nonHTTPResponse(let got):
                 return "Recived a non HTTP response of type \(got)"
             case .serverError(let status, let message):
@@ -113,7 +109,7 @@ struct PhoneNumberView: View {
         request.httpBody = try JSONEncoder().encode(OTPRequest(number: phone))
         let (body, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw ServerRequestError.nonHTTPResponse(got: Mirror(reflecting: response).subjectType)
+            throw ServerRequestError.nonHTTPResponse(got: type(of: response))
         }
         print("\(httpResponse.statusCode)")
         guard httpResponse.statusCode == 200 else {
@@ -136,10 +132,4 @@ struct PhoneNumberView: View {
     struct OTPResponse: Codable, Hashable {
         var otpToken: String
     }
-
-    //    #Preview{
-    //        NavigationStack {
-    //            PhoneNumberView(onLoginComplete: {})
-    //        }
-    //    }
 }
