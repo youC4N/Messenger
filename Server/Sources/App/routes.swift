@@ -48,11 +48,7 @@ func routes(_ app: Application, db: Database) throws {
     }
     app.post("otp", use: requestOTPRoute)
     
-    app.post("login") { req async throws in
-        let otpReq = try req.content.decode(OTPRequest.self)
-        
-        return LoginResponse.invalid
-    }
+    app.post("login", use: loginRoute)
     
 }
 

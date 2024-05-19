@@ -7,7 +7,7 @@ struct LoginRequest: Content {
     var code: String
 }
 
-enum LoginResponse: Encodable,  Content {
+enum LoginResponse: Encodable, Decodable,  Content {
     case invalid
     case expired
     case registrationRequired(registrationToken: String, phone: String)
@@ -40,24 +40,25 @@ enum LoginResponse: Encodable,  Content {
         }
     }
 
-//    init(from decoder: any Decoder) throws {
-//        let container = try decoder.container(keyedBy: CodingKeys.self)
-//        switch try container.decode(Tag.self, forKey: .type) {
-//        case .invalid:
-//            self = .invalid
-//        case .expired:
-//            self = .expired
-//        case .registrationRequired:
-//            let registrationToken = try container.decode(String.self, forKey: .registrationToken)
-//            self = .registrationRequired(registrationToken: registrationToken)
-//        case .existingLogin:
-//            let sessionToken = try container.decode(String.self, forKey: .sessionToken)
-//            let userInfo = try container.decode([String: String].self, forKey: .userInfo)
-//            self = .existingLogin(sessionToken: sessionToken, userInfo: userInfo)
-//        }
-//    }
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        switch try container.decode(Tag.self, forKey: .type) {
+        case .invalid:
+            self = .invalid
+        case .expired:
+            self = .expired
+        case .registrationRequired:
+            let phone = try container.decode(String.self, forKey: .phone)
+            let registrationToken = try container.decode(String.self, forKey: .registrationToken)
+            self = .registrationRequired(registrationToken: registrationToken, phone: phone)
+        case .existingLogin:
+            let sessionToken = try container.decode(String.self, forKey: .sessionToken)
+            let userInfo = try container.decode([String: String].self, forKey: .userInfo)
+            self = .existingLogin(sessionToken: sessionToken, userInfo: userInfo)
+        }
+    }
 }
-
+@Sendable
 func loginRoute(req: Request) async throws -> LoginResponse {
     let loginRequest = try req.content.decode(LoginRequest.self)
     let input: PersistedOTP? = try await req.db.prepare(
@@ -74,6 +75,7 @@ func loginRoute(req: Request) async throws -> LoginResponse {
 
     guard input.expires_at > Date.now else {
         // TODO: Remove expired token
+        try await req.db.prepare("delete from one_time_passwords where token = \(loginRequest.token)").run()
         return .expired
     }
     
@@ -82,7 +84,7 @@ func loginRoute(req: Request) async throws -> LoginResponse {
     }
     
     // TODO: Expire otp_token
-    
+    try await req.db.prepare("delete from one_time_passwords where token = \(loginRequest.token)").run()
     if try await userExists(byPhone: input.phone, in: req.db) {
         // TODO: login
         let O = "O"
@@ -91,6 +93,12 @@ func loginRoute(req: Request) async throws -> LoginResponse {
     } else {
         let registrationToken = nanoid()
         // TODO: insert in registration_tokens new token
+        try await req.db.prepare(
+            """
+            insert into registration_tokens (token, phone, expires_at)
+            values (\(input.phone), \(registrationToken), datetime('now', 'utc', 'subsecond', '+14 days'));
+            """
+        ).run()
         return .registrationRequired(registrationToken: registrationToken, phone: input.phone)
     }
 

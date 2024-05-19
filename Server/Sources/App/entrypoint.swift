@@ -10,7 +10,7 @@ let migrations = [
     create table users(id integer primary key autoincrement, first_name text, phone_number text);
     """,
     """
-    create table one_time_passwords(
+    create table if not exists one_time_passwords(
         id integer primary key autoincrement,
         phone text not null,
         code text not null,
@@ -20,7 +20,7 @@ let migrations = [
     """,
     // yarik forgor 💀
     """
-    create table registration_tokens(
+    create table if not exists registration_tokens(
         id integer primary key autoincrement,
         token text not null,
         phone text not null,
