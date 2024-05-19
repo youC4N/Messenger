@@ -9,7 +9,6 @@ let migrations = [
     """
     create table users(id integer primary key autoincrement, first_name text, phone_number text);
     """,
-    
     """
     create table one_time_passwords(
         id integer primary key autoincrement,
@@ -18,7 +17,19 @@ let migrations = [
         token text not null,
         expires_at text not null
     );
-    create index one_time_passwords_codes on one_time_passwords (code);
+    """,
+    // yarik forgor 💀
+    """
+    create table registration_tokens(
+        id integer primary key autoincrement,
+        token text not null,
+        phone text not null,
+        expires_at text not null
+    );
+    create index registration_tokens on registration_tokens(token);
+    create index one_time_passwords_tokens on one_time_passwords(token);
+    create index registration_tokens_expires_at on registration_tokens(expires_at);
+    create index one_time_passwords_expires_at on one_time_passwords(expires_at);
     """
 ]
 
@@ -74,6 +85,7 @@ enum Entrypoint {
         }
         
         let app = try await Application.make(env)
+        app.storage[Database.self] = db
         defer { app.shutdown() }
 
         do {
