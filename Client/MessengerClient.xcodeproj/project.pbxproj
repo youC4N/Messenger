@@ -18,6 +18,7 @@
 		85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CA2BE93B3100576055 /* CodeView.swift */; };
 		85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CC2BE9424400576055 /* MainChatsView.swift */; };
 		85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */; };
+		C419E6832BF8E59B00519AAE /* Registration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C419E6822BF8E59B00519AAE /* Registration.swift */; };
 		C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +35,7 @@
 		85FC07CA2BE93B3100576055 /* CodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
 		85FC07CC2BE9424400576055 /* MainChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainChatsView.swift; sourceTree = "<group>"; };
 		85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowDisambiguation.swift; sourceTree = "<group>"; };
+		C419E6822BF8E59B00519AAE /* Registration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registration.swift; sourceTree = "<group>"; };
 		C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
