@@ -8,13 +8,7 @@ struct PasswordRequest: Codable {
 let logger = Logger(subsystem: "com.github.youC4N.videomessenger", category: "UI")
 
 struct PhoneNumberView: View {
-    func validate(_ code: String) -> Bool {
-        // TODO: validate the code
-        return true
-    }
-    @State private var nextView: Bool = false
     @State var token: OTPResponse?
-
     var countryCode = "+380"
     var countryFlag = "🇺🇦"
 
@@ -22,6 +16,13 @@ struct PhoneNumberView: View {
     var onLoginComplete: () -> Void
     var onRegistrationRequired: (String) -> Void
 
+    func handleExpiration() {
+        self.token = nil
+    }
+    func validate(_ code: String) -> Bool {
+        // TODO: validate the code
+        return true
+    }
     var body: some View {
         VStack(spacing: 10) {
             Text("Confirm country code and enter phone number")
@@ -75,10 +76,13 @@ struct PhoneNumberView: View {
                                 in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
                 )
-                
-                .navigationDestination(item: $token){
-                    CodeView(onLoginComplete: onLoginComplete, onRegistrationRequired: onRegistrationRequired, otpToken: $0.otpToken)
-                    }
+
+            }
+            .navigationDestination(item: $token) {
+                CodeView(
+                    onLoginComplete: onLoginComplete,
+                    onExpired: handleExpiration, onRegistrationRequired: onRegistrationRequired,
+                    otpToken: $0.otpToken)
             }
             .navigationTitle("Login")
             .padding(.horizontal)

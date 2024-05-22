@@ -17,8 +17,7 @@ enum LoginResponse: Decodable, Hashable {
     }
 
     enum Tag: String, Codable {
-        case invalid, expired, registrationRequired = "registration-required", existingLogin =
-            "existing-login"
+        case invalid, expired, registrationRequired = "registration-required", existingLogin = "existing-login"
     }
 
     init(from decoder: any Decoder) throws {
@@ -65,24 +64,45 @@ func requestLogin(forCode code: String, forToken token: String) async throws -> 
 struct CodeView: View {
     @State var code = ""
     @State var response: LoginResponse?
+    @State var errorMessage: String?
+    @State var showAlert = false
+    @State var alertMessage = ""
+    @State var alertAction: (() -> Void)? = nil
     var onLoginComplete: () -> Void
+    var onExpired: () -> Void
     var onRegistrationRequired: (String) -> Void
     let otpToken: String
+
     func validate(_ code: String) -> Bool {
         // TODO: validate the code
         return true
     }
-    
+
+    func handleResponse(_ response: LoginResponse) {
+        switch response {
+        case .expired:
+            alertMessage = "The code has expired. Please request a new one."
+            alertAction = { onExpired() }
+            showAlert = true
+        case .existingLogin(sessionToken: _, userInfo: _):
+            onLoginComplete()
+        case .registrationRequired(registrationToken: let registrationToken, phone: let phone):
+            onRegistrationRequired(registrationToken)
+        case .invalid:
+            alertMessage = "The code you entered is invalid. Please try again."
+            showAlert = true
+        }
+    }
+
     var body: some View {
         VStack {
             Text("Enter the code")
             HStack {
                 ZStack {
-
                     TextField("", text: $code)
                         .padding(.leading, 10)
                         .frame(maxWidth: 160, minHeight: 47)
-                        .background(.secondary, in: RoundedRectangle(cornerRadius: 10))
+                        .background(Color.secondary, in: RoundedRectangle(cornerRadius: 10))
                         .autocorrectionDisabled(true)
                 }
             }
@@ -91,18 +111,12 @@ struct CodeView: View {
                 action: {
                     Task {
                         do {
-                            let loginResponse: LoginResponse = try await requestLogin(
-                                forCode: code, forToken: otpToken)
-                            switch loginResponse{
-                            case .existingLogin(sessionToken: let a , userInfo: let b):
-                                onLoginComplete()
-                            case .registrationRequired(registrationToken: let foo, phone: let boo):
-                                onRegistrationRequired(foo)
-                            default:
-                                break
-                            }
-                        } catch var e {
-                            throw e
+                            let response = try await requestLogin(forCode: code, forToken: otpToken)
+                            handleResponse(response)
+                        } catch {
+                            errorMessage = error.localizedDescription
+                            alertMessage = "An error occurred: \(errorMessage ?? "Unknown error")"
+                            showAlert = true
                         }
                     }
                 },
@@ -110,32 +124,41 @@ struct CodeView: View {
                     Text("Next")
                         .frame(maxWidth: .infinity, minHeight: 47)
                         .background(
-                            .secondary,
+                            Color.secondary,
                             in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
             )
+
+            if let errorMessage = errorMessage {
+                Text(errorMessage).foregroundColor(.red)
+            }
         }
         .padding()
         .navigationTitle("Authorization")
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text("Notification"),
+                message: Text(alertMessage),
+                dismissButton: .default(Text("OK")) {
+                    if let action = alertAction {
+                        action()
+                    }
+                }
+            )
+        }
     }
-
 }
 
 enum ServerRequestError: Error, CustomStringConvertible {
-
     case nonHTTPResponse(got: Any.Type)
     case serverError(status: Int, message: String?)
 
     var description: String {
         switch self {
-
         case .nonHTTPResponse(let got):
-            return "Recived a non HTTP response of type \(got)"
+            return "Received a non-HTTP response of type \(got)"
         case .serverError(let status, let message):
-            return
-                "Recived a server error with a status: \(status) and body \(message ?? "<binary>")"
+            return "Received a server error with a status: \(status) and body \(message ?? "<binary>")"
         }
     }
 }
-
-

@@ -6,23 +6,24 @@ enum AppFlow: Codable, Hashable {
     case regular
 }
 
-
-
 struct FlowDisambiguation: View {
     @State var currentFlow = AppFlow.login
-
 
     var body: some View {
         switch currentFlow {
         case .login:
             NavigationStack {
-                PhoneNumberView(onLoginComplete: {
-                    withAnimation {
-                        currentFlow = .regular
-                    }
-                }, onRegistrationRequired: {registrationToken in withAnimation {
-                    currentFlow = .registration(registrationToken: registrationToken)
-                }})
+                PhoneNumberView(
+                    onLoginComplete: {
+                        withAnimation {
+                            currentFlow = .regular
+                        }
+                    },
+                    onRegistrationRequired: { registrationToken in
+                        withAnimation {
+                            currentFlow = .registration(registrationToken: registrationToken)
+                        }
+                    })
             }
             .transition(.blurReplace)
         case .regular:
@@ -31,17 +32,17 @@ struct FlowDisambiguation: View {
             }
             .transition(.blurReplace)
         case .registration(registrationToken: let token):
-            Registration(token: token, onLoginComplete: {
-                withAnimation {
-                    currentFlow = .regular
+            Registration(
+                token: token,
+                onLoginComplete: {
+                    withAnimation {
+                        currentFlow = .regular
+                    }
                 }
-            }).transition(.blurReplace)
+            ).transition(.blurReplace)
 
-            
-            
-        
         }
-        
+
     }
 }
 
