@@ -1,19 +1,12 @@
-//
-//  CodeView.swift
-//  Messenger
-//
-//  Created by Егор Малыгин on 06.05.2024.
-//
-
+import OSLog
 import SwiftUI
-import Logging
 
-struct LoginRequest: Encodable{
+struct LoginRequest: Encodable {
     var code: String
     var token: String
 }
 
-enum LoginResponse: Decodable, Hashable{
+enum LoginResponse: Decodable, Hashable {
     case invalid
     case expired
     case registrationRequired(registrationToken: String, phone: String)
@@ -27,7 +20,6 @@ enum LoginResponse: Decodable, Hashable{
         case invalid, expired, registrationRequired = "registration-required", existingLogin =
             "existing-login"
     }
-
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -59,7 +51,7 @@ func requestLogin(forCode code: String, forToken token: String) async throws -> 
     guard let httpResponse = response.1 as? HTTPURLResponse else {
         throw ServerRequestError.nonHTTPResponse(got: Mirror(reflecting: response).subjectType)
     }
-    
+
     print("\(httpResponse.statusCode)")
     guard httpResponse.statusCode == 200 else {
         throw ServerRequestError.serverError(
@@ -70,17 +62,17 @@ func requestLogin(forCode code: String, forToken token: String) async throws -> 
     return try JSONDecoder().decode(LoginResponse.self, from: response.0)
 }
 
-let logger = Logger(subsystem: "com.github.youC4N.videomessenger", category: "UI")
-
 struct CodeView: View {
     @State var code = ""
     @State var response: LoginResponse?
     var onLoginComplete: () -> Void
+    var onRegistrationRequired: (String) -> Void
     let otpToken: String
     func validate(_ code: String) -> Bool {
         // TODO: validate the code
-        return false
+        return true
     }
+    
     var body: some View {
         VStack {
             Text("Enter the code")
@@ -97,18 +89,20 @@ struct CodeView: View {
 
             Button(
                 action: {
-                    Task{
-                        do{
-                            if validate(code) {
+                    Task {
+                        do {
+                            let loginResponse: LoginResponse = try await requestLogin(
+                                forCode: code, forToken: otpToken)
+                            switch loginResponse{
+                            case .existingLogin(sessionToken: let a , userInfo: let b):
                                 onLoginComplete()
-                            } else {
-                                
-                                let loginResponse:LoginResponse = try await requestLogin(forCode: code, forToken: otpToken)
-                                logger.info("\(loginResponse)")
+                            case .registrationRequired(registrationToken: let foo, phone: let boo):
+                                onRegistrationRequired(foo)
+                            default:
+                                break
                             }
-                        }
-                        catch let e{
-                            logger.error("when requesting login an error occured: \(e)")
+                        } catch var e {
+                            throw e
                         }
                     }
                 },
@@ -120,25 +114,10 @@ struct CodeView: View {
                             in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
             )
-            .navigationDestination(item: $response) { res in
-                switch res {
-                case .invalid:
-                    CodeView(onLoginComplete: onLoginComplete, otpToken: otpToken)
-                case .expired:
-                    PhoneNumberView(onLoginComplete: onLoginComplete)
-                case .registrationRequired(let registrationToken, let phone):
-                    Registration(onLoginComplete: onLoginComplete)
-                case .existingLogin(let sessionToken, let userInfo):
-                    MainChatsView()
-                    
-                }
-            }
-
         }
         .padding()
         .navigationTitle("Authorization")
     }
-
 
 }
 
@@ -160,8 +139,3 @@ enum ServerRequestError: Error, CustomStringConvertible {
 }
 
 
-#Preview {
-    NavigationStack {
-        CodeView(onLoginComplete: {}, otpToken: "ahdflkahfj")
-    }
-}

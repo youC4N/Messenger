@@ -1,10 +1,3 @@
-//
-//  Registration.swift
-//  Messenger
-//
-//  Created by Егор Малыгин on 06.05.2024.
-//
-
 import PhotosUI
 import SwiftUI
 
@@ -12,6 +5,7 @@ struct Registration: View {
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var selectedImage: Image? = nil
     @State var username = ""
+    var token: String
     var onLoginComplete: () -> Void
     func validate(_ name: String) -> Bool {
         // TODO: validate the code
@@ -78,6 +72,3 @@ struct Registration: View {
     }
 }
 
-#Preview {
-    Registration(onLoginComplete: {})
-}

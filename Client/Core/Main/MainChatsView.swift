@@ -1,10 +1,3 @@
-//
-//  MainChatsView.swift
-//  Messenger
-//
-//  Created by Егор Малыгин on 06.05.2024.
-//
-
 import SwiftUI
 
 func getUsersInfo() async throws -> [User] {

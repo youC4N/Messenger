@@ -20,6 +20,7 @@ struct PhoneNumberView: View {
 
     @State var phoneNumber = ""
     var onLoginComplete: () -> Void
+    var onRegistrationRequired: (String) -> Void
 
     var body: some View {
         VStack(spacing: 10) {
@@ -74,8 +75,9 @@ struct PhoneNumberView: View {
                                 in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
                 )
+                
                 .navigationDestination(item: $token){
-                        CodeView(onLoginComplete: onLoginComplete, otpToken: $0.otpToken)
+                    CodeView(onLoginComplete: onLoginComplete, onRegistrationRequired: onRegistrationRequired, otpToken: $0.otpToken)
                     }
             }
             .navigationTitle("Login")

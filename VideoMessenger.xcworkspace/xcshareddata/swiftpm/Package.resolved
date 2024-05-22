@@ -1,5 +1,5 @@
 {
-  "originHash" : "e26ab3facebcebe1e548295651b7a172029370c2a2701bfff75c8d1ddd8ac219",
+  "originHash" : "49f559f5ad99c475b1a5f0e3cd28272f218a8db0ceb3828a2ef176db3a5b0b6e",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Malien/raw-dawg.swift",
       "state" : {
-        "revision" : "9305e311fa6770528749ab35fb108b615f6656d6",
-        "version" : "0.0.6"
+        "revision" : "81169d396e6e367fda58b091d6e541e07dff9ef1",
+        "version" : "0.1.1"
       }
     },
     {

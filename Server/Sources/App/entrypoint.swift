@@ -26,7 +26,7 @@ let migrations = [
         phone text not null,
         expires_at text not null
     );
-    create index registration_tokens on registration_tokens(token);
+    create index registration_tokens_tokens on registration_tokens(token);
     create index one_time_passwords_tokens on one_time_passwords(token);
     create index registration_tokens_expires_at on registration_tokens(expires_at);
     create index one_time_passwords_expires_at on one_time_passwords(expires_at);

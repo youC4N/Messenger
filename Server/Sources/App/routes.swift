@@ -18,7 +18,7 @@ extension Database: StorageKey {
 
 extension Request {
     var db: Database {
-        self.storage[Database.self]!
+        self.application.storage[Database.self]!
     }
 }
 

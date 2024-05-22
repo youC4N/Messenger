@@ -70,26 +70,28 @@ func loginRoute(req: Request) async throws -> LoginResponse {
     ).fetchOptional()
     
     guard let input = input else {
+        req.logger.info("There is no entry for the token", metadata: ["token": "\(loginRequest.token)"])
         return .expired
     }
 
-    guard input.expires_at > Date.now else {
-        // TODO: Remove expired token
+    guard input.expires_at < Date.now else {
         try await req.db.prepare("delete from one_time_passwords where token = \(loginRequest.token)").run()
+        req.logger.info("The token expired", metadata: ["token":"\(loginRequest.token)", "expires_at":"\(input.expires_at)"])
         return .expired
     }
     
     guard input.code == loginRequest.code else {
+        req.logger.info("Invalid code for this token", metadata: ["token":"\(loginRequest.token)", "code":"\(loginRequest.code)"])
         return .invalid
     }
     
-    // TODO: Expire otp_token
     try await req.db.prepare("delete from one_time_passwords where token = \(loginRequest.token)").run()
     if try await userExists(byPhone: input.phone, in: req.db) {
         // TODO: login
         let O = "O"
         let o = "o"
-        return .existingLogin(sessionToken: "", userInfo: [O:o])
+        req.logger.info("Login successed")
+        return .existingLogin(sessionToken: "qweqw", userInfo: [O:o])
     } else {
         let registrationToken = nanoid()
         // TODO: insert in registration_tokens new token
@@ -99,6 +101,7 @@ func loginRoute(req: Request) async throws -> LoginResponse {
             values (\(input.phone), \(registrationToken), datetime('now', 'utc', 'subsecond', '+14 days'));
             """
         ).run()
+        req.logger.info("registration started")
         return .registrationRequired(registrationToken: registrationToken, phone: input.phone)
     }
 
@@ -110,7 +113,7 @@ func loginRoute(req: Request) async throws -> LoginResponse {
 // - off by one errors
 
 func userExists(byPhone number: String, in db: Database) async throws -> Bool {
-    try await db.prepare("select exists (select 1 from users where number = \(number))").fetchOne()
+    try await db.prepare("select exists (select 1 from users where phone_number = \(number))").fetchOne()
 }
 
 

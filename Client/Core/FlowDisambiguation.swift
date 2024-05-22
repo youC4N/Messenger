@@ -1,12 +1,16 @@
 import SwiftUI
 
 enum AppFlow: Codable, Hashable {
+    case registration(registrationToken: String)
     case login
     case regular
 }
 
+
+
 struct FlowDisambiguation: View {
     @State var currentFlow = AppFlow.login
+
 
     var body: some View {
         switch currentFlow {
@@ -16,7 +20,9 @@ struct FlowDisambiguation: View {
                     withAnimation {
                         currentFlow = .regular
                     }
-                })
+                }, onRegistrationRequired: {registrationToken in withAnimation {
+                    currentFlow = .registration(registrationToken: registrationToken)
+                }})
             }
             .transition(.blurReplace)
         case .regular:
@@ -24,7 +30,18 @@ struct FlowDisambiguation: View {
                 MainChatsView()
             }
             .transition(.blurReplace)
+        case .registration(registrationToken: let token):
+            Registration(token: token, onLoginComplete: {
+                withAnimation {
+                    currentFlow = .regular
+                }
+            }).transition(.blurReplace)
+
+            
+            
+        
         }
+        
     }
 }
 
