@@ -1,6 +1,18 @@
 import PhotosUI
 import SwiftUI
 
+
+struct RegistrationRequest: Encodable {
+    var registrationToken: String
+    var username: String
+//    var image: Data?
+}
+
+struct RegistrationResponse: Decodable {
+    var sessionToken: String
+    var userInfo: [String: String]
+}
+
 struct Registration: View {
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var selectedImage: Image? = nil
@@ -11,6 +23,31 @@ struct Registration: View {
         // TODO: validate the code
         return true
     }
+
+    func requestRegistration(
+        forRegToken token: String,
+        forUsername username: String
+    ) async throws -> RegistrationResponse {
+        let address = "http://127.0.0.1:8080/registration"
+        let url = URL(string: address)!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(RegistrationRequest(registrationToken: token, username: username))
+        let response = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response.1 as? HTTPURLResponse else {
+            throw ServerRequestError.nonHTTPResponse(got: Mirror(reflecting: response).subjectType)
+        }
+        logger.info("registration status code -- \(httpResponse.statusCode)")
+        guard httpResponse.statusCode == 200 else {
+            throw ServerRequestError.serverError(
+                status: httpResponse.statusCode,
+                message: String(data: response.0, encoding: .utf8)
+            )
+        }
+        return try JSONDecoder().decode(RegistrationResponse.self, from: response.0)
+    }
+
     var body: some View {
         VStack {
             PhotosPicker(
@@ -55,6 +92,11 @@ struct Registration: View {
             Button(
                 action: {
                     if validate(username) {
+                        Task{
+                            do{
+                                let response = try await requestRegistration(forRegToken: token, forUsername: username)
+                            }
+                        }
                         onLoginComplete()
                     }
                 },
@@ -71,4 +113,5 @@ struct Registration: View {
         .navigationTitle("Registration")
     }
 }
+
 

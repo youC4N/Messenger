@@ -45,7 +45,7 @@ func requestOTPRoute(req: Request) async throws -> OTPResponse {
     try await req.db.prepare(
         """
         insert into one_time_passwords (phone, code, token, expires_at)
-        values (\(otpReq.number), \(code), \(token), datetime('now', 'utc', 'subsecond', '+5 minutes'));
+        values (\(normalisedNumber), \(code), \(token), datetime('now', 'utc', 'subsecond', '+5 minutes'));
         """
     ).run()
     return OTPResponse(otpToken: token)

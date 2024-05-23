@@ -49,6 +49,7 @@ func routes(_ app: Application, db: Database) throws {
     app.post("otp", use: requestOTPRoute)
     
     app.post("login", use: loginRoute)
+    app.post("registration", use: registrationRoute)
     
 }
 

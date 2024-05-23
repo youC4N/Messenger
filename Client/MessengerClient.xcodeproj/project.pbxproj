@@ -12,13 +12,13 @@
 		8515B1EA2BD2D36D00A7AD8A /* MessengerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8515B1E92BD2D36D00A7AD8A /* MessengerApp.swift */; };
 		8515B1EE2BD2D36F00A7AD8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */; };
 		8515B1F12BD2D36F00A7AD8A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8515B1F02BD2D36F00A7AD8A /* Preview Assets.xcassets */; };
+		85304C182BFFA23400958610 /* Private chats MVP.md in Resources */ = {isa = PBXBuildFile; fileRef = 85304C162BFFA23400958610 /* Private chats MVP.md */; };
 		853CC70C2BE1511F00B88C89 /* PhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853CC70B2BE1511F00B88C89 /* PhoneNumberView.swift */; };
 		859638B62BF8F19B0029EC85 /* Registration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859638B52BF8F19B0029EC85 /* Registration.swift */; };
 		85CBD6592BF2415B00FC7B91 /* Foo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CBD6582BF2415B00FC7B91 /* Foo.swift */; };
 		85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CA2BE93B3100576055 /* CodeView.swift */; };
 		85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CC2BE9424400576055 /* MainChatsView.swift */; };
 		85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */; };
-		C419E6832BF8E59B00519AAE /* Registration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C419E6822BF8E59B00519AAE /* Registration.swift */; };
 		C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */; };
 /* End PBXBuildFile section */
 
@@ -29,13 +29,13 @@
 		8515B1E92BD2D36D00A7AD8A /* MessengerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerApp.swift; sourceTree = "<group>"; };
 		8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8515B1F02BD2D36F00A7AD8A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		85304C162BFFA23400958610 /* Private chats MVP.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = "Private chats MVP.md"; sourceTree = "<group>"; };
 		853CC70B2BE1511F00B88C89 /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
 		859638B52BF8F19B0029EC85 /* Registration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Registration.swift; sourceTree = "<group>"; };
 		85CBD6582BF2415B00FC7B91 /* Foo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foo.swift; sourceTree = "<group>"; };
 		85FC07CA2BE93B3100576055 /* CodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
 		85FC07CC2BE9424400576055 /* MainChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainChatsView.swift; sourceTree = "<group>"; };
 		85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowDisambiguation.swift; sourceTree = "<group>"; };
-		C419E6822BF8E59B00519AAE /* Registration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registration.swift; sourceTree = "<group>"; };
 		C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -53,6 +53,7 @@
 		8515B1DD2BD2D36D00A7AD8A = {
 			isa = PBXGroup;
 			children = (
+				85304C172BFFA23400958610 /* Docs */,
 				8515B1F72BD2D39A00A7AD8A /* Core */,
 				8515B1E92BD2D36D00A7AD8A /* MessengerApp.swift */,
 				8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */,
@@ -88,6 +89,15 @@
 				859638B52BF8F19B0029EC85 /* Registration.swift */,
 			);
 			path = Login;
+			sourceTree = "<group>";
+		};
+		85304C172BFFA23400958610 /* Docs */ = {
+			isa = PBXGroup;
+			children = (
+				85304C162BFFA23400958610 /* Private chats MVP.md */,
+			);
+			name = Docs;
+			path = ../Docs;
 			sourceTree = "<group>";
 		};
 		85CBD6572BF23FE500FC7B91 /* Main */ = {
@@ -173,6 +183,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8515B1F12BD2D36F00A7AD8A /* Preview Assets.xcassets in Resources */,
+				85304C182BFFA23400958610 /* Private chats MVP.md in Resources */,
 				8515B1EE2BD2D36F00A7AD8A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

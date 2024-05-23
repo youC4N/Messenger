@@ -7,7 +7,13 @@ import LoggingOSLog
 
 let migrations = [
     """
-    create table users(id integer primary key autoincrement, first_name text, phone_number text);
+    create table users(
+    id integer primary key autoincrement,
+    first_name text not null,
+    phone_number text not null,
+    created_at text not null default (datetime('now', 'subsec')),
+    constraint phone_numbers_are_unique unique (phone_number)
+    ); -- Will also create an index
     """,
     """
     create table if not exists one_time_passwords(
@@ -30,6 +36,28 @@ let migrations = [
     create index one_time_passwords_tokens on one_time_passwords(token);
     create index registration_tokens_expires_at on registration_tokens(expires_at);
     create index one_time_passwords_expires_at on one_time_passwords(expires_at);
+    """,
+    """
+    create table private_chats (
+        id integer primary key autoincrement,
+        participant_a_id integer not null references users(id) on delete cascade,
+        participant_b_id integer not null references users(id) on delete cascade,
+        message_count integer not null default 0,
+        created_at text not null default (datetime('now', 'subsec')),
+        
+        constraint participant_a_id_is_less_than_b_id check (participant_a_id < participant_b_id),
+        -- This also automagically creates an index we'll use for the lookups
+        constraint private_chats_are_unique unique (participant_a_id, participant_b_id)
+    );
+    """,
+    """
+    create table private_messages (
+        id integer primary key autoincrement,
+        chat_id integer not null references private_chats(id) on delete cascade,
+        video_blob blob not null,
+        message_order integer not null,
+        created_at text not null default (datetime('now', 'subsec'))
+    );
     """
 ]
 
@@ -80,9 +108,6 @@ enum Entrypoint {
 
         let db = try Database(filename: dbpath)
         try await migrate(db: db)
-        for name in input {
-            try await db.prepare("insert into users(first_name) values(\(name))").run()
-        }
         
         let app = try await Application.make(env)
         app.storage[Database.self] = db

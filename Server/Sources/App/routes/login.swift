@@ -1,4 +1,3 @@
-import SwiftUI
 import Vapor
 import RawDawg
 
@@ -95,10 +94,11 @@ func loginRoute(req: Request) async throws -> LoginResponse {
     } else {
         let registrationToken = nanoid()
         // TODO: insert in registration_tokens new token
+        //req.logger.info("insert into registration_tokens", metadata: ["phone":"\(input.phone), ""])
         try await req.db.prepare(
             """
             insert into registration_tokens (token, phone, expires_at)
-            values (\(input.phone), \(registrationToken), datetime('now', 'utc', 'subsecond', '+14 days'));
+            values (\(registrationToken), \(input.phone), datetime('now', 'subsecond', '+14 days'));
             """
         ).run()
         req.logger.info("registration started")
