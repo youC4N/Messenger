@@ -19,8 +19,17 @@ struct PhoneNumberView: View {
     func handleExpiration() {
         self.token = nil
     }
-    func validate(_ code: String) -> Bool {
+    func validate(_ code: String)  -> Bool {
+        for char in code {
+            //logger.info("char -- \(char) char.isNumber -- \(char.isNumber)")
+            if !char.isNumber {
+                return false
+            }
+        }
         // TODO: validate the code
+        if code.count != 9 {
+            return false
+        }
         return true
     }
     var body: some View {
@@ -47,15 +56,19 @@ struct PhoneNumberView: View {
                     .background(
                         .secondary, in: RoundedRectangle(cornerRadius: 10, style: .continuous)
                     )
+                    
 
                 Button(
                     action: {
+                        logger.info("validate phone number -- \(validate(phoneNumber))")
                         if validate(phoneNumber) {
                             Task {
                                 do {
                                     logger.debug("is post request working????")
+                                    let finalPhone = "\(countryCode)\(phoneNumber)"
+                                    logger.debug("final phone -- \(finalPhone)")
                                     let response: OTPResponse = try await requestOTP(
-                                        forPhoneNumber: phoneNumber)
+                                        forPhoneNumber: finalPhone)
                                     logger.info("recived otp token -- \(response.otpToken)")
                                     token = response
                                 } catch let e {
