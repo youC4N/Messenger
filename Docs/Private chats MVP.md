@@ -13,14 +13,15 @@ create table private_chats (
     participant_a_id integer not null references users(id) on delete cascade,
     participant_b_id integer not null references users(id) on delete cascade,
     message_count integer not null default 0,
+    last_message_sent_at text null,    
     created_at text not null default (datetime('now', 'subsec')),
     
     constraint participant_a_id_is_less_than_b_id check (participant_a_id < participant_b_id),
     -- This also automagically creates an index we'll use for the lookups
     constraint private_chats_are_unique unique (participant_a_id, participant_b_id)
 );
-
--- CREATE FK INDICES, Egor
+create index private_chats_a_last_message on private_chats(participant_a_id, last_message_sent_at);
+create index private_chats_b_last_message on private_chats(participant_b_id, last_message_sent_at);
 
 create table private_messages (
     id integer primary key autoincrement,

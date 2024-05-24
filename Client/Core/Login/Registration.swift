@@ -10,7 +10,6 @@ struct RegistrationRequest: Encodable {
 
 struct RegistrationResponse: Decodable {
     var sessionToken: String
-    var userInfo: [String: String]
 }
 
 struct Registration: View {

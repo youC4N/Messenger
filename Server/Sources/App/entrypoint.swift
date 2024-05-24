@@ -38,6 +38,13 @@ let migrations = [
     create index one_time_passwords_expires_at on one_time_passwords(expires_at);
     """,
     """
+    create table sessions(
+    id integer primary key autoincrement,
+    session_token text not null,
+    user_id integer not null
+    );
+    """,
+    """
     create table private_chats (
         id integer primary key autoincrement,
         participant_a_id integer not null references users(id) on delete cascade,

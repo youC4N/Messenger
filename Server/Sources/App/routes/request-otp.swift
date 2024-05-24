@@ -32,11 +32,6 @@ func normalisedPhoneNumber( for number: String) throws -> String {
 @Sendable
 func requestOTPRoute(req: Request) async throws -> OTPResponse {
     
-//    let a = try normalisedPhoneNumber(req: req, for: "+38()(*(0506371561")
-//    let b = try normalisedPhoneNumber(req: req, for: "+(380)50-637-15-61")
-//    let c = try normalisedPhoneNumber(req: req, for: "+ 3 8 0 5 0 6 3 7 1 5 6 1 adf")
-//    let d = try normalisedPhoneNumber(req: req, for: "+380506371561")
-    //req.logger.info("test normilized string ", metadata: ["+38()(*(0506371561": "\(a)", "+(380)50-637-15-61": "\(b)", "+ 3 8 0 5 0 6 3 7 1 5 6 1 adf":"\(c)", "+380506371561":"\(d)"])
     let otpReq = try req.content.decode(OTPRequest.self)
     let code = generateOTPCode()
     req.logger.info("Here is your code = \(code)", metadata: ["phoneNumber": "\(otpReq.number)"])

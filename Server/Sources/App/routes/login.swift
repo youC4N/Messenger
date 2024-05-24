@@ -10,10 +10,11 @@ enum LoginResponse: Encodable, Decodable,  Content {
     case invalid
     case expired
     case registrationRequired(registrationToken: String, phone: String)
-    case existingLogin(sessionToken: String, userInfo: [String: String])
+    case existingLogin(sessionToken: String)
 
     enum CodingKeys: String, CodingKey {
-        case type, registrationToken, sessionToken, userInfo, phone
+        //userInfo
+        case type, registrationToken, sessionToken, phone
     }
 
     enum Tag: String, Codable {
@@ -32,10 +33,11 @@ enum LoginResponse: Encodable, Decodable,  Content {
             try container.encode(Tag.registrationRequired, forKey: .type)
             try container.encode(registrationToken, forKey: .registrationToken)
             try container.encode(userPhone, forKey: .phone)
-        case .existingLogin(let sessionToken, let userInfo):
+            //let userInfo
+        case .existingLogin(let sessionToken):
             try container.encode(Tag.existingLogin, forKey: .type)
             try container.encode(sessionToken, forKey: .sessionToken)
-            try container.encode(userInfo, forKey: .userInfo)
+            //try container.encode(userInfo, forKey: .userInfo)
         }
     }
 
@@ -52,10 +54,19 @@ enum LoginResponse: Encodable, Decodable,  Content {
             self = .registrationRequired(registrationToken: registrationToken, phone: phone)
         case .existingLogin:
             let sessionToken = try container.decode(String.self, forKey: .sessionToken)
-            let userInfo = try container.decode([String: String].self, forKey: .userInfo)
-            self = .existingLogin(sessionToken: sessionToken, userInfo: userInfo)
+            //let userInfo = try container.decode([String: String].self, forKey: .userInfo)
+            self = .existingLogin(sessionToken: sessionToken)
         }
     }
+}
+
+func createSession(for userId: Int, in req: Request) async throws -> String{
+    let session = nanoid()
+    try await req.db.prepare(
+        """
+        insert into sessions (session_token, user_id) values(\(session), \(userId))
+        """).run()
+    return session
 }
 @Sendable
 func loginRoute(req: Request) async throws -> LoginResponse {
@@ -87,14 +98,13 @@ func loginRoute(req: Request) async throws -> LoginResponse {
     try await req.db.prepare("delete from one_time_passwords where token = \(loginRequest.token)").run()
     if try await userExists(byPhone: input.phone, in: req.db) {
         // TODO: login
-        let O = "O"
-        let o = "o"
+        let userID: Int = try await req.db.prepare("select id from users where phone_number = \(input.phone)").fetchOptional()!
+        let sessionToken = try await createSession(for: userID, in: req)
         req.logger.info("Login successed")
-        return .existingLogin(sessionToken: "qweqw", userInfo: [O:o])
+        req.logger.info("Login session created", metadata: ["userID": "\(userID)", "sessionToken": "\(sessionToken)"])
+        return .existingLogin(sessionToken: sessionToken)
     } else {
         let registrationToken = nanoid()
-        // TODO: insert in registration_tokens new token
-        //req.logger.info("insert into registration_tokens", metadata: ["phone":"\(input.phone), ""])
         try await req.db.prepare(
             """
             insert into registration_tokens (token, phone, expires_at)

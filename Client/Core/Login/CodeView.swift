@@ -10,10 +10,10 @@ enum LoginResponse: Decodable, Hashable {
     case invalid
     case expired
     case registrationRequired(registrationToken: String, phone: String)
-    case existingLogin(sessionToken: String, userInfo: [String: String])
+    case existingLogin(sessionToken: String)
 
     enum CodingKeys: String, CodingKey {
-        case type, registrationToken, sessionToken, userInfo, phone
+        case type, registrationToken, sessionToken, phone
     }
 
     enum Tag: String, Codable {
@@ -33,8 +33,7 @@ enum LoginResponse: Decodable, Hashable {
             self = .registrationRequired(registrationToken: registrationToken, phone: phone)
         case .existingLogin:
             let sessionToken = try container.decode(String.self, forKey: .sessionToken)
-            let userInfo = try container.decode([String: String].self, forKey: .userInfo)
-            self = .existingLogin(sessionToken: sessionToken, userInfo: userInfo)
+            self = .existingLogin(sessionToken: sessionToken)
         }
     }
 }
@@ -84,9 +83,9 @@ struct CodeView: View {
             alertMessage = "The code has expired. Please request a new one."
             alertAction = { onExpired() }
             showAlert = true
-        case .existingLogin(sessionToken: _, userInfo: _):
+        case .existingLogin(sessionToken: _):
             onLoginComplete()
-        case .registrationRequired(registrationToken: let registrationToken, phone: let phone):
+        case .registrationRequired(registrationToken: let registrationToken, phone: _):
             onRegistrationRequired(registrationToken)
         case .invalid:
             alertMessage = "The code you entered is invalid. Please try again."

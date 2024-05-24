@@ -1,6 +1,8 @@
 import Vapor
 import RawDawg
 
+
+// TODO: expiration check
 struct RegistrationRequest: Content, Sendable {
     var registrationToken: String
     var username: String
@@ -9,7 +11,6 @@ struct RegistrationRequest: Content, Sendable {
 
 struct RegistrationResponse: Content, Sendable {
     var sessionToken: String
-    var userInfo: [String: String]
 }
 
 
@@ -30,7 +31,11 @@ func registrationRoute(req: Request) async throws -> RegistrationResponse {
     insert into users (first_name, phone_number) values(\(registrationRequest.username), \(userPhoneNumber))
     """).run()
     req.logger.info("new user registrated", metadata: ["name": "\(registrationRequest.username)", "number":"\(userPhoneNumber)"])
-    return RegistrationResponse(sessionToken: "rewqr", userInfo: [:])
+    
+    let userID: Int = try await req.db.prepare("select id from users where phone_number = \(userPhoneNumber)").fetchOptional()!
+    let sessionToken = try await createSession(for: userID, in: req)
+    req.logger.info("Registration session created", metadata: ["userID": "\(userID)", "sessionToken": "\(sessionToken)"])
+    return RegistrationResponse(sessionToken: sessionToken)
 }
 
 
