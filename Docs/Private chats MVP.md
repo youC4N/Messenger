@@ -43,6 +43,10 @@ type Edge<T> = {
     node: T
     cursor: string
 }
+type Connection<T> = {
+    pageInfo: PageInfo
+    edge: Edge<T>[]
+}
 ```
 
 ## API endpoints
@@ -62,13 +66,10 @@ Return the paginated list of private, non-empty chats user has engaged with
 #### 200 OK
 `application/json`
 ```ts
-{ 
-    pageInfo: PageInfo, 
-    edges: [Edge<{ 
-        id: number,
-        otherParticipant: { id: number, phone: string, username: string }
-    }>]
-}
+Connection<{ 
+    id: number,
+    otherParticipant: { id: number, phone: string, username: string }
+}>
 ```
 #### 401 No session token / invalid session
 `application/json`
@@ -143,13 +144,10 @@ Retrieve the paginated list of chat messages in the chat history.
 #### 200 OK
 `application/json`
 ```ts
-{ 
-    pageInfo: PageInfo, 
-    edges: [Edge<{ 
-        id: number,
-        otherParticipant: { id: number, phone: string, username: string }
-    }>]
-}
+Connection<{ 
+    id: number,
+    otherParticipant: { id: number, phone: string, username: string }
+}>
 ```
 #### 404 No chat for id `chatID` / User is not one of the participants in the chat
 `application/json`
