@@ -7,7 +7,7 @@ struct ContactCardView: View {
             HStack {
                 Image(systemName: "person")
                     .resizable()
-                    .frame(minWidth: 47, minHeight: 47)
+                    .frame(width: 48, height: 48)
                     .aspectRatio(1, contentMode: .fit)
                     .foregroundColor(.primary)
                 Spacer()
@@ -22,7 +22,7 @@ struct ContactCardView: View {
             }
             .padding()
             .frame(maxWidth: .infinity, maxHeight: 94)
-            .background(.secondary, in: RoundedRectangle(cornerRadius: 10))
+            .background(.clear,in: RoundedRectangle(cornerRadius: 10))
 
         }
     }

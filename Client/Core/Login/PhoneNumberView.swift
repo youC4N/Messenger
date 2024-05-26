@@ -56,41 +56,43 @@ struct PhoneNumberView: View {
                     .background(
                         .secondary, in: RoundedRectangle(cornerRadius: 10, style: .continuous)
                     )
+                
                     
 
-                Button(
-                    action: {
-                        logger.info("validate phone number -- \(validate(phoneNumber))")
-                        if validate(phoneNumber) {
-                            Task {
-                                do {
-                                    logger.debug("is post request working????")
-                                    let finalPhone = "\(countryCode)\(phoneNumber)"
-                                    logger.debug("final phone -- \(finalPhone)")
-                                    let response: OTPResponse = try await requestOTP(
-                                        forPhoneNumber: finalPhone)
-                                    logger.info("recived otp token -- \(response.otpToken)")
-                                    token = response
-                                } catch let e {
-                                    logger.error(
-                                        "when requesting otp an error occured: \(e, privacy: .public)"
-                                    )
-                                }
-                            }
-                        } else {
-                            // TODO:
-                        }
-                    },
-                    label: {
-                        Text("Next")
-                            .frame(maxWidth: .infinity, minHeight: 47)
-                            .background(
-                                .secondary,
-                                in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    }
-                )
+                
 
             }
+            Button(
+                action: {
+                    logger.info("validate phone number -- \(validate(phoneNumber))")
+                    if validate(phoneNumber) {
+                        Task {
+                            do {
+                                logger.debug("is post request working????")
+                                let finalPhone = "\(countryCode)\(phoneNumber)"
+                                logger.debug("final phone -- \(finalPhone)")
+                                let response: OTPResponse = try await requestOTP(
+                                    forPhoneNumber: finalPhone)
+                                logger.info("recived otp token -- \(response.otpToken)")
+                                token = response
+                            } catch let e {
+                                logger.error(
+                                    "when requesting otp an error occured: \(e, privacy: .public)"
+                                )
+                            }
+                        }
+                    } else {
+                        // TODO:
+                    }
+                },
+                label: {
+                    Text("Next")
+                        .frame(maxWidth: .infinity, minHeight: 47)
+                        .background(
+                            .secondary,
+                            in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+            )
             .navigationDestination(item: $token) {
                 CodeView(
                     onLoginComplete: onLoginComplete,

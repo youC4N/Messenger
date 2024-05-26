@@ -160,7 +160,7 @@ Connection<{
 { error: "Unauthorized" }
 ```
 
-## GET `/private_chat/:chatID/message/:messageID/video`
+## GET `/private_chat/:otherParticipantID/message/:messageID/video`
 **Required authorization**
 
 Fetch the video file for the message `messageID` in chat `chatID`. Also, would be great to support streaming, and http request ranges.

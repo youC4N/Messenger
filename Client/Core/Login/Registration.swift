@@ -19,8 +19,11 @@ struct Registration: View {
     var token: String
     var onLoginComplete: () -> Void
     func validate(_ name: String) -> Bool {
+        if !name.isEmpty{
+            return true
+        }
         // TODO: validate the code
-        return true
+        return false
     }
 
     func requestRegistration(
