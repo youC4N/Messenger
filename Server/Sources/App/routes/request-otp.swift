@@ -9,7 +9,24 @@ struct OTPResponse: Content, Sendable {
     var otpToken: String
 }
 
-func normalisedPhoneNumber( for number: String) throws -> String {
+@Sendable
+func requestOTPRoute(req: Request) async throws -> OTPResponse {
+    let otpReq = try req.content.decode(OTPRequest.self)
+    let code = generateOTPCode()
+    req.logger.info("Here is your code = \(code)", metadata: ["phoneNumber": "\(otpReq.number)"])
+    let token = nanoid()
+    let normalisedNumber = try normalisedPhoneNumber(for: otpReq.number)
+    try await saveOTP(code: code, token: token, phone: normalisedNumber, in: req.db)
+    return OTPResponse(otpToken: token)
+}
+
+enum MyError: Error, AbortError {
+    case invalidPhoneNumber
+    var status: HTTPResponseStatus { .badRequest }
+    var reason: String { "Invalid phone number." }
+}
+
+func normalisedPhoneNumber(for number: String) throws -> String {
     let rgReplacingPattern = "[^0-9\\+]"
     let rgPhoneMatchingPattern = "\\+\\d{12,15}"
     var regex = try! NSRegularExpression(pattern: rgReplacingPattern, options: .caseInsensitive)
@@ -34,21 +51,4 @@ private func saveOTP(code: String, token: String, phone: String, in db: Database
             """
         ).run()
     }
-}
-
-@Sendable
-func requestOTPRoute(req: Request) async throws -> OTPResponse {
-    let otpReq = try req.content.decode(OTPRequest.self)
-    let code = generateOTPCode()
-    req.logger.info("Here is your code = \(code)", metadata: ["phoneNumber": "\(otpReq.number)"])
-    let token = nanoid()
-    let normalisedNumber = try normalisedPhoneNumber(for: otpReq.number)
-    try await saveOTP(code: code, token: token, phone: normalisedNumber, in: req.db)
-    return OTPResponse(otpToken: token)
-}
-
-enum MyError: Error, AbortError {
-    case invalidPhoneNumber
-    var status: HTTPResponseStatus { .badRequest }
-    var reason: String { "Invalid phone number." }
 }

@@ -1,12 +1,11 @@
-import Vapor
 import RawDawg
-
+import Vapor
 
 // TODO: expiration check
 struct RegistrationRequest: Content, Sendable {
     var registrationToken: String
     var username: String
-//    var image: Data?
+    //    var image: Data?
 }
 
 struct RegistrationResponse: Content, Sendable {

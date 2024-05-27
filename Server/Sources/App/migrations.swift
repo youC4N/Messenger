@@ -1,11 +1,7 @@
-import Logging
 import RawDawg
-import Vapor
-#if canImport(LoggingOSLog)
-import LoggingOSLog
-#endif
+import Logging
 
-let migrations = [
+private let migrations = [
     """
     create table users(
         id integer primary key autoincrement,
@@ -13,7 +9,7 @@ let migrations = [
         phone_number text not null,
         created_at text not null default (datetime('now', 'subsec')),
         constraint phone_numbers_are_unique unique (phone_number)
-        ); -- Will also create an index
+    ); -- Will also create an index
     """,
     """
     create table if not exists one_time_passwords(
@@ -65,7 +61,7 @@ let migrations = [
         message_order integer not null,
         created_at text not null default (datetime('now', 'subsec'))
     );
-    """
+    """,
 ]
 
 func migrate(db: Database, logger: Logger) async throws {

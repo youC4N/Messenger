@@ -2,10 +2,10 @@
 <Workspace
    version = "1.0">
    <Group
-      location = "group:Client/../Docs"
+      location = "group:Docs"
       name = "Docs">
       <FileRef
-         location = "group:Docs/Private chats MVP.md">
+         location = "group:Private chats MVP.md">
       </FileRef>
    </Group>
    <FileRef

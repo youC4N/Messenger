@@ -1,12 +1,12 @@
-import Vapor
 import RawDawg
+import Vapor
 
 struct LoginRequest: Content {
     var token: String
     var code: String
 }
 
-enum LoginResponse: Encodable, Decodable,  Content {
+enum LoginResponse: Encodable, Decodable, Content {
     case invalid
     case expired
     case registrationRequired(registrationToken: String, phone: String)
@@ -33,11 +33,11 @@ enum LoginResponse: Encodable, Decodable,  Content {
             try container.encode(Tag.registrationRequired, forKey: .type)
             try container.encode(registrationToken, forKey: .registrationToken)
             try container.encode(userPhone, forKey: .phone)
-            //let userInfo
+        //let userInfo
         case .existingLogin(let sessionToken):
             try container.encode(Tag.existingLogin, forKey: .type)
             try container.encode(sessionToken, forKey: .sessionToken)
-            //try container.encode(userInfo, forKey: .userInfo)
+        //try container.encode(userInfo, forKey: .userInfo)
         }
     }
 

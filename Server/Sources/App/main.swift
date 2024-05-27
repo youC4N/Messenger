@@ -1,3 +1,4 @@
+import Logging
 import RawDawg
 import Vapor
 
@@ -23,9 +24,7 @@ defer { app.shutdown() }
 routes(app)
 try await app.execute()
 
-enum MessangerError: Error {
-    case serverError
-}
+// MARK: Common functionality
 
 extension Database: StorageKey {
     public typealias Value = Database
@@ -35,6 +34,10 @@ extension Request {
     var db: Database {
         self.application.storage[Database.self]!
     }
+}
+
+enum MessangerError: Error {
+    case serverError
 }
 
 func nanoid(
@@ -51,10 +54,7 @@ func nanoid(
     return result
 }
 
-func generateOTPCode() -> String {
-    let result = Int.random(in: 0..<100000)
-    return String(result)
-}
+// MARK: Route definitions
 
 func routes(_ app: Application) {
     app.post("otp", use: requestOTPRoute)
