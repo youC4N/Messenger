@@ -9,7 +9,7 @@ struct OTPResponse: Content, Sendable {
     var otpToken: String
 }
 
-func normalisedPhoneNumber( for number: String) throws -> String {
+func normalisedPhoneNumber(for number: String) throws -> String {
     let rgReplacingPattern = "[^0-9\\+]"
     let rgPhoneMatchingPattern = "\\+\\d{12,15}"
     var regex = try! NSRegularExpression(pattern: rgReplacingPattern, options: .caseInsensitive)
@@ -26,12 +26,17 @@ func normalisedPhoneNumber( for number: String) throws -> String {
         throw MyError.smthWithNumber
     }
     //return ""
+}
 
+private let codeAlphabet = "0123456789"
+
+private func generateOTPCode(size: Int = 6) -> String {
+    String(codeAlphabet.randomSample(count: size))
 }
 
 @Sendable
 func requestOTPRoute(req: Request) async throws -> OTPResponse {
-    
+
     let otpReq = try req.content.decode(OTPRequest.self)
     let code = generateOTPCode()
     req.logger.info("Here is your code = \(code)", metadata: ["phoneNumber": "\(otpReq.number)"])

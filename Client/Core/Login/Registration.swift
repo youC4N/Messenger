@@ -36,18 +36,18 @@ struct Registration: View {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONEncoder().encode(RegistrationRequest(registrationToken: token, username: username))
-        let response = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response.1 as? HTTPURLResponse else {
+        let (body, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
             throw ServerRequestError.nonHTTPResponse(got: Mirror(reflecting: response).subjectType)
         }
         logger.info("registration status code -- \(httpResponse.statusCode)")
         guard httpResponse.statusCode == 200 else {
             throw ServerRequestError.serverError(
                 status: httpResponse.statusCode,
-                message: String(data: response.0, encoding: .utf8)
+                message: String(data: body, encoding: .utf8)
             )
         }
-        return try JSONDecoder().decode(RegistrationResponse.self, from: response.0)
+        return try JSONDecoder().decode(RegistrationResponse.self, from: body)
     }
 
     var body: some View {
