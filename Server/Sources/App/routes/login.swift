@@ -23,12 +23,12 @@ enum LoginResponse: Encodable, Decodable, Content {
     }
 
     func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self) // { type: , registrationToken: , sessionToken: , userInfo: }
+        var container = encoder.container(keyedBy: CodingKeys.self)  // { type: , registrationToken: , sessionToken: , userInfo: }
         switch self {
         case .invalid:
-            try container.encode(Tag.invalid, forKey: .type) // { type: "invalid" }
+            try container.encode(Tag.invalid, forKey: .type)  // { type: "invalid" }
         case .expired:
-            try container.encode(Tag.expired, forKey: .type) // { type: "expired" }
+            try container.encode(Tag.expired, forKey: .type)  // { type: "expired" }
         case .registrationRequired(let registrationToken, let userPhone):
             try container.encode(Tag.registrationRequired, forKey: .type)
             try container.encode(registrationToken, forKey: .registrationToken)
@@ -63,7 +63,9 @@ enum LoginResponse: Encodable, Decodable, Content {
 @Sendable
 func loginRoute(req: Request) async throws -> LoginResponse {
     let loginRequest = try req.content.decode(LoginRequest.self)
-    let input: (String, String, Date)? = try await withContext("Fetching persisted otp values given token") {
+    let input: (String, String, Date)? = try await withContext(
+        "Fetching persisted otp values given token"
+    ) {
         try await req.db.prepare(
             """
             select phone, code, expires_at

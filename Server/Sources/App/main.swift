@@ -5,10 +5,10 @@ import Vapor
 var env = try Environment.detect()
 
 #if canImport(LoggingOSLog)
-import LoggingOSLog
-LoggingSystem.bootstrap(LoggingOSLog.init)
+    import LoggingOSLog
+    LoggingSystem.bootstrap(LoggingOSLog.init)
 #else
-try LoggingSystem.bootstrap(from: &env)
+    try LoggingSystem.bootstrap(from: &env)
 #endif
 
 let dbpath = ProcessInfo.processInfo.environment["DB_PATH"] ?? "./db.sqlite"

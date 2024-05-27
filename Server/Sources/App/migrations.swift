@@ -1,5 +1,5 @@
-import RawDawg
 import Logging
+import RawDawg
 
 private let migrations = [
     """

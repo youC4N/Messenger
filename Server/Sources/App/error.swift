@@ -8,7 +8,9 @@ protocol ErrorContext: Error {
 }
 
 extension ErrorContext {
-    func traverseCauseChain() -> (rootError: any Error, contextStack: [(context: String, in: ErrorSource)]) {
+    func traverseCauseChain() -> (
+        rootError: any Error, contextStack: [(context: String, in: ErrorSource)]
+    ) {
         var contextStack = [(context: context, in: source)]
         var currentCause = cause
         while let contextful = currentCause as? ErrorContext {
@@ -30,7 +32,8 @@ struct WrappedError<Inner: Error>: Error, ErrorContext, CustomStringConvertible 
         let (rootError, contextStack) = traverseCauseChain()
         var desc = String(describing: rootError)
         for (context, source) in contextStack.reversed() {
-            desc += "\n\t- \(context) in \(source.function) (\(source.file):\(source.line):\(source.column))"
+            desc +=
+                "\n\t- \(context) in \(source.function) (\(source.file):\(source.line):\(source.column))"
         }
         return desc
     }
@@ -154,7 +157,9 @@ public struct ErrorMiddleware: AsyncMiddleware {
         var reason: String
     }
 
-    public func respond(to request: Request, chainingTo next: any AsyncResponder) async throws -> Response {
+    public func respond(to request: Request, chainingTo next: any AsyncResponder) async throws
+        -> Response
+    {
         do {
             return try await next.respond(to: request)
         } catch {
@@ -209,12 +214,16 @@ public struct ErrorMiddleware: AsyncMiddleware {
             let body: Response.Body
             do {
                 body = try .init(
-                    buffer: JSONEncoder().encodeAsByteBuffer(ErrorResponse(error: true, reason: reason), allocator: request.byteBufferAllocator),
+                    buffer: JSONEncoder().encodeAsByteBuffer(
+                        ErrorResponse(error: true, reason: reason),
+                        allocator: request.byteBufferAllocator),
                     byteBufferAllocator: request.byteBufferAllocator
                 )
                 headers.contentType = .json
             } catch {
-                body = .init(string: "Oops: \(String(describing: error))\nWhile encoding error: \(reason)", byteBufferAllocator: request.byteBufferAllocator)
+                body = .init(
+                    string: "Oops: \(String(describing: error))\nWhile encoding error: \(reason)",
+                    byteBufferAllocator: request.byteBufferAllocator)
                 headers.contentType = .plainText
             }
 

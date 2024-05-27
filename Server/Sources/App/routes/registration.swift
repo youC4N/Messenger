@@ -15,21 +15,32 @@ struct RegistrationResponse: Content, Sendable {
 @Sendable
 func registrationRoute(req: Request) async throws -> RegistrationResponse {
     let registrationRequest = try req.content.decode(RegistrationRequest.self)
-    guard let userPhoneNumber = try await fetchPhoneNumber(fromRegistration: registrationRequest.registrationToken, in: req.db)
+    guard
+        let userPhoneNumber = try await fetchPhoneNumber(
+            fromRegistration: registrationRequest.registrationToken,
+            in: req.db
+        )
     else { throw Abort(.badRequest, reason: "Invalid registration token.") }
-    
+
     // TODO: take and save Avatar for every user
-    let userID: Int = try await createUser(username: registrationRequest.username, phone: userPhoneNumber, in: req.db)
+    let userID = try await createUser(
+        username: registrationRequest.username, phone: userPhoneNumber, in: req.db
+    )
     req.logger.info(
         "New user registered",
-        metadata: ["userID": "\(userID)", "name": "\(registrationRequest.username)", "phone": "\(userPhoneNumber)"]
+        metadata: [
+            "userID": "\(userID)", "name": "\(registrationRequest.username)",
+            "phone": "\(userPhoneNumber)",
+        ]
     )
 
     let sessionToken = try await createSession(for: userID, in: req)
     return RegistrationResponse(sessionToken: sessionToken)
 }
 
-private func fetchPhoneNumber(fromRegistration token: String, in db: Database) async throws -> String? {
+private func fetchPhoneNumber(fromRegistration token: String, in db: Database) async throws
+    -> String?
+{
     try await withContext("Retrieving phone given registrationToken") {
         try await db.prepare(
             "select phone from registration_tokens where token = \(token)"
