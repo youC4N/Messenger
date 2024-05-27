@@ -41,7 +41,7 @@ enum MessangerError: Error {
 }
 
 func nanoid(
-    alphabet: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~_",
+    alphabet: String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-",
     size: Int = 21
 ) -> String {
     assert(!alphabet.isEmpty)

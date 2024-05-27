@@ -79,7 +79,7 @@ extension WrappedError: DebuggableError {
 @discardableResult
 func withContext<T>(
     _ context: @autoclosure () -> String,
-    file: String = #file,
+    file: String = #fileID,
     function: String = #function,
     line: UInt = #line,
     column: UInt = #column,
@@ -109,7 +109,7 @@ func withContext<T>(
 @discardableResult
 func withContext<T>(
     _ context: @autoclosure () -> String,
-    file: String = #file,
+    file: String = #fileID,
     function: String = #function,
     line: UInt = #line,
     column: UInt = #column,
