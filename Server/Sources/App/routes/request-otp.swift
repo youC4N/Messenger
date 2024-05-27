@@ -26,6 +26,12 @@ enum MyError: Error, AbortError {
     var reason: String { "Invalid phone number." }
 }
 
+private let otpAlphabet = "0123456789"
+
+private func generateOTPCode(size: Int = 6) -> String {
+    String(otpAlphabet.randomSample(count: size))
+}
+
 func normalisedPhoneNumber(for number: String) throws -> String {
     let rgReplacingPattern = "[^0-9\\+]"
     let rgPhoneMatchingPattern = "\\+\\d{12,15}"

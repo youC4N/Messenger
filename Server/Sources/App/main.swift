@@ -46,12 +46,7 @@ func nanoid(
 ) -> String {
     assert(!alphabet.isEmpty)
     assert(size >= 0)
-    var result = ""
-    for _ in 0 ..< size {
-        let ch = alphabet.randomElement()!
-        result.append(ch)
-    }
-    return result
+    return String(alphabet.randomSample(count: size))
 }
 
 // MARK: Route definitions
