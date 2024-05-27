@@ -8,12 +8,12 @@ import LoggingOSLog
 let migrations = [
     """
     create table users(
-    id integer primary key autoincrement,
-    first_name text not null,
-    phone_number text not null,
-    created_at text not null default (datetime('now', 'subsec')),
-    constraint phone_numbers_are_unique unique (phone_number)
-    ); -- Will also create an index
+        id integer primary key autoincrement,
+        first_name text not null,
+        phone_number text not null,
+        created_at text not null default (datetime('now', 'subsec')),
+        constraint phone_numbers_are_unique unique (phone_number)
+        ); -- Will also create an index
     """,
     """
     create table if not exists one_time_passwords(
@@ -39,9 +39,9 @@ let migrations = [
     """,
     """
     create table sessions(
-    id integer primary key autoincrement,
-    session_token text not null,
-    user_id integer not null
+        id integer primary key autoincrement,
+        session_token text not null,
+        user_id integer not null
     );
     """,
     """
@@ -68,7 +68,7 @@ let migrations = [
     """
 ]
 
-func migrate(db: Database) async throws {
+func migrate(db: Database, logger: Logger) async throws {
     try await db.prepare(
         """
         create table if not exists migrations (
@@ -88,44 +88,6 @@ func migrate(db: Database) async throws {
             insert into migrations (idx, applied_at) values (\(idx + maxIdx + 1), datetime());
             commit;
             """)
-    }
-}
-
-@main
-enum Entrypoint {
-    static func main() async throws {
-        var env = try Environment.detect()
-        #if canImport(LoggingOSLog)
-        LoggingSystem.bootstrap(LoggingOSLog.init)
-        #else
-        try LoggingSystem.bootstrap(from: &env)
-        #endif
-        
-        let input = [
-            "Aaran", "Aaren", "Aarez", "Aarman", "Aaron", "Aaron-James", "Aarron", "Aaryan",
-            "Aaryn", "Aayan", "Aazaan", "Abaan", "Abbas", "Abdallah", "Abdalroof", "Abdihakim",
-            "Abdirahman", "Abdisalam", "Abdul", "Abdul-Aziz", "Abdulbasir", "Abdulkadir",
-            "Abdulkarem", "Abdulkhader", "Abdullah", "Abdul-Majeed", "Abdulmalik", "Abdul-Rehman",
-            "Abdur", "Abdurraheem", "Abdur-Rahman", "Abdur-Rehmaan", "Abel", "Abhinav",
-            "Abhisumant", "Abid", "Abir", "Abraham", "Abu", "Abubakar", "Ace", "Adain", "Adam",
-            "Adam-James", "Addison", "Addisson", "Adegbola", "Adegbolahan", "Aden", "Adenn", "Adie",
-            "Adil", "Aditya", "Adnan", "foo",
-        ]
-        let dbpath = ProcessInfo.processInfo.environment["DB_PATH"] ?? "./db.sqlite"
-
-        let db = try Database(filename: dbpath)
-        try await migrate(db: db)
-        
-        let app = try await Application.make(env)
-        app.storage[Database.self] = db
-        defer { app.shutdown() }
-
-        do {
-            try routes(app, db: db)
-        } catch {
-            app.logger.report(error: error)
-            throw error
-        }
-        try await app.execute()
+        logger.info("Applied migration #\(idx + 1): \(migration)")
     }
 }

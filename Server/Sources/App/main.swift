@@ -1,12 +1,27 @@
 import RawDawg
 import Vapor
 
-struct MyResponse: Codable, Content {
-    var id: Int
-    var username: String
-    var number: String
-}
+var env = try Environment.detect()
 
+#if canImport(LoggingOSLog)
+import LoggingOSLog
+LoggingSystem.bootstrap(LoggingOSLog.init)
+#else
+try LoggingSystem.bootstrap(from: &env)
+#endif
+
+let dbpath = ProcessInfo.processInfo.environment["DB_PATH"] ?? "./db.sqlite"
+
+let app = try await Application.make(env)
+app.middleware = .init()
+app.middleware.use(App.ErrorMiddleware(env: env))
+let db = try Database(filename: dbpath)
+try await migrate(db: db, logger: app.logger)
+
+app.storage[Database.self] = db
+defer { app.shutdown() }
+routes(app)
+try await app.execute()
 
 enum MessangerError: Error {
     case serverError
@@ -29,7 +44,7 @@ func nanoid(
     assert(!alphabet.isEmpty)
     assert(size >= 0)
     var result = ""
-    for _ in 0..<size {
+    for _ in 0 ..< size {
         let ch = alphabet.randomElement()!
         result.append(ch)
     }
@@ -41,19 +56,8 @@ func generateOTPCode() -> String {
     return String(result)
 }
 
-func routes(_ app: Application, db: Database) throws {
-    app.get("json") { req async throws in
-        let users: [MyResponse] = try await db.prepare("select * from users").fetchAll()
-        return users
-    }
+func routes(_ app: Application) {
     app.post("otp", use: requestOTPRoute)
-    
     app.post("login", use: loginRoute)
     app.post("registration", use: registrationRoute)
-    
 }
-
-
-
-
-
