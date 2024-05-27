@@ -12,9 +12,62 @@ struct RegistrationResponse: Decodable {
     var sessionToken: String
 }
 
+struct ImageDecodeError: Error { }
+
+struct AvatarPhoto: Transferable {
+    var contentType: UTType
+    var bytes: Data
+    var image: Image
+    
+    static var transferRepresentation: some TransferRepresentation {
+        dataRepr(ofType: .heic)
+        dataRepr(ofType: .heif)
+        dataRepr(ofType: .jpeg)
+        dataRepr(ofType: .png)
+    }
+    
+    private static func dataRepr(ofType type: UTType) -> DataRepresentation<Self> {
+        DataRepresentation(importedContentType: type) { data in
+            let image = UIImage(data: data)
+            guard let prepared = await image?.byPreparingForDisplay() else {
+                throw ImageDecodeError()
+            }
+            
+            return AvatarPhoto(contentType: type, bytes: data, image: Image(uiImage: prepared))
+        }
+    }
+}
+
+#Preview {
+    Registration(token: "nope", onLoginComplete: {})
+}
+
+struct AvatarSelection: View {
+    var selectedImage: Image?
+    
+    var body: some View {
+        if let selectedImage = selectedImage {
+            selectedImage
+                .resizable()
+                .contentTransition(.opacity)
+                .scaledToFill()
+        } else {
+            ZStack {
+                Image(systemName: "person")
+                    .resizable()
+                    .padding(60)
+                Circle()
+                    .fill(.clear)
+                    .strokeBorder()
+
+            }
+        }
+    }
+}
+
 struct Registration: View {
     @State private var selectedItem: PhotosPickerItem? = nil
-    @State private var selectedImage: Image? = nil
+    @State private var selectedImage: AvatarPhoto? = nil
     @State var username = ""
     var token: String
     var onLoginComplete: () -> Void
@@ -55,35 +108,33 @@ struct Registration: View {
             PhotosPicker(
                 selection: $selectedItem,
                 matching: .images,
+                preferredItemEncoding: .current,
                 photoLibrary: .shared()
             ) {
-
-                if let selectedImage = selectedImage {
-
-                    selectedImage
-                        .resizable()
-                        .scaledToFit()
-                        .frame(minWidth: 80, minHeight: 80)
-                        .clipShape(Circle())
-
-                } else {
-                    ZStack {
-                        Image(systemName: "person")
-                            .resizable()
-                            .frame(maxWidth: 80, maxHeight: 80)
-                        Circle()
-                            .fill(.clear)
-                            .strokeBorder()
-                            .frame(maxWidth: 160, maxHeight: 160)
-
-                    }
-                }
-
+                AvatarSelection(selectedImage: selectedImage?.image)
+                    .frame(minWidth: 80, maxWidth: .infinity, minHeight: 80, maxHeight: .infinity)
+                    .aspectRatio(1, contentMode: .fit)
+                    .clipShape(Circle())
+                    .padding(.horizontal, 60)
+                    .padding(.vertical, 20)
             }
             .onChange(of: selectedItem) {
                 Task {  // Incase of multiple selection newValue is of array type
-                    if let data = try? await selectedItem?.loadTransferable(type: Image.self) {
-                        selectedImage = data
+                    do {
+                        guard let selectedItem = selectedItem else {
+                            logger.info("Cleared selected gallery item")
+                            return
+                        }
+                        let mimeTypes = selectedItem.supportedContentTypes.compactMap { $0.preferredMIMEType }.map(\.description)
+                        logger.info("Selected gallery item: \(String(describing: mimeTypes))")
+                        if let data = try await selectedItem.loadTransferable(type: AvatarPhoto.self) {
+                            withAnimation {
+                                selectedImage = data
+                            }
+                            logger.info("Transferred gallery image into AvatarPhoto \(data.contentType), \(data.bytes)")
+                        }
+                    } catch {
+                        logger.error("While transferring to AvatarPhoto, error occurred: \(error)")
                     }
                 }
             }
@@ -96,7 +147,7 @@ struct Registration: View {
                     if validate(username) {
                         Task{
                             do{
-                                let response = try await requestRegistration(forRegToken: token, forUsername: username)
+                                _ = try await requestRegistration(forRegToken: token, forUsername: username)
                             }
                         }
                         onLoginComplete()
