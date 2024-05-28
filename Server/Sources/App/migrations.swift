@@ -1,5 +1,5 @@
-import RawDawg
 import Logging
+import RawDawg
 
 private let migrations = [
     """
@@ -64,7 +64,7 @@ private let migrations = [
     """,
 ]
 
-func migrate(db: Database, logger: Logger? = nil) async throws {
+func migrate(db: Database, logger: Logger) async throws {
     try await db.prepare(
         """
         create table if not exists migrations (
@@ -84,6 +84,6 @@ func migrate(db: Database, logger: Logger? = nil) async throws {
             insert into migrations (idx, applied_at) values (\(idx + maxIdx + 1), datetime());
             commit;
             """)
-        logger?.info("Applied migration #\(idx + 1):\n\(migration)")
+        logger.info("Applied migration #\(idx + 1): \(migration)")
     }
 }

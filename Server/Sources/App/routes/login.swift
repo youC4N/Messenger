@@ -13,7 +13,7 @@ enum LoginResponse: Encodable, Decodable, Content {
     case existingLogin(sessionToken: String)
 
     enum CodingKeys: String, CodingKey {
-        //userInfo
+        // userInfo
         case type, registrationToken, sessionToken, phone
     }
 
@@ -54,81 +54,62 @@ enum LoginResponse: Encodable, Decodable, Content {
             self = .registrationRequired(registrationToken: registrationToken, phone: phone)
         case .existingLogin:
             let sessionToken = try container.decode(String.self, forKey: .sessionToken)
-            //let userInfo = try container.decode([String: String].self, forKey: .userInfo)
+            // let userInfo = try container.decode([String: String].self, forKey: .userInfo)
             self = .existingLogin(sessionToken: sessionToken)
         }
     }
 }
 
-func createSession(for userId: Int, in req: Request) async throws -> String {
-    let session = nanoid()
-    try await req.db.prepare(
-        """
-        insert into sessions (session_token, user_id) values (\(session), \(userId))
-        """
-    ).run()
-    return session
-}
-
 @Sendable
 func loginRoute(req: Request) async throws -> LoginResponse {
     let loginRequest = try req.content.decode(LoginRequest.self)
-    let input: (String, String, Date)? = try await req.db.prepare(
-        """
-        select phone, code, expires_at
-        from one_time_passwords
-        where token = \(loginRequest.token)
-        """
-    ).fetchOptional()
+    let input: (String, String, Date)? = try await withContext(
+        "Fetching persisted otp values given token"
+    ) {
+        try await req.db.prepare(
+            """
+            select phone, code, expires_at
+            from one_time_passwords
+            where token = \(loginRequest.token)
+            """
+        ).fetchOptional()
+    }
 
     guard let (phone, persistedCode, expiresAt) = input else {
         req.logger.info(
-            "There is no entry for the token", metadata: ["token": "\(loginRequest.token)"])
+            "There is no entry for the token", metadata: ["token": "\(loginRequest.token)"]
+        )
         return .expired
     }
 
     guard expiresAt < Date.now else {
-        try await req.db.prepare(
-            "delete from one_time_passwords where token = \(loginRequest.token)"
-        ).run()
+        try await deleteOTP(token: loginRequest.token, in: req.db)
         req.logger.info(
-            "The token expired",
-            metadata: ["token": "\(loginRequest.token)", "expires_at": "\(expiresAt)"])
+            "Token expired",
+            metadata: ["token": "\(loginRequest.token)", "expires_at": "\(expiresAt)"]
+        )
         return .expired
     }
 
     guard persistedCode == loginRequest.code else {
         req.logger.info(
             "Invalid code for this token",
-            metadata: ["token": "\(loginRequest.token)", "code": "\(loginRequest.code)"])
+            metadata: ["token": "\(loginRequest.token)", "code": "\(loginRequest.code)"]
+        )
         return .invalid
     }
 
-    try await req.db.prepare("delete from one_time_passwords where token = \(loginRequest.token)")
-        .run()
-    if try await userExists(byPhone: phone, in: req.db) {
-        // TODO: login
-        let userID: Int = try await req.db.prepare(
-            "select id from users where phone_number = \(phone)"
-        ).fetchOptional()!
+    try await deleteOTP(token: loginRequest.token, in: req.db)
+    if let userID = try await fetchUserID(byPhone: phone, in: req.db) {
         let sessionToken = try await createSession(for: userID, in: req)
-        req.logger.info("Login successed")
-        req.logger.info(
-            "Login session created",
-            metadata: ["userID": "\(userID)", "sessionToken": "\(sessionToken)"])
+        req.logger.info("Login successed", metadata: ["userID": "\(userID)"])
         return .existingLogin(sessionToken: sessionToken)
     } else {
         let registrationToken = nanoid()
-        try await req.db.prepare(
-            """
-            insert into registration_tokens (token, phone, expires_at)
-            values (\(registrationToken), \(phone), datetime('now', 'subsecond', '+14 days'));
-            """
-        ).run()
-        req.logger.info("registration started")
+        try await createRegistrationSession(token: registrationToken, phone: phone, in: req.db)
+        req.logger.info("Registration session created")
         return .registrationRequired(registrationToken: registrationToken, phone: phone)
     }
-
 }
 
 // Two hardest things in CS:
@@ -136,7 +117,39 @@ func loginRoute(req: Request) async throws -> LoginResponse {
 // - naming things
 // - off by one errors
 
-func userExists(byPhone number: String, in db: Database) async throws -> Bool {
-    try await db.prepare("select exists (select 1 from users where phone_number = \(number))")
-        .fetchOne()
+func createSession(for userId: Int, in req: Request) async throws -> String {
+    let session = nanoid()
+    try await withContext("Saving new session") {
+        try await req.db.prepare(
+            "insert into sessions (session_token, user_id) values (\(session), \(userId))"
+        ).run()
+    }
+    return session
+}
+
+func deleteOTP(token: String, in db: Database) async throws {
+    try await withContext("Deleting OTP given token") {
+        try await db.prepare(
+            "delete from one_time_passwords where token = \(token)"
+        ).run()
+    }
+}
+
+func fetchUserID(byPhone phone: String, in db: Database) async throws -> Int? {
+    try await withContext("Retriving user id given phone number") {
+        try await db.prepare(
+            "select id from users where phone_number = \(phone)"
+        ).fetchOptional()
+    }
+}
+
+func createRegistrationSession(token: String, phone: String, in db: Database) async throws {
+    try await withContext("Saving registration token") {
+        try await db.prepare(
+            """
+            insert into registration_tokens (token, phone, expires_at)
+            values (\(token), \(phone), datetime('now', 'subsecond', '+14 days'));
+            """
+        ).run()
+    }
 }

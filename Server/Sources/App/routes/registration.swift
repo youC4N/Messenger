@@ -15,34 +15,47 @@ struct RegistrationResponse: Content, Sendable {
 @Sendable
 func registrationRoute(req: Request) async throws -> RegistrationResponse {
     let registrationRequest = try req.content.decode(RegistrationRequest.self)
-    let userPhoneNumber: String? = try await req.db.prepare(
-        """
-        select phone from registration_tokens where token = \(registrationRequest.registrationToken);
-        """
-    ).fetchOptional()
-    guard let userPhoneNumber = userPhoneNumber else {
-        throw RegistrationErrors.phoneDoesntExistInRegistrationToken
-    }
-    // TODO: take and save Avatar for every user
-    try await req.db.prepare(
-        """
-        insert into users (first_name, phone_number) values(\(registrationRequest.username), \(userPhoneNumber))
-        """
-    ).run()
-    req.logger.info(
-        "new user registrated",
-        metadata: ["name": "\(registrationRequest.username)", "number": "\(userPhoneNumber)"])
+    guard
+        let userPhoneNumber = try await fetchPhoneNumber(
+            fromRegistration: registrationRequest.registrationToken,
+            in: req.db
+        )
+    else { throw Abort(.badRequest, reason: "Invalid registration token.") }
 
-    let userID: Int = try await req.db.prepare(
-        "select id from users where phone_number = \(userPhoneNumber)"
-    ).fetchOptional()!
-    let sessionToken = try await createSession(for: userID, in: req)
+    // TODO: take and save Avatar for every user
+    let userID = try await createUser(
+        username: registrationRequest.username, phone: userPhoneNumber, in: req.db
+    )
     req.logger.info(
-        "Registration session created",
-        metadata: ["userID": "\(userID)", "sessionToken": "\(sessionToken)"])
+        "New user registered",
+        metadata: [
+            "userID": "\(userID)", "name": "\(registrationRequest.username)",
+            "phone": "\(userPhoneNumber)",
+        ]
+    )
+
+    let sessionToken = try await createSession(for: userID, in: req)
     return RegistrationResponse(sessionToken: sessionToken)
 }
 
-enum RegistrationErrors: Error {
-    case phoneDoesntExistInRegistrationToken
+private func fetchPhoneNumber(fromRegistration token: String, in db: Database) async throws
+    -> String?
+{
+    try await withContext("Retrieving phone given registrationToken") {
+        try await db.prepare(
+            "select phone from registration_tokens where token = \(token)"
+        ).fetchOptional()
+    }
+}
+
+private func createUser(username: String, phone: String, in db: Database) async throws -> Int {
+    try await withContext("Saving new user") {
+        try await db.prepare(
+            """
+            insert into users (first_name, phone_number)
+            values (\(username), \(phone))
+            returning id
+            """
+        ).fetchOne()
+    }
 }

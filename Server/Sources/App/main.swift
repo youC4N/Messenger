@@ -13,10 +13,12 @@ var env = try Environment.detect()
 
 let dbpath = ProcessInfo.processInfo.environment["DB_PATH"] ?? "./db.sqlite"
 
+let app = try await Application.make(env)
+app.middleware = .init()
+app.middleware.use(App.ErrorMiddleware(env: env))
 let db = try Database(filename: dbpath)
 try await migrate(db: db, logger: app.logger)
 
-let app = try await Application.make(env)
 app.storage[Database.self] = db
 defer { app.shutdown() }
 routes(app)
@@ -39,17 +41,12 @@ enum MessangerError: Error {
 }
 
 func nanoid(
-    alphabet: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~_",
+    alphabet: String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-",
     size: Int = 21
 ) -> String {
     assert(!alphabet.isEmpty)
     assert(size >= 0)
-    var result = ""
-    for _ in 0..<size {
-        let ch = alphabet.randomElement()!
-        result.append(ch)
-    }
-    return result
+    return String(alphabet.randomSample(count: size))
 }
 
 // MARK: Route definitions
@@ -58,5 +55,4 @@ func routes(_ app: Application) {
     app.post("otp", use: requestOTPRoute)
     app.post("login", use: loginRoute)
     app.post("registration", use: registrationRoute)
-
 }
