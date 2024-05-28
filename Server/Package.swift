@@ -5,7 +5,7 @@ let package = Package(
     name: "messanger-api",
     platforms: [
         .macOS(.v13),
-        .iOS(.v13),  // This doesn't make any sense!
+        .iOS(.v15),  // This doesn't make any sense!
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.

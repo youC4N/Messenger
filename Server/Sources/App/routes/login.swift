@@ -63,17 +63,12 @@ enum LoginResponse: Encodable, Decodable, Content {
 @Sendable
 func loginRoute(req: Request) async throws -> LoginResponse {
     let loginRequest = try req.content.decode(LoginRequest.self)
-    let input: (String, String, Date)? = try await withContext(
-        "Fetching persisted otp values given token"
-    ) {
-        try await req.db.prepare(
-            """
-            select phone, code, expires_at
-            from one_time_passwords
-            where token = \(loginRequest.token)
-            """
-        ).fetchOptional()
-    }
+    let input: (String, String, Date)? =
+        try await withContext("Fetching persisted otp values given token") {
+            try await req.db.prepare(
+                "select phone, code, expires_at from one_time_passwords where token = \(loginRequest.token)"
+            ).fetchOptional()
+        }
 
     guard let (phone, persistedCode, expiresAt) = input else {
         req.logger.info(

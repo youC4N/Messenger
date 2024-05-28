@@ -45,7 +45,7 @@ struct PhoneNumberView: View {
                         .padding(10)
                         .frame(minWidth: 80, minHeight: 48)
                         .background(
-                            .secondary,
+                            .placeholder,
                             in: RoundedRectangle(cornerRadius: 10, style: .continuous)
                         )
                         .foregroundColor(.black)
@@ -54,13 +54,8 @@ struct PhoneNumberView: View {
                     .padding(.leading, 10)
                     .frame(minWidth: 80, maxHeight: 48)
                     .background(
-                        .secondary, in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .placeholder, in: RoundedRectangle(cornerRadius: 10, style: .continuous)
                     )
-                
-                    
-
-                
-
             }
             Button(
                 action: {
@@ -100,10 +95,9 @@ struct PhoneNumberView: View {
                     otpToken: $0.otpToken)
             }
             .navigationTitle("Login")
-            .padding(.horizontal)
             .padding(.bottom, 80)
-
         }
+        .padding()
     }
 
     enum ServerRequestError: Error, CustomStringConvertible {
@@ -153,4 +147,8 @@ struct PhoneNumberView: View {
     struct OTPResponse: Codable, Hashable {
         var otpToken: String
     }
+}
+
+#Preview {
+    PhoneNumberView(token: nil, onLoginComplete: {}, onRegistrationRequired: { _ in })
 }
