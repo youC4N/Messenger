@@ -102,6 +102,8 @@ struct Registration: View {
         }
         return try JSONDecoder().decode(RegistrationResponse.self, from: body)
     }
+    func foo (image: Image) {
+            }
 
     var body: some View {
         VStack {
@@ -110,6 +112,7 @@ struct Registration: View {
                 matching: .images,
                 preferredItemEncoding: .current,
                 photoLibrary: .shared()
+                
             ) {
                 AvatarSelection(selectedImage: selectedImage?.image)
                     .frame(minWidth: 80, maxWidth: .infinity, minHeight: 80, maxHeight: .infinity)
@@ -119,6 +122,8 @@ struct Registration: View {
                     .padding(.vertical, 20)
             }
             .onChange(of: selectedItem) {
+                logger.info(
+                    "selected Items \(String(describing: selectedItem?.supportedContentTypes))")
                 Task {  // Incase of multiple selection newValue is of array type
                     do {
                         guard let selectedItem = selectedItem else {

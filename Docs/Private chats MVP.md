@@ -77,7 +77,7 @@ Connection<{
 { error: "Unauthorized" }
 ````
 
-## POST `/new_private_chat/:phone`
+## ~~POST `/new_private_chat/:phone`~~
 **Requires authorization**
 
 Look up an existing, or create a new chat.
