@@ -62,6 +62,13 @@ private let migrations = [
         created_at text not null default (datetime('now', 'subsec'))
     );
     """,
+    """
+        alter table users add column avatar blob null;
+    """
+    ,
+    """
+        alter table users add column avatar_type text null;
+    """
 ]
 
 func migrate(db: Database, logger: Logger) async throws {

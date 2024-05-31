@@ -13,7 +13,7 @@ struct PhoneNumberView: View {
     var countryFlag = "🇺🇦"
 
     @State var phoneNumber = ""
-    var onLoginComplete: () -> Void
+    var onLoginComplete: (String) -> Void
     var onRegistrationRequired: (String) -> Void
 
     func handleExpiration() {
@@ -150,5 +150,5 @@ struct PhoneNumberView: View {
 }
 
 #Preview {
-    PhoneNumberView(token: nil, onLoginComplete: {}, onRegistrationRequired: { _ in })
+    PhoneNumberView(token: nil, onLoginComplete: {_ in }, onRegistrationRequired: { _ in })
 }

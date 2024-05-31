@@ -54,5 +54,7 @@ func nanoid(
 func routes(_ app: Application) {
     app.post("otp", use: requestOTPRoute)
     app.post("login", use: loginRoute)
-    app.post("registration", use: registrationRoute)
+    app.get("getUser", ":phone", use: findUserRoute)
+    app.on(.POST, "registration", body: .collect(maxSize: "10mb"), use: registrationRoute)
+    app.on(.GET, "get", "user", ":id", "avatar", use: getUserAvatarRoute)
 }

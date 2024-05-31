@@ -5,7 +5,7 @@ import Vapor
 struct RegistrationRequest: Content, Sendable {
     var registrationToken: String
     var username: String
-    //    var image: Data?
+    var avatar: File?
 }
 
 struct RegistrationResponse: Content, Sendable {
@@ -24,7 +24,7 @@ func registrationRoute(req: Request) async throws -> RegistrationResponse {
 
     // TODO: take and save Avatar for every user
     let userID = try await createUser(
-        username: registrationRequest.username, phone: userPhoneNumber, in: req.db
+        username: registrationRequest.username, phone: userPhoneNumber, avatar: registrationRequest.avatar, avatarType: registrationRequest.avatar?.contentType?.type , in: req.db
     )
     req.logger.info(
         "New user registered",
@@ -48,14 +48,22 @@ private func fetchPhoneNumber(fromRegistration token: String, in db: Database) a
     }
 }
 
-private func createUser(username: String, phone: String, in db: Database) async throws -> Int {
+private func createUser(username: String, phone: String, avatar: File?, avatarType: String? , in db: Database) async throws -> Int {
     try await withContext("Saving new user") {
         try await db.prepare(
             """
-            insert into users (first_name, phone_number)
-            values (\(username), \(phone))
+            insert into users (first_name, phone_number, avatar, avatar_type)
+            values (\(username), \(phone), \(avatar?.data), \(avatarType))
             returning id
             """
         ).fetchOne()
     }
+}
+
+extension ByteBuffer : SQLPrimitiveEncodable {
+    public func encode() -> RawDawg.SQLiteValue {
+        return SQLiteValue.blob(SQLiteBlob.loaded(Data(buffer: self)))
+    }
+    
+    
 }

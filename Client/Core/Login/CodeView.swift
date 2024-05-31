@@ -67,7 +67,7 @@ struct CodeView: View {
     @State var showAlert = false
     @State var alertMessage = ""
     @State var alertAction: (() -> Void)? = nil
-    var onLoginComplete: () -> Void
+    var onLoginComplete: (String) -> Void
     var onExpired: () -> Void
     var onRegistrationRequired: (String) -> Void
     let otpToken: String
@@ -83,8 +83,8 @@ struct CodeView: View {
             alertMessage = "The code has expired. Please request a new one."
             alertAction = { onExpired() }
             showAlert = true
-        case .existingLogin(sessionToken: _):
-            onLoginComplete()
+        case .existingLogin(sessionToken: let token):
+            onLoginComplete(token)
         case .registrationRequired(registrationToken: let registrationToken, phone: _):
             onRegistrationRequired(registrationToken)
         case .invalid:
@@ -112,6 +112,7 @@ struct CodeView: View {
                         do {
                             let response = try await requestLogin(forCode: code, forToken: otpToken)
                             handleResponse(response)
+                            
                         } catch {
                             errorMessage = error.localizedDescription
                             alertMessage = "An error occurred: \(errorMessage ?? "Unknown error")"

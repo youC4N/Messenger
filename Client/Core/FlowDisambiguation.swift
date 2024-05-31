@@ -1,9 +1,12 @@
 import SwiftUI
+import OSLog
+
 
 enum AppFlow: Codable, Hashable {
+    
     case registration(registrationToken: String)
     case login
-    case regular
+    case regular(session: String)
 }
 
 struct FlowDisambiguation: View {
@@ -14,9 +17,10 @@ struct FlowDisambiguation: View {
         case .login:
             NavigationStack {
                 PhoneNumberView(
-                    onLoginComplete: {
+                    onLoginComplete: { sessionToken in
                         withAnimation {
-                            currentFlow = .regular
+                            currentFlow = .regular(session: sessionToken)
+                            
                         }
                     },
                     onRegistrationRequired: { registrationToken in
@@ -26,17 +30,19 @@ struct FlowDisambiguation: View {
                     })
             }
             .transition(.blurReplace)
-        case .regular:
+        case .regular(session: let sessionToken):
             NavigationStack {
-                MainChatsView()
+                MainChatsView(sessionToken: sessionToken) {
+                    currentFlow = .login
+                }
             }
             .transition(.blurReplace)
         case .registration(registrationToken: let token):
             Registration(
                 token: token,
-                onLoginComplete: {
+                onLoginComplete: { sessionToken in
                     withAnimation {
-                        currentFlow = .regular
+                        currentFlow = .regular(session: sessionToken)
                     }
                 }
             ).transition(.blurReplace)

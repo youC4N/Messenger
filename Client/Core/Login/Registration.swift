@@ -2,11 +2,7 @@ import PhotosUI
 import SwiftUI
 
 
-struct RegistrationRequest: Encodable {
-    var registrationToken: String
-    var username: String
-//    var image: Data?
-}
+
 
 struct RegistrationResponse: Decodable {
     var sessionToken: String
@@ -18,6 +14,7 @@ struct AvatarPhoto: Transferable {
     var contentType: UTType
     var bytes: Data
     var image: Image
+    
     
     static var transferRepresentation: some TransferRepresentation {
         dataRepr(ofType: .heic)
@@ -39,7 +36,7 @@ struct AvatarPhoto: Transferable {
 }
 
 #Preview {
-    Registration(token: "nope", onLoginComplete: {})
+    Registration(token: "nope", onLoginComplete: {_ in})
 }
 
 struct AvatarSelection: View {
@@ -65,12 +62,22 @@ struct AvatarSelection: View {
     }
 }
 
+
+
+
+func generateBoundaryString() -> String {
+return "Boundary--\(UUID().uuidString)"
+}
+
+
+
+
 struct Registration: View {
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var selectedImage: AvatarPhoto? = nil
     @State var username = ""
     var token: String
-    var onLoginComplete: () -> Void
+    var onLoginComplete: (String) -> Void
     func validate(_ name: String) -> Bool {
         if !name.isEmpty{
             return true
@@ -79,16 +86,39 @@ struct Registration: View {
         return false
     }
 
-    func requestRegistration(
-        forRegToken token: String,
-        forUsername username: String
-    ) async throws -> RegistrationResponse {
+    func requestRegistration(forRegToken token: String, forUsername username: String, forAvatar avatar: AvatarPhoto?) async throws -> RegistrationResponse {
         let address = "http://127.0.0.1:8080/registration"
         let url = URL(string: address)!
         var request = URLRequest(url: url)
+        let fileName = "\(token)\(username)"
         request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(RegistrationRequest(registrationToken: token, username: username))
+        let boundary = generateBoundaryString()
+        var stringData = ""
+        
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        var data = Data()
+        
+        data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
+        data.append(contentsOf: "Content-Disposition: form-data; name=\"username\"\r\n\r\n".utf8)
+        data.append(contentsOf: "\(username)".utf8)
+        data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
+        data.append(contentsOf: "Content-Disposition: form-data; name=\"registrationToken\"\r\n\r\n".utf8)
+        data.append(contentsOf: "\(token)".utf8)
+        data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
+        
+        
+        
+        if let avatar = avatar, let avatarMIMEType = avatar.contentType.preferredMIMEType {
+            logger.info("photo from client is sent, with type -- \(avatarMIMEType)")
+            data.append(contentsOf: "Content-Disposition: form-data; name=\"avatar\"; filename = \"\(fileName)\"\r\n".utf8)
+            data.append(contentsOf: "Content-Type: \(avatarMIMEType)\r\n\r\n".utf8)
+            data.append(avatar.bytes)
+            data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
+            
+        }
+        
+        logger.info("\(stringData)")
+        request.httpBody = data
         let (body, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else {
             throw ServerRequestError.nonHTTPResponse(got: Mirror(reflecting: response).subjectType)
@@ -102,9 +132,6 @@ struct Registration: View {
         }
         return try JSONDecoder().decode(RegistrationResponse.self, from: body)
     }
-    func foo (image: Image) {
-            }
-
     var body: some View {
         VStack {
             PhotosPicker(
@@ -151,11 +178,11 @@ struct Registration: View {
                 action: {
                     if validate(username) {
                         Task{
-                            do{
-                                _ = try await requestRegistration(forRegToken: token, forUsername: username)
-                            }
+                            let response = try await requestRegistration(forRegToken: token, forUsername: username, forAvatar: selectedImage)
+                            onLoginComplete(response.sessionToken)
                         }
-                        onLoginComplete()
+                        
+                       
                     }
                 },
                 label: {
