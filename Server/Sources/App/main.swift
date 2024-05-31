@@ -56,5 +56,5 @@ func routes(_ app: Application) {
     app.post("login", use: loginRoute)
     app.get("getUser", ":phone", use: findUserRoute)
     app.on(.POST, "registration", body: .collect(maxSize: "10mb"), use: registrationRoute)
-    app.on(.GET, "get", "user", ":id", "avatar", use: getUserAvatarRoute)
+    app.get("user", ":id", "avatar", use: getUserAvatarRoute)
 }

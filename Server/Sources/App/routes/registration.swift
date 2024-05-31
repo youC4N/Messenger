@@ -22,9 +22,11 @@ func registrationRoute(req: Request) async throws -> RegistrationResponse {
         )
     else { throw Abort(.badRequest, reason: "Invalid registration token.") }
 
-    // TODO: take and save Avatar for every user
     let userID = try await createUser(
-        username: registrationRequest.username, phone: userPhoneNumber, avatar: registrationRequest.avatar, avatarType: registrationRequest.avatar?.contentType?.type , in: req.db
+        username: registrationRequest.username,
+        phone: userPhoneNumber,
+        avatar: registrationRequest.avatar,
+        in: req.db
     )
     req.logger.info(
         "New user registered",
@@ -48,22 +50,54 @@ private func fetchPhoneNumber(fromRegistration token: String, in db: Database) a
     }
 }
 
-private func createUser(username: String, phone: String, avatar: File?, avatarType: String? , in db: Database) async throws -> Int {
+private func createUser(username: String, phone: String, avatar: File?, in db: Database) async throws -> Int {
     try await withContext("Saving new user") {
         try await db.prepare(
             """
             insert into users (first_name, phone_number, avatar, avatar_type)
-            values (\(username), \(phone), \(avatar?.data), \(avatarType))
+            values (\(username), \(phone), \(avatar?.data), \(avatar?.contentType))
             returning id
             """
         ).fetchOne()
     }
 }
 
-extension ByteBuffer : SQLPrimitiveEncodable {
-    public func encode() -> RawDawg.SQLiteValue {
-        return SQLiteValue.blob(SQLiteBlob.loaded(Data(buffer: self)))
+extension HTTPMediaType: SQLPrimitiveDecodable, SQLPrimitiveEncodable {
+    /// Yoinked verbatim implementation from the Vapor's internal `HTTPMediaType` init
+    init?(parse headerValue: String) {
+        let directives = headerValue.components(separatedBy: [",", ";"])
+        guard let value = directives.first else {
+            /// not a valid header value
+            return nil
+        }
+
+        /// parse out type and subtype
+        let typeParts = value.split(separator: "/", maxSplits: 2)
+        guard typeParts.count == 2 else {
+            /// the type was not form `foo/bar`
+            return nil
+        }
+
+        self.init(
+            type: String(typeParts[0]).trimmingCharacters(in: .whitespaces),
+            subType: String(typeParts[1]).trimmingCharacters(in: .whitespaces)
+        )
     }
     
-    
+    public init?(fromSQL primitive: SQLiteValue) {
+        guard case .text(let string) = primitive else {
+            return nil
+        }
+        self.init(parse: string)
+    }
+
+    public func encode() -> SQLiteValue {
+        .text(self.serialize())
+    }
+}
+
+extension ByteBuffer: SQLPrimitiveEncodable {
+    public func encode() -> RawDawg.SQLiteValue {
+        .blob(.loaded(Data(buffer: self)))
+    }
 }

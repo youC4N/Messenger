@@ -1,47 +1,43 @@
 import PhotosUI
 import SwiftUI
 
-
-
-
 struct RegistrationResponse: Decodable {
     var sessionToken: String
 }
 
-struct ImageDecodeError: Error { }
+struct ImageDecodeError: Error {}
 
 struct AvatarPhoto: Transferable {
     var contentType: UTType
     var bytes: Data
     var image: Image
-    
-    
+
     static var transferRepresentation: some TransferRepresentation {
         dataRepr(ofType: .heic)
         dataRepr(ofType: .heif)
         dataRepr(ofType: .jpeg)
         dataRepr(ofType: .png)
     }
-    
+
     private static func dataRepr(ofType type: UTType) -> DataRepresentation<Self> {
         DataRepresentation(importedContentType: type) { data in
             let image = UIImage(data: data)
             guard let prepared = await image?.byPreparingForDisplay() else {
                 throw ImageDecodeError()
             }
-            
+
             return AvatarPhoto(contentType: type, bytes: data, image: Image(uiImage: prepared))
         }
     }
 }
 
 #Preview {
-    Registration(token: "nope", onLoginComplete: {_ in})
+    Registration(token: "nope", onLoginComplete: { _ in })
 }
 
 struct AvatarSelection: View {
     var selectedImage: Image?
-    
+
     var body: some View {
         if let selectedImage = selectedImage {
             selectedImage
@@ -56,21 +52,10 @@ struct AvatarSelection: View {
                 Circle()
                     .fill(.clear)
                     .strokeBorder()
-
             }
         }
     }
 }
-
-
-
-
-func generateBoundaryString() -> String {
-return "Boundary--\(UUID().uuidString)"
-}
-
-
-
 
 struct Registration: View {
     @State private var selectedItem: PhotosPickerItem? = nil
@@ -79,7 +64,7 @@ struct Registration: View {
     var token: String
     var onLoginComplete: (String) -> Void
     func validate(_ name: String) -> Bool {
-        if !name.isEmpty{
+        if !name.isEmpty {
             return true
         }
         // TODO: validate the code
@@ -92,32 +77,27 @@ struct Registration: View {
         var request = URLRequest(url: url)
         let fileName = "\(token)\(username)"
         request.httpMethod = "POST"
-        let boundary = generateBoundaryString()
-        var stringData = ""
-        
+        let boundary = UUID().uuidString
+
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         var data = Data()
-        
-        data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
+
+        data.append(contentsOf: "--\(boundary)\r\n".utf8)
         data.append(contentsOf: "Content-Disposition: form-data; name=\"username\"\r\n\r\n".utf8)
         data.append(contentsOf: "\(username)".utf8)
         data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
         data.append(contentsOf: "Content-Disposition: form-data; name=\"registrationToken\"\r\n\r\n".utf8)
         data.append(contentsOf: "\(token)".utf8)
         data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
-        
-        
-        
+
         if let avatar = avatar, let avatarMIMEType = avatar.contentType.preferredMIMEType {
             logger.info("photo from client is sent, with type -- \(avatarMIMEType)")
-            data.append(contentsOf: "Content-Disposition: form-data; name=\"avatar\"; filename = \"\(fileName)\"\r\n".utf8)
+            data.append(contentsOf: "Content-Disposition: form-data; name=\"avatar\"; filename=\"\(fileName)\"\r\n".utf8)
             data.append(contentsOf: "Content-Type: \(avatarMIMEType)\r\n\r\n".utf8)
             data.append(avatar.bytes)
             data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
-            
         }
-        
-        logger.info("\(stringData)")
+
         request.httpBody = data
         let (body, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else {
@@ -127,20 +107,19 @@ struct Registration: View {
         guard httpResponse.statusCode == 200 else {
             throw ServerRequestError.serverError(
                 status: httpResponse.statusCode,
-                message: String(data: body, encoding: .utf8)
-            )
+                message: String(data: body, encoding: .utf8))
         }
         return try JSONDecoder().decode(RegistrationResponse.self, from: body)
     }
+
     var body: some View {
         VStack {
             PhotosPicker(
                 selection: $selectedItem,
                 matching: .images,
                 preferredItemEncoding: .current,
-                photoLibrary: .shared()
-                
-            ) {
+                photoLibrary: .shared())
+            {
                 AvatarSelection(selectedImage: selectedImage?.image)
                     .frame(minWidth: 80, maxWidth: .infinity, minHeight: 80, maxHeight: .infinity)
                     .aspectRatio(1, contentMode: .fit)
@@ -151,7 +130,7 @@ struct Registration: View {
             .onChange(of: selectedItem) {
                 logger.info(
                     "selected Items \(String(describing: selectedItem?.supportedContentTypes))")
-                Task {  // Incase of multiple selection newValue is of array type
+                Task { // Incase of multiple selection newValue is of array type
                     do {
                         guard let selectedItem = selectedItem else {
                             logger.info("Cleared selected gallery item")
@@ -177,12 +156,10 @@ struct Registration: View {
             Button(
                 action: {
                     if validate(username) {
-                        Task{
+                        Task {
                             let response = try await requestRegistration(forRegToken: token, forUsername: username, forAvatar: selectedImage)
                             onLoginComplete(response.sessionToken)
                         }
-                        
-                       
                     }
                 },
                 label: {
@@ -192,11 +169,8 @@ struct Registration: View {
                             .secondary,
                             in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 })
-
         }
         .padding()
         .navigationTitle("Registration")
     }
 }
-
-
