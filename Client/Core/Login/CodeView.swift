@@ -12,11 +12,11 @@ struct CodeView: View {
     @State var response: LoginResponse?
     @State var alert: AlertOptions?
     
-    var onLoginComplete: (String, Int) -> Void
+    var onLoginComplete: (SessionToken, UserID) -> Void
     var onExpired: () -> Void
-    var onRegistrationRequired: (String) -> Void
+    var onRegistrationRequired: (RegistrationToken) -> Void
     
-    let otpToken: String
+    let otpToken: OTPToken
 
     func handleResponse(_ response: Result<LoginResponse, any Error>) {
         switch response {

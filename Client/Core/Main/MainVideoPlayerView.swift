@@ -3,12 +3,13 @@ import SwiftUI
 
 
 struct MainVideoPlayerView: View {
-    var chat: Int
-    var sessionToken: String
+    var chat: UserID
+    var sessionToken: SessionToken
+    
     func getRandomNumber(to number: Int) -> Int {
-        
         return Int.random(in: 2...number)
     }
+    
     var body: some View {
         Text("Video")
         Button{

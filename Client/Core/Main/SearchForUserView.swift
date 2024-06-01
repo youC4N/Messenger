@@ -1,18 +1,18 @@
 import SwiftUI
 
 struct UserSearchMatch {
-    var id: Int
+    var id: UserID
     var username: String
-    var phone: String
+    var phone: PhoneNumber
 }
 
 struct SearchForUserView: View {
     @Environment(\.dismiss) var dismiss
     @State var phoneNumber = ""
-    var sessionToken: String
+    var sessionToken: SessionToken
     @State var match: UserSearchMatch?
     @State var wrongSession: () -> Void
-    @State var startedChat: (Int) -> Void
+    @State var startedChat: (UserID) -> Void
     @FocusState var focusedField: Bool?
     @State var alert: AlertOptions?
     var countryCode = "+380"
@@ -24,27 +24,26 @@ struct SearchForUserView: View {
     }
 
     func handleSubmit() {
-        guard validate(phoneNumber) else {
+        guard let phone = PhoneNumber(rawValue: "\(countryCode)\(phoneNumber)") else {
             match = nil
             return
         }
         Task {
             do {
-                let fullPhone = "\(countryCode)\(phoneNumber)"
-                let response = try await API.local.findUser(byPhoneNumber: fullPhone, sessionToken: sessionToken)
+                let response = try await API.local.findUser(byPhoneNumber: phone, sessionToken: sessionToken)
                 switch response {
                 case .unauthorized:
                     wrongSession()
                 case .absent:
                     match = nil
                 case .invalidPhoneNumber(reason: let reason):
-                    logger.warning("Invalid phone number \(fullPhone, privacy: .private), as told by server: \(reason, privacy: .public)")
+                    logger.warning("Invalid phone number \(phone.description, privacy: .private), as told by server: \(reason, privacy: .public)")
                     match = nil
                 case .found(let user):
                     match = UserSearchMatch(
                         id: user.id,
                         username: user.username,
-                        phone: fullPhone
+                        phone: phone
                     )
                 }
             } catch {
@@ -110,7 +109,7 @@ struct SearchForUserView: View {
 
 struct UserSearchCard: View {
     var match: UserSearchMatch
-    var sessionToken: String
+    var sessionToken: SessionToken
 
     var body: some View {
         HStack {
@@ -124,7 +123,7 @@ struct UserSearchCard: View {
                     .fontWeight(.bold)
                     .font(.title3)
                     .foregroundStyle(.black)
-                Text(match.phone)
+                Text(match.phone.rawValue)
                     .foregroundStyle(.tertiary)
                     .font(.callout)
             }
@@ -140,8 +139,12 @@ struct UserSearchCard: View {
 #Preview {
     List {
         UserSearchCard(
-            match: UserSearchMatch(id: 1, username: "John Appleseed", phone: "+380XXXXXXXXX"),
-            sessionToken: "nope"
+            match: UserSearchMatch(
+                id: UserID(rawValue: 1),
+                username: "John Appleseed",
+                phone: PhoneNumber(rawValue: "+380111111111")!
+            ),
+            sessionToken: SessionToken(rawValue: "nope")
         )
     }
 }

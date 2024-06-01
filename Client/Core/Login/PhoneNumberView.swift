@@ -5,13 +5,13 @@ struct PasswordRequest: Codable {
 }
 
 struct PhoneNumberView: View {
-    @State var otpToken: String?
+    @State var otpToken: OTPToken?
     var countryCode = "+380"
     var countryFlag = "🇺🇦"
 
     @State var phoneNumber = ""
-    var onLoginComplete: (String, Int) -> Void
-    var onRegistrationRequired: (String) -> Void
+    var onLoginComplete: (SessionToken, UserID) -> Void
+    var onRegistrationRequired: (RegistrationToken) -> Void
 
     func validate(_ code: String) -> Bool {
         return code.count == 9 && code.allSatisfy { $0.isASCII && $0.isNumber }
@@ -44,11 +44,10 @@ struct PhoneNumberView: View {
             }
             Button(
                 action: {
-                    if self.validate(self.phoneNumber) {
+                    if let validPhone = PhoneNumber(rawValue: "\(countryCode)\(phoneNumber)") {
                         Task {
                             do {
-                                let finalPhone = "\(countryCode)\(phoneNumber)"
-                                switch try await API.local.requestOTP(forPhoneNumber: finalPhone) {
+                                switch try await API.local.requestOTP(forPhoneNumber: validPhone) {
                                 case .invalidPhoneNumber(reason: _): break // TODO: Display an error to the user
                                 case .success(otpToken: let token): self.otpToken = token
                                 }

@@ -1,7 +1,7 @@
 import Foundation
 
 struct User: Equatable, Identifiable, Decodable {
-    var id: Int
+    var id: UserID
     var username: String
 }
 
@@ -11,7 +11,7 @@ enum FetchPrivateChatsResponse {
 }
 
 extension API {
-    func fetchPrivateChats(sessionToken: String) async throws -> FetchPrivateChatsResponse {
+    func fetchPrivateChats(sessionToken: SessionToken) async throws -> FetchPrivateChatsResponse {
         var request = URLRequest(url: endpoint.appending(components: "private-chats"))
         request.httpMethod = "GET"
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")

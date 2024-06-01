@@ -28,7 +28,7 @@ struct AvatarPhoto: Transferable {
 }
 
 #Preview {
-    Registration(token: "nope", onLoginComplete: { _, _ in })
+    Registration(token: RegistrationToken(rawValue: "nope"), onLoginComplete: { _, _ in })
 }
 
 struct AvatarSelection: View {
@@ -57,8 +57,9 @@ struct Registration: View {
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var selectedImage: AvatarPhoto? = nil
     @State var username = ""
-    var token: String
-    var onLoginComplete: (String, Int) -> Void
+    var token: RegistrationToken
+    var onLoginComplete: (SessionToken, UserID) -> Void
+    
     func validate(_ name: String) -> Bool {
         if !name.isEmpty {
             return true

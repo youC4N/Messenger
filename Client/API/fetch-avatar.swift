@@ -7,8 +7,8 @@ enum FetchAvatarResponse {
 }
 
 extension API {
-    func fetchAvatar(ofUserID userID: Int, sessionToken: String) async throws -> FetchAvatarResponse {
-        var request = URLRequest(url: endpoint.appending(components: "user", String(userID), "avatar"))
+    func fetchAvatar(ofUser userID: UserID, sessionToken: SessionToken) async throws -> FetchAvatarResponse {
+        var request = URLRequest(url: endpoint.appending(components: "user", userID.description, "avatar"))
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         let (data, response) = try await URLSession.shared.data(for: request)
         

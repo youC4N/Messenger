@@ -1,20 +1,20 @@
 import Foundation
 
 private struct OTPRequest: Codable {
-    var number: String
+    var number: PhoneNumber
 }
 
 enum OTPResponse {
     case invalidPhoneNumber(reason: String)
-    case success(otpToken: String)
+    case success(otpToken: OTPToken)
     
     fileprivate struct Raw: Codable, Hashable {
-        var otpToken: String
+        var otpToken: OTPToken
     }
 }
 
 extension API {
-    func requestOTP(forPhoneNumber phone: String) async throws -> OTPResponse {
+    func requestOTP(forPhoneNumber phone: PhoneNumber) async throws -> OTPResponse {
         var request = URLRequest(url: endpoint.appending(component: "otp"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

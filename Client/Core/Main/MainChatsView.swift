@@ -3,9 +3,8 @@ import SwiftUI
 
 struct MainChatsView: View {
     @State private var showingSheet = false
-    @State var openedChat: Int?
-    let initialUserID: Int
-    var sessionToken: String
+    @State var openedChat: UserID?
+    var sessionToken: SessionToken
     // TODO: every time empty array with users
     @State var wrongSession: () -> Void
     @State var allChats: [User]?

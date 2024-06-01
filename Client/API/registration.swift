@@ -3,11 +3,11 @@ import UniformTypeIdentifiers
 
 enum RegistrationResponse {
     case invalidToken(reason: String)
-    case success(sessionToken: String, userID: Int)
+    case success(sessionToken: SessionToken, userID: UserID)
     
     struct Raw: Decodable {
-        var sessionToken: String
-        var userID: Int
+        var sessionToken: SessionToken
+        var userID: UserID
     }
 }
 
@@ -17,9 +17,9 @@ struct FileForUpload {
 }
 
 extension API {
-    func registerUser(registrationToken token: String, username: String, avatar: FileForUpload?) async throws -> RegistrationResponse {
+    func registerUser(registrationToken token: RegistrationToken, username: String, avatar: FileForUpload?) async throws -> RegistrationResponse {
         var parts: [MultipartPart] = [
-            .field(name: "registrationToken", value: token),
+            .field(name: "registrationToken", value: token.rawValue),
             .field(name: "username", value: username),
         ]
         if let avatar = avatar {

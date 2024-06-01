@@ -1,12 +1,10 @@
-import SwiftUI
 import OSLog
-
+import SwiftUI
 
 enum AppFlow: Codable, Hashable {
-    
-    case registration(registrationToken: String)
+    case registration(registrationToken: RegistrationToken)
     case login
-    case regular(session: String, initialUserID: Int)
+    case regular(session: SessionToken, initialUserID: UserID)
 }
 
 struct FlowDisambiguation: View {
@@ -20,19 +18,19 @@ struct FlowDisambiguation: View {
                     onLoginComplete: { sessionToken, initialID in
                         withAnimation {
                             currentFlow = .regular(session: sessionToken, initialUserID: initialID)
-                            
                         }
                     },
                     onRegistrationRequired: { registrationToken in
                         withAnimation {
                             currentFlow = .registration(registrationToken: registrationToken)
                         }
-                    })
+                    }
+                )
             }
             .transition(.blurReplace)
         case .regular(session: let sessionToken, initialUserID: let userID):
             NavigationStack {
-                MainChatsView(initialUserID: userID, sessionToken: sessionToken) {
+                MainChatsView(sessionToken: sessionToken) {
                     currentFlow = .login
                 }
             }
@@ -42,13 +40,11 @@ struct FlowDisambiguation: View {
                 token: token,
                 onLoginComplete: { sessionToken, initialID in
                     withAnimation {
-                        currentFlow = .regular( session: sessionToken, initialUserID: initialID)
+                        currentFlow = .regular(session: sessionToken, initialUserID: initialID)
                     }
                 }
             ).transition(.blurReplace)
-
         }
-
     }
 }
 

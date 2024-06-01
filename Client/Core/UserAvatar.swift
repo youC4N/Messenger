@@ -3,8 +3,8 @@ import SwiftUI
 let API_BASE_URL = URL(string: "http://localhost:8080/")!
 
 struct UserAvatar: View {
-    var sessionToken: String
-    var userID: Int
+    var sessionToken: SessionToken
+    var userID: UserID
     @State var stage: Stage = .loading
 
     enum Stage {
@@ -33,9 +33,9 @@ struct UserAvatar: View {
                 if Task.isCancelled { return }
                 
                 let nextStage: Stage
-                switch try await API.local.fetchAvatar(ofUserID: userID, sessionToken: sessionToken) {
+                switch try await API.local.fetchAvatar(ofUser: userID, sessionToken: sessionToken) {
                 case .unauthorized:
-                    logger.warning("Tried to load a UserAvatar with an invalid session token \(sessionToken, privacy: .private)")
+                    logger.warning("Tried to load a UserAvatar with an invalid session token \(sessionToken.description, privacy: .private)")
                     nextStage = .error(ServerRequestError.recognizedServerError(status: 401, reason: "Invalid session token."))
                 case .notFound:
                     nextStage = .notFound

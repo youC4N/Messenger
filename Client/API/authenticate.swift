@@ -2,14 +2,14 @@ import Foundation
 
 private struct LoginRequest: Encodable {
     var code: String
-    var token: String
+    var token: OTPToken
 }
 
 enum LoginResponse: Decodable, Hashable {
     case invalid
     case expired
-    case registrationRequired(registrationToken: String, phone: String)
-    case existingLogin(sessionToken: String, userID: Int)
+    case registrationRequired(registrationToken: RegistrationToken, phone: PhoneNumber)
+    case existingLogin(sessionToken: SessionToken, userID: UserID)
 
     enum CodingKeys: String, CodingKey {
         case type, registrationToken, sessionToken, phone, userID
@@ -27,12 +27,12 @@ enum LoginResponse: Decodable, Hashable {
         case .expired:
             self = .expired
         case .registrationRequired:
-            let phone = try container.decode(String.self, forKey: .phone)
-            let registrationToken = try container.decode(String.self, forKey: .registrationToken)
+            let phone = try container.decode(PhoneNumber.self, forKey: .phone)
+            let registrationToken = try container.decode(RegistrationToken.self, forKey: .registrationToken)
             self = .registrationRequired(registrationToken: registrationToken, phone: phone)
         case .existingLogin:
-            let sessionToken = try container.decode(String.self, forKey: .sessionToken)
-            let userID = try container.decode(Int.self, forKey: .userID)
+            let sessionToken = try container.decode(SessionToken.self, forKey: .sessionToken)
+            let userID = try container.decode(UserID.self, forKey: .userID)
             self = .existingLogin(sessionToken: sessionToken, userID: userID)
         }
     }
@@ -40,8 +40,8 @@ enum LoginResponse: Decodable, Hashable {
 
 
 extension API {
-    func authenticate(forCode code: String, otpToken token: String) async throws -> LoginResponse {
-        API.logger.info("Authenticating with code: \(code, privacy: .private), for token: \(token, privacy: .private)")
+    func authenticate(forCode code: String, otpToken token: OTPToken) async throws -> LoginResponse {
+        API.logger.info("Authenticating with code: \(code, privacy: .private), for token: \(token.description, privacy: .private)")
         
         var request = URLRequest(url: endpoint.appending(component: "login"))
         request.httpMethod = "POST"
