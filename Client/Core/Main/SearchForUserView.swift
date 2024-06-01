@@ -1,17 +1,19 @@
 import SwiftUI
 
-
+struct UserSearchMatch {
+    var id: Int
+    var username: String
+    var phone: String
+}
 
 struct SearchForUserView: View {
     @Environment(\.dismiss) var dismiss
     @State var phoneNumber = ""
     var sessionToken: String
-    @State var userName: String?
-    @State var userID: Int?
-    @State var userImage: Image = Image(systemName: "person")
+    @State var match: UserSearchMatch?
     @State var wrongSession: () -> Void
     @State var startedChat: (Int) -> Void
-    @FocusState var focusedField:Bool?
+    @FocusState var focusedField: Bool?
     @State var errorMessage: String?
     @State var showAlert = false
     @State var alertMessage = ""
@@ -19,17 +21,17 @@ struct SearchForUserView: View {
     var countryCode = "+380"
     var countryFlag = "🇺🇦"
     
-    struct FindUserResponse: Codable {
-        var username: String
+    struct UserSearchResponse: Decodable {
         var id: Int
+        var username: String
     }
     
-    func requestUser(withNumber number: String, sessionToken: String) async throws -> FindUserResponse {
+    func requestUser(withNumber number: String, sessionToken: String) async throws -> UserSearchResponse {
         let address = "http://127.0.0.1:8080/getUser/\(number)"
         let url = URL(string: address)!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization" )
+        request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         let response = try await URLSession.shared.data(for: request)
         guard let httpResponse = response.1 as? HTTPURLResponse else {
             throw ServerRequestError.nonHTTPResponse(got: Mirror(reflecting: response).subjectType)
@@ -38,7 +40,7 @@ struct SearchForUserView: View {
         case 200: break
         case 401:
             alertMessage = "invalid session token"
-            alertAction = {wrongSession()}
+            alertAction = { wrongSession() }
             showAlert = true
         case 404:
             alertMessage = "user with this \(phoneNumber) doesn't exist"
@@ -52,18 +54,17 @@ struct SearchForUserView: View {
                 message: String(data: response.0, encoding: .utf8)
             )
         }
-        return try JSONDecoder().decode(FindUserResponse.self, from: response.0)
+        return try JSONDecoder().decode(UserSearchResponse.self, from: response.0)
     }
     
-
-    func validate(_ code: String)  -> Bool {
-        return code.allSatisfy{$0.isNumber} && code.count == 9
+    func validate(_ code: String) -> Bool {
+        return code.allSatisfy { $0.isNumber } && code.count == 9
     }
 
     var body: some View {
-        List{
-            Section{
-                HStack{
+        List {
+            Section {
+                HStack {
                     Button(action: {}) {
                         Text("\(countryFlag) \(countryCode)")
                             .padding(10)
@@ -80,22 +81,17 @@ struct SearchForUserView: View {
                         .background(Color.secondary, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                         .focused($focusedField, equals: true)
                         .keyboardType(.numbersAndPunctuation)
-                        .onSubmit() {
-                            if validate("\(phoneNumber)"){
+                        .onSubmit {
+                            if validate(phoneNumber) {
                                 Task {
                                     do {
                                         let response = try await requestUser(withNumber: "\(countryCode)\(phoneNumber)", sessionToken: sessionToken)
-                                        userName = response.username
-                                        userID = response.id
-                                        guard let avatarResponse = try await requstUserAvatar(for: response.id, sessionToken: sessionToken) else {
-                                            userImage = Image(systemName: "person")
-                                            throw MYError.noAvatar
-                                        }
-                                        
-                                        userImage = avatarResponse
-                                        
-                                    }
-                                    catch {
+                                        match = UserSearchMatch(
+                                            id: response.id,
+                                            username: response.username,
+                                            phone: "\(countryCode)\(phoneNumber)"
+                                        )
+                                    } catch {
                                         logger.error("unexpected error occured: \(error)")
                                     }
                                 }
@@ -104,7 +100,6 @@ struct SearchForUserView: View {
                                 showAlert = true
                                 alertMessage = "can't validate this number -- \(phoneNumber)"
                                 // TODO: create alert
-                                
                             }
                         }
                         .alert(isPresented: $showAlert) {
@@ -120,44 +115,19 @@ struct SearchForUserView: View {
                         }
                 }
             }
-            .onAppear{
+            .onAppear {
                 focusedField = true
             }
             .listRowBackground(Color.clear)
-            if userName != nil {
-                Section{
-                    HStack {
-                        userImage
-                            .resizable()
-                            .frame(minWidth: 96, minHeight: 96)
-                            .aspectRatio(1, contentMode: .fit)
-                            .clipShape(Circle())
-                            .foregroundColor(.primary)
-                        Spacer()
-                        
-                        Text( userName ?? "placeholder")
-                            .fontWeight(.bold)
-                            .font(.system(size: 500))
-                            .minimumScaleFactor(0.01)
-                            .foregroundStyle(.black)
-                        Spacer()
-                        
+            if let match = match {
+                Section {
+                    Button {
+                        dismiss()
+                        startedChat(match.id)
                     }
-                    .background(
-                        Button(""){
-                            dismiss()
-                            if let userID = userID {
-                                startedChat(userID)
-                            }
-                        }
-                        .opacity(0)
-
-                    )
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: 94)
-                    .background(.clear,in: RoundedRectangle(cornerRadius: 10))
-                    
-                    
+                    label: {
+                        UserSearchCard(match: match, sessionToken: sessionToken)
+                    }
                 }
             }
         }
@@ -170,6 +140,43 @@ struct SearchForUserView: View {
                 }
             }
         }
+    }
+}
 
+struct UserSearchCard: View {
+    var match: UserSearchMatch
+    var sessionToken: String
+    
+    var body: some View {
+        HStack {
+            UserAvatar(sessionToken: sessionToken, userID: match.id)
+                .frame(width: 48, height: 48)
+                .padding(.trailing, 4)
+            
+            VStack(alignment: .leading) {
+                Text(match.username)
+                    .multilineTextAlignment(.leading)
+                    .fontWeight(.bold)
+                    .font(.title3)
+                    .foregroundStyle(.black)
+                Text(match.phone)
+                    .foregroundStyle(.tertiary)
+                    .font(.callout)
+            }
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 8)
+    }
+}
+
+#Preview {
+    List {
+        UserSearchCard(
+            match: UserSearchMatch(id: 1, username: "John Appleseed", phone: "+380XXXXXXXXX"),
+            sessionToken: "nope"
+        )
     }
 }
