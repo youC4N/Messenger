@@ -17,6 +17,10 @@
 		85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CA2BE93B3100576055 /* CodeView.swift */; };
 		85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CC2BE9424400576055 /* MainChatsView.swift */; };
 		85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */; };
+		C44052522C0BB2E300D51BDC /* common.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44052512C0BB2E300D51BDC /* common.swift */; };
+		C44052542C0BB2EF00D51BDC /* authenticate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44052532C0BB2EF00D51BDC /* authenticate.swift */; };
+		C44052562C0BB46300D51BDC /* request-otp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44052552C0BB46300D51BDC /* request-otp.swift */; };
+		C44052582C0BC05700D51BDC /* registration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44052572C0BC05700D51BDC /* registration.swift */; };
 		C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,6 +36,10 @@
 		85FC07CA2BE93B3100576055 /* CodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
 		85FC07CC2BE9424400576055 /* MainChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainChatsView.swift; sourceTree = "<group>"; };
 		85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowDisambiguation.swift; sourceTree = "<group>"; };
+		C44052512C0BB2E300D51BDC /* common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = common.swift; sourceTree = "<group>"; };
+		C44052532C0BB2EF00D51BDC /* authenticate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = authenticate.swift; sourceTree = "<group>"; };
+		C44052552C0BB46300D51BDC /* request-otp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "request-otp.swift"; sourceTree = "<group>"; };
+		C44052572C0BC05700D51BDC /* registration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = registration.swift; sourceTree = "<group>"; };
 		C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -49,6 +57,7 @@
 		8515B1DD2BD2D36D00A7AD8A = {
 			isa = PBXGroup;
 			children = (
+				C44052502C0BB2C900D51BDC /* API */,
 				8515B1F72BD2D39A00A7AD8A /* Core */,
 				8515B1E92BD2D36D00A7AD8A /* MessengerApp.swift */,
 				8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */,
@@ -102,6 +111,17 @@
 				8515B1F02BD2D36F00A7AD8A /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		C44052502C0BB2C900D51BDC /* API */ = {
+			isa = PBXGroup;
+			children = (
+				C44052512C0BB2E300D51BDC /* common.swift */,
+				C44052532C0BB2EF00D51BDC /* authenticate.swift */,
+				C44052552C0BB46300D51BDC /* request-otp.swift */,
+				C44052572C0BC05700D51BDC /* registration.swift */,
+			);
+			path = API;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -180,14 +200,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				8506BDBD2BEA95A8002F2DC1 /* MainVideoPlayerView.swift in Sources */,
+				C44052562C0BB46300D51BDC /* request-otp.swift in Sources */,
 				85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */,
 				853CC70C2BE1511F00B88C89 /* PhoneNumberView.swift in Sources */,
 				C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */,
+				C44052522C0BB2E300D51BDC /* common.swift in Sources */,
+				C44052582C0BC05700D51BDC /* registration.swift in Sources */,
 				85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */,
 				8515B1EA2BD2D36D00A7AD8A /* MessengerApp.swift in Sources */,
 				859638B62BF8F19B0029EC85 /* Registration.swift in Sources */,
 				855F07912C0B58B20096D967 /* SearchForUserView.swift in Sources */,
 				85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */,
+				C44052542C0BB2EF00D51BDC /* authenticate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

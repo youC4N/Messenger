@@ -14,7 +14,6 @@ struct MainVideoPlayerView: View {
         Button{
             Task{
                 do {
-                    
                     let address = "http://127.0.0.1:8080/chat/\(getRandomNumber(to: 4))"
                     let url = URL(string: address)!
                     var request = URLRequest(url: url)

@@ -1,11 +1,6 @@
 import PhotosUI
 import SwiftUI
 
-struct RegistrationResponse: Decodable {
-    var sessionToken: String
-    var userID: Int
-}
-
 struct ImageDecodeError: Error {}
 
 struct AvatarPhoto: Transferable {
@@ -72,44 +67,54 @@ struct Registration: View {
         return false
     }
 
-    func requestRegistration(forRegToken token: String, forUsername username: String, forAvatar avatar: AvatarPhoto?) async throws -> RegistrationResponse {
-        let address = "http://127.0.0.1:8080/registration"
-        let url = URL(string: address)!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        let boundary = UUID().uuidString
+    func handleRegistrationClick() {
+        guard validate(username) else { return }
 
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        var data = Data()
+        Task {
+            let response = await Result {
+                try await API.local.registerUser(
+                    registrationToken: token,
+                    username: username,
+                    avatar: selectedImage.flatMap { avatar in
+                        avatar.contentType.mimeType.map { mimeType in
+                            .init(bytes: avatar.bytes, contentType: mimeType)
+                        }
+                    })
+            }
+            switch response {
+            case .failure: break // TODO:
+            case .success(.invalidToken(reason: _)): break // TODO: send the user back to the phone number screen
+            case .success(.success(sessionToken: let sessionToken, userID: let userID)):
+                onLoginComplete(sessionToken, userID)
+            }
+        }
+    }
 
-        data.append(contentsOf: "--\(boundary)\r\n".utf8)
-        data.append(contentsOf: "Content-Disposition: form-data; name=\"username\"\r\n\r\n".utf8)
-        data.append(contentsOf: "\(username)".utf8)
-        data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
-        data.append(contentsOf: "Content-Disposition: form-data; name=\"registrationToken\"\r\n\r\n".utf8)
-        data.append(contentsOf: "\(token)".utf8)
-        data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
+    func handleGallerySelectionChange() {
+        logger.info(
+            "selected Items \(String(describing: selectedItem?.supportedContentTypes))")
 
-        if let avatar = avatar, let avatarMIMEType = avatar.contentType.preferredMIMEType {
-            logger.info("photo from client is sent, with type -- \(avatarMIMEType)")
-            data.append(contentsOf: "Content-Disposition: form-data; name=\"avatar\"; filename=\"\(avatarMIMEType)\"\r\n".utf8)
-            data.append(contentsOf: "Content-Type: \(avatarMIMEType)\r\n\r\n".utf8)
-            data.append(avatar.bytes)
-            data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
+        guard let selectedItem = selectedItem else {
+            logger.info("Cleared selected gallery item")
+            return
         }
 
-        request.httpBody = data
-        let (body, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw ServerRequestError.nonHTTPResponse(got: Mirror(reflecting: response).subjectType)
+        Task {
+            do {
+                let mimeTypes = selectedItem.supportedContentTypes.compactMap { $0.preferredMIMEType }.map(\.description)
+                logger.info("Selected gallery item: \(String(describing: mimeTypes))")
+                guard let data = try await selectedItem.loadTransferable(type: AvatarPhoto.self) else {
+                    logger.error("Couldn't find suitable conversion for AvatarPhoto")
+                    return
+                }
+                withAnimation {
+                    selectedImage = data
+                }
+                logger.info("Transferred gallery image into AvatarPhoto \(data.contentType), \(data.bytes)")
+            } catch {
+                logger.error("While transferring to AvatarPhoto, error occurred: \(error)")
+            }
         }
-        logger.info("registration status code -- \(httpResponse.statusCode)")
-        guard httpResponse.statusCode == 200 else {
-            throw ServerRequestError.serverError(
-                status: httpResponse.statusCode,
-                message: String(data: body, encoding: .utf8))
-        }
-        return try JSONDecoder().decode(RegistrationResponse.self, from: body)
     }
 
     var body: some View {
@@ -127,48 +132,18 @@ struct Registration: View {
                     .padding(.horizontal, 60)
                     .padding(.vertical, 20)
             }
-            .onChange(of: selectedItem) {
-                logger.info(
-                    "selected Items \(String(describing: selectedItem?.supportedContentTypes))")
-                Task { // Incase of multiple selection newValue is of array type
-                    do {
-                        guard let selectedItem = selectedItem else {
-                            logger.info("Cleared selected gallery item")
-                            return
-                        }
-                        let mimeTypes = selectedItem.supportedContentTypes.compactMap { $0.preferredMIMEType }.map(\.description)
-                        logger.info("Selected gallery item: \(String(describing: mimeTypes))")
-                        if let data = try await selectedItem.loadTransferable(type: AvatarPhoto.self) {
-                            withAnimation {
-                                selectedImage = data
-                            }
-                            logger.info("Transferred gallery image into AvatarPhoto \(data.contentType), \(data.bytes)")
-                        }
-                    } catch {
-                        logger.error("While transferring to AvatarPhoto, error occurred: \(error)")
-                    }
-                }
-            }
+            .onChange(of: selectedItem, handleGallerySelectionChange)
             TextField("username", text: $username)
                 .padding(.leading, 10)
                 .frame(minWidth: 80, minHeight: 47)
                 .background(.secondary, in: RoundedRectangle(cornerRadius: 10))
-            Button(
-                action: {
-                    if validate(username) {
-                        Task {
-                            let response = try await requestRegistration(forRegToken: token, forUsername: username, forAvatar: selectedImage)
-                            onLoginComplete(response.sessionToken, response.userID)
-                        }
-                    }
-                },
-                label: {
-                    Text("Next")
-                        .frame(maxWidth: .infinity, minHeight: 47)
-                        .background(
-                            .secondary,
-                            in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                })
+            Button(action: handleRegistrationClick) {
+                Text("Next")
+                    .frame(maxWidth: .infinity, minHeight: 47)
+                    .background(
+                        .secondary,
+                        in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            }
         }
         .padding()
         .navigationTitle("Registration")
