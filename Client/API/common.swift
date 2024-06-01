@@ -2,13 +2,13 @@ import Foundation
 import OSLog
 
 struct API {
-    static let local = API(baseURL: "http://localhost:8080")
+    static let local = API(base: URL(string: "http://localhost:8080")!)
     static let logger = Logger(subsystem: "com.github.youC4N.videomessenger", category: "Networking")
     
     let endpoint: URL
     
-    init(baseURL: StaticString) {
-        self.endpoint = URL(string: baseURL.description)!
+    init(base: URL) {
+        self.endpoint = base
     }
 }
 
