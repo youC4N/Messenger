@@ -10,10 +10,10 @@ enum LoginResponse: Decodable, Hashable {
     case invalid
     case expired
     case registrationRequired(registrationToken: String, phone: String)
-    case existingLogin(sessionToken: String)
+    case existingLogin(sessionToken: String, userID: Int)
 
     enum CodingKeys: String, CodingKey {
-        case type, registrationToken, sessionToken, phone
+        case type, registrationToken, sessionToken, phone, userID
     }
 
     enum Tag: String, Codable {
@@ -33,7 +33,8 @@ enum LoginResponse: Decodable, Hashable {
             self = .registrationRequired(registrationToken: registrationToken, phone: phone)
         case .existingLogin:
             let sessionToken = try container.decode(String.self, forKey: .sessionToken)
-            self = .existingLogin(sessionToken: sessionToken)
+            let userID = try container.decode(Int.self, forKey: .userID)
+            self = .existingLogin(sessionToken: sessionToken, userID: userID)
         }
     }
 }
@@ -67,7 +68,7 @@ struct CodeView: View {
     @State var showAlert = false
     @State var alertMessage = ""
     @State var alertAction: (() -> Void)? = nil
-    var onLoginComplete: (String) -> Void
+    var onLoginComplete: (String, Int) -> Void
     var onExpired: () -> Void
     var onRegistrationRequired: (String) -> Void
     let otpToken: String
@@ -83,8 +84,8 @@ struct CodeView: View {
             alertMessage = "The code has expired. Please request a new one."
             alertAction = { onExpired() }
             showAlert = true
-        case .existingLogin(sessionToken: let token):
-            onLoginComplete(token)
+        case .existingLogin(sessionToken: let token, userID: let userID):
+            onLoginComplete(token, userID)
         case .registrationRequired(registrationToken: let registrationToken, phone: _):
             onRegistrationRequired(registrationToken)
         case .invalid:

@@ -10,11 +10,11 @@ enum LoginResponse: Encodable, Decodable, Content {
     case invalid
     case expired
     case registrationRequired(registrationToken: String, phone: String)
-    case existingLogin(sessionToken: String)
+    case existingLogin(sessionToken: String, userID: Int)
 
     enum CodingKeys: String, CodingKey {
         // userInfo
-        case type, registrationToken, sessionToken, phone
+        case type, registrationToken, sessionToken, phone, userID
     }
 
     enum Tag: String, Codable {
@@ -34,9 +34,10 @@ enum LoginResponse: Encodable, Decodable, Content {
             try container.encode(registrationToken, forKey: .registrationToken)
             try container.encode(userPhone, forKey: .phone)
         //let userInfo
-        case .existingLogin(let sessionToken):
+        case .existingLogin(let sessionToken, let userID):
             try container.encode(Tag.existingLogin, forKey: .type)
             try container.encode(sessionToken, forKey: .sessionToken)
+            try container.encode(userID, forKey: .userID)
         //try container.encode(userInfo, forKey: .userInfo)
         }
     }
@@ -54,8 +55,9 @@ enum LoginResponse: Encodable, Decodable, Content {
             self = .registrationRequired(registrationToken: registrationToken, phone: phone)
         case .existingLogin:
             let sessionToken = try container.decode(String.self, forKey: .sessionToken)
+            let userID = try container.decode(Int.self, forKey: .userID)
             // let userInfo = try container.decode([String: String].self, forKey: .userInfo)
-            self = .existingLogin(sessionToken: sessionToken)
+            self = .existingLogin(sessionToken: sessionToken, userID: userID)
         }
     }
 }
@@ -98,7 +100,7 @@ func loginRoute(req: Request) async throws -> LoginResponse {
     if let userID = try await fetchUserID(byPhone: phone, in: req.db) {
         let sessionToken = try await createSession(for: userID, in: req)
         req.logger.info("Login successed", metadata: ["userID": "\(userID)"])
-        return .existingLogin(sessionToken: sessionToken)
+        return .existingLogin(sessionToken: sessionToken, userID: userID)
     } else {
         let registrationToken = nanoid()
         try await createRegistrationSession(token: registrationToken, phone: phone, in: req.db)

@@ -3,6 +3,7 @@ import SwiftUI
 
 struct RegistrationResponse: Decodable {
     var sessionToken: String
+    var userID: Int
 }
 
 struct ImageDecodeError: Error {}
@@ -32,7 +33,7 @@ struct AvatarPhoto: Transferable {
 }
 
 #Preview {
-    Registration(token: "nope", onLoginComplete: { _ in })
+    Registration(token: "nope", onLoginComplete: { _, _ in })
 }
 
 struct AvatarSelection: View {
@@ -62,7 +63,7 @@ struct Registration: View {
     @State private var selectedImage: AvatarPhoto? = nil
     @State var username = ""
     var token: String
-    var onLoginComplete: (String) -> Void
+    var onLoginComplete: (String, Int) -> Void
     func validate(_ name: String) -> Bool {
         if !name.isEmpty {
             return true
@@ -75,7 +76,6 @@ struct Registration: View {
         let address = "http://127.0.0.1:8080/registration"
         let url = URL(string: address)!
         var request = URLRequest(url: url)
-        let fileName = "\(token)\(username)"
         request.httpMethod = "POST"
         let boundary = UUID().uuidString
 
@@ -92,7 +92,7 @@ struct Registration: View {
 
         if let avatar = avatar, let avatarMIMEType = avatar.contentType.preferredMIMEType {
             logger.info("photo from client is sent, with type -- \(avatarMIMEType)")
-            data.append(contentsOf: "Content-Disposition: form-data; name=\"avatar\"; filename=\"\(fileName)\"\r\n".utf8)
+            data.append(contentsOf: "Content-Disposition: form-data; name=\"avatar\"; filename=\"\(avatarMIMEType)\"\r\n".utf8)
             data.append(contentsOf: "Content-Type: \(avatarMIMEType)\r\n\r\n".utf8)
             data.append(avatar.bytes)
             data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
@@ -158,7 +158,7 @@ struct Registration: View {
                     if validate(username) {
                         Task {
                             let response = try await requestRegistration(forRegToken: token, forUsername: username, forAvatar: selectedImage)
-                            onLoginComplete(response.sessionToken)
+                            onLoginComplete(response.sessionToken, response.userID)
                         }
                     }
                 },

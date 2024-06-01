@@ -6,7 +6,7 @@ enum AppFlow: Codable, Hashable {
     
     case registration(registrationToken: String)
     case login
-    case regular(session: String)
+    case regular(session: String, initialUserID: Int)
 }
 
 struct FlowDisambiguation: View {
@@ -17,9 +17,9 @@ struct FlowDisambiguation: View {
         case .login:
             NavigationStack {
                 PhoneNumberView(
-                    onLoginComplete: { sessionToken in
+                    onLoginComplete: { sessionToken, initialID in
                         withAnimation {
-                            currentFlow = .regular(session: sessionToken)
+                            currentFlow = .regular(session: sessionToken, initialUserID: initialID)
                             
                         }
                     },
@@ -30,9 +30,9 @@ struct FlowDisambiguation: View {
                     })
             }
             .transition(.blurReplace)
-        case .regular(session: let sessionToken):
+        case .regular(session: let sessionToken, initialUserID: let userID):
             NavigationStack {
-                MainChatsView(sessionToken: sessionToken) {
+                MainChatsView(initialUserID: userID, sessionToken: sessionToken) {
                     currentFlow = .login
                 }
             }
@@ -40,9 +40,9 @@ struct FlowDisambiguation: View {
         case .registration(registrationToken: let token):
             Registration(
                 token: token,
-                onLoginComplete: { sessionToken in
+                onLoginComplete: { sessionToken, initialID in
                     withAnimation {
-                        currentFlow = .regular(session: sessionToken)
+                        currentFlow = .regular( session: sessionToken, initialUserID: initialID)
                     }
                 }
             ).transition(.blurReplace)
