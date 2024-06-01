@@ -68,6 +68,14 @@ private let migrations = [
     ,
     """
         alter table users add column avatar_type text null;
+    """,
+    """
+        alter table private_chats
+            drop column message_count;
+        alter table private_chats
+            add column last_message_id integer null references private_messages(id);
+    
+        create index private_chats_last_message_id on private_chats(last_message_id);
     """
 ]
 
@@ -91,6 +99,6 @@ func migrate(db: Database, logger: Logger) async throws {
             insert into migrations (idx, applied_at) values (\(idx + maxIdx + 1), datetime());
             commit;
             """)
-        logger.info("Applied migration #\(idx + 1): \(migration)")
+        logger.info("Applied migration #\(maxIdx + idx + 1): \(migration)")
     }
 }

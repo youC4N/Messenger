@@ -54,10 +54,7 @@ extension API {
         
         API.logger.info("POST /login response: \(httpResponse.statusCode, privacy: .public)")
         guard httpResponse.statusCode == 200 else {
-            let error = ServerRequestError.serverError(
-                status: httpResponse.statusCode,
-                message: String(data: body, encoding: .utf8)
-            )
+            let error = ServerRequestError(fromResponse: httpResponse, data: body)
             
             API.logger.error("Server error occurred for POST /login \(error, privacy: .public)")
             throw error

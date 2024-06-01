@@ -2,13 +2,8 @@ import Foundation
 import RawDawg
 import Vapor
 
-struct FindUserResponse: Content {
-    var username: String
-    var id: Int
-}
-
 @Sendable
-func findUserRoute(req: Request) async throws -> FindUserResponse {
+func findUserRoute(req: Request) async throws -> User {
     guard let sessionToken: String = req.headers.bearerAuthorization?.token else {
         throw Abort(.unauthorized, reason: "Invalid session token.")
     }
@@ -16,8 +11,8 @@ func findUserRoute(req: Request) async throws -> FindUserResponse {
         throw Abort(.unauthorized, reason: "Invalid session token.")
     }
     
-    guard let number = req.parameters.get("phone") else {
-        throw Abort(.internalServerError, reason: "Missing phone path parameter.")
+    guard let number: String = try req.query.get(at: "phone") else {
+        throw Abort(.badRequest, reason: "Missing phone query parameter.")
     }
     let normNumber = try normalisedPhoneNumber(for: number)
 
@@ -32,7 +27,7 @@ func findUserRoute(req: Request) async throws -> FindUserResponse {
     }
     req.logger.info("Retrieved user info", metadata: ["username": "\(username)", "userID": "\(userID)", "phone": "\(number)"])
 
-    return FindUserResponse(username: username, id: userID)
+    return User(id: userID, username: username)
 }
 
 func sessionTokenExists(token: String, in db: Database) async throws -> Bool {

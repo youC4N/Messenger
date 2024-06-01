@@ -26,10 +26,7 @@ struct MainVideoPlayerView: View {
                         throw ServerRequestError.nonHTTPResponse(got: Mirror(reflecting: response).subjectType)
                     }
                     guard httpResponse.statusCode == 200 else {
-                        throw ServerRequestError.serverError(
-                            status: httpResponse.statusCode,
-                            message: String(data: response.0, encoding: .utf8)
-                        )
+                        throw ServerRequestError(fromResponse: httpResponse, data: response.0)
                     }
                     logger.info("Chat created for user \(chat)")
                     

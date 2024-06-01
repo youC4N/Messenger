@@ -30,25 +30,24 @@ struct UserAvatar: View {
                         stage = .stale(previous)
                     }
                 }
-                var request = URLRequest(url: API_BASE_URL.appending(components: "user", String(userID), "avatar"))
-                request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
-                let (data, response) = try await URLSession.shared.data(for: request)
+                if Task.isCancelled { return }
                 
-                if let httpResponse = response as? HTTPURLResponse {
-                    if httpResponse.statusCode == 404 {
-                        stage = .notFound
+                let nextStage: Stage
+                switch try await API.local.fetchAvatar(ofUserID: userID, sessionToken: sessionToken) {
+                case .unauthorized:
+                    logger.warning("Tried to load a UserAvatar with an invalid session token \(sessionToken, privacy: .private)")
+                    nextStage = .error(ServerRequestError.recognizedServerError(status: 401, reason: "Invalid session token."))
+                case .notFound:
+                    nextStage = .notFound
+                case .success(let data):
+                    guard let image = UIImage(data: data) else {
+                        throw ImageDecodeError()
                     }
-                    if httpResponse.statusCode != 200 {
-                        throw ImageLoadError(fromResponse: httpResponse, data: data)
-                    }
+                    if Task.isCancelled { return }
+                    nextStage = .loaded(Image(uiImage: image))
                 }
-                if Task.isCancelled { return }
-                guard let image = UIImage(data: data) else {
-                    throw ImageDecodeError()
-                }
-                if Task.isCancelled { return }
                 withAnimation {
-                    stage = .loaded(Image(uiImage: image))
+                    stage = nextStage
                 }
             } catch {
                 logger.error("Failed to load an image for user with id \(userID): \(error, privacy: .public)")
@@ -58,26 +57,6 @@ struct UserAvatar: View {
     }
 }
 
-enum ImageLoadError: Error {
-    case binary(status: Int)
-    case textual(status: Int, response: String)
-    case recognized(status: Int, reason: String)
-    
-    init(fromResponse res: HTTPURLResponse, data: Data) {
-        guard let text = String(data: data, encoding: .utf8) else {
-            self = .binary(status: res.statusCode)
-            return
-        }
-        struct RecognizedServerError: Decodable {
-            var reason: String
-        }
-        guard let recognized = try? JSONDecoder().decode(RecognizedServerError.self, from: data) else {
-            self = .textual(status: res.statusCode, response: text)
-            return
-        }
-        self = .recognized(status: res.statusCode, reason: recognized.reason)
-    }
-}
 
 struct RoundAvatar: View {
     var image: Image

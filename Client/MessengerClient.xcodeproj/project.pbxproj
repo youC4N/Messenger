@@ -21,6 +21,9 @@
 		C44052542C0BB2EF00D51BDC /* authenticate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44052532C0BB2EF00D51BDC /* authenticate.swift */; };
 		C44052562C0BB46300D51BDC /* request-otp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44052552C0BB46300D51BDC /* request-otp.swift */; };
 		C44052582C0BC05700D51BDC /* registration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44052572C0BC05700D51BDC /* registration.swift */; };
+		C440525A2C0BCAED00D51BDC /* fetch-private-chats.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44052592C0BCAED00D51BDC /* fetch-private-chats.swift */; };
+		C440525C2C0BD5EB00D51BDC /* find-user.swift in Sources */ = {isa = PBXBuildFile; fileRef = C440525B2C0BD5EB00D51BDC /* find-user.swift */; };
+		C440525E2C0BDA8900D51BDC /* fetch-avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C440525D2C0BDA8900D51BDC /* fetch-avatar.swift */; };
 		C45A115A2C0B8D22005BB2D1 /* UserAvatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45A11592C0B8D22005BB2D1 /* UserAvatar.swift */; };
 		C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */; };
 /* End PBXBuildFile section */
@@ -41,6 +44,9 @@
 		C44052532C0BB2EF00D51BDC /* authenticate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = authenticate.swift; sourceTree = "<group>"; };
 		C44052552C0BB46300D51BDC /* request-otp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "request-otp.swift"; sourceTree = "<group>"; };
 		C44052572C0BC05700D51BDC /* registration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = registration.swift; sourceTree = "<group>"; };
+		C44052592C0BCAED00D51BDC /* fetch-private-chats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "fetch-private-chats.swift"; sourceTree = "<group>"; };
+		C440525B2C0BD5EB00D51BDC /* find-user.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "find-user.swift"; sourceTree = "<group>"; };
+		C440525D2C0BDA8900D51BDC /* fetch-avatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "fetch-avatar.swift"; sourceTree = "<group>"; };
 		C45A11592C0B8D22005BB2D1 /* UserAvatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAvatar.swift; sourceTree = "<group>"; };
 		C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -123,6 +129,9 @@
 				C44052532C0BB2EF00D51BDC /* authenticate.swift */,
 				C44052552C0BB46300D51BDC /* request-otp.swift */,
 				C44052572C0BC05700D51BDC /* registration.swift */,
+				C44052592C0BCAED00D51BDC /* fetch-private-chats.swift */,
+				C440525B2C0BD5EB00D51BDC /* find-user.swift */,
+				C440525D2C0BDA8900D51BDC /* fetch-avatar.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -209,11 +218,14 @@
 				C45A115A2C0B8D22005BB2D1 /* UserAvatar.swift in Sources */,
 				C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */,
 				C44052522C0BB2E300D51BDC /* common.swift in Sources */,
+				C440525C2C0BD5EB00D51BDC /* find-user.swift in Sources */,
+				C440525E2C0BDA8900D51BDC /* fetch-avatar.swift in Sources */,
 				C44052582C0BC05700D51BDC /* registration.swift in Sources */,
 				85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */,
 				8515B1EA2BD2D36D00A7AD8A /* MessengerApp.swift in Sources */,
 				859638B62BF8F19B0029EC85 /* Registration.swift in Sources */,
 				855F07912C0B58B20096D967 /* SearchForUserView.swift in Sources */,
+				C440525A2C0BCAED00D51BDC /* fetch-private-chats.swift in Sources */,
 				85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */,
 				C44052542C0BB2EF00D51BDC /* authenticate.swift in Sources */,
 			);

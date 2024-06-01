@@ -26,7 +26,7 @@ extension API {
             parts.append(.file(name: "avatar", bytes: avatar.bytes, contentType: avatar.contentType))
         }
         
-        var (requestBody, contentTypeHeader) = multipartEncode(parts)
+        let (requestBody, contentTypeHeader) = multipartEncode(parts)
         
         var request = URLRequest(url: endpoint.appending(component: "registration"))
         request.httpMethod = "POST"
@@ -43,9 +43,7 @@ extension API {
             return .invalidToken(reason: errorResponse.reason)
         }
         guard httpResponse.statusCode == 200 else {
-            throw ServerRequestError.serverError(
-                status: httpResponse.statusCode,
-                message: String(data: body, encoding: .utf8))
+            throw ServerRequestError(fromResponse: httpResponse, data: body)
         }
         let decoded = try JSONDecoder().decode(RegistrationResponse.Raw.self, from: body)
         return .success(sessionToken: decoded.sessionToken, userID: decoded.userID)

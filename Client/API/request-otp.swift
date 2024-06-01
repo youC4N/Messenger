@@ -25,20 +25,17 @@ extension API {
         }
         
         API.logger.info("POST /otp response: \(httpResponse.statusCode, privacy: .public)")
+        guard httpResponse.statusCode != 400 else {
+            let errorResponse = try JSONDecoder().decode(CommonErrorResponse.self, from: body)
+            return .invalidPhoneNumber(reason: errorResponse.reason)
+        }
         guard httpResponse.statusCode == 200 else {
-            let error = ServerRequestError.serverError(
-                status: httpResponse.statusCode,
-                message: String(data: body, encoding: .utf8)
-            )
+            let error = ServerRequestError(fromResponse: httpResponse, data: body)
             
             API.logger.error("Server error occurred for POST /login \(error, privacy: .public)")
             throw error
         }
-        guard httpResponse.statusCode == 400 else {
-            let errorResponse = try JSONDecoder().decode(CommonErrorResponse.self, from: body)
-            return .invalidPhoneNumber(reason: errorResponse.reason)
-        }
-        
+
         let decoded = try JSONDecoder().decode(OTPResponse.Raw.self, from: body)
         return .success(otpToken: decoded.otpToken)
     }
