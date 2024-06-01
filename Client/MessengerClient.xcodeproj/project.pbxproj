@@ -17,6 +17,7 @@
 		85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CA2BE93B3100576055 /* CodeView.swift */; };
 		85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07CC2BE9424400576055 /* MainChatsView.swift */; };
 		85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */; };
+		C45A115A2C0B8D22005BB2D1 /* UserAvatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45A11592C0B8D22005BB2D1 /* UserAvatar.swift */; };
 		C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,6 +33,7 @@
 		85FC07CA2BE93B3100576055 /* CodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
 		85FC07CC2BE9424400576055 /* MainChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainChatsView.swift; sourceTree = "<group>"; };
 		85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowDisambiguation.swift; sourceTree = "<group>"; };
+		C45A11592C0B8D22005BB2D1 /* UserAvatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAvatar.swift; sourceTree = "<group>"; };
 		C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -71,6 +73,7 @@
 				85FC07D42BEA56C700576055 /* FlowDisambiguation.swift */,
 				85CBD6572BF23FE500FC7B91 /* Main */,
 				8515B2272BE14E7700A7AD8A /* Login */,
+				C45A11592C0B8D22005BB2D1 /* UserAvatar.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -182,6 +185,7 @@
 				8506BDBD2BEA95A8002F2DC1 /* MainVideoPlayerView.swift in Sources */,
 				85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */,
 				853CC70C2BE1511F00B88C89 /* PhoneNumberView.swift in Sources */,
+				C45A115A2C0B8D22005BB2D1 /* UserAvatar.swift in Sources */,
 				C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */,
 				85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */,
 				8515B1EA2BD2D36D00A7AD8A /* MessengerApp.swift in Sources */,
