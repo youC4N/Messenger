@@ -15,7 +15,7 @@ struct MainVideoPlayerView: View {
             Task{
                 do {
                     
-                    let address = "http://127.0.0.1:8080/chat/\(getRandomNumber(to: 4))"
+                    let address = "http://127.0.0.1:8080/chat/\(getRandomNumber(to: 5))"
                     let url = URL(string: address)!
                     var request = URLRequest(url: url)
                     request.httpMethod = "POST"
