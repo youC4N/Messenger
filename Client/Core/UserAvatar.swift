@@ -11,15 +11,13 @@ struct UserAvatar: View {
         case loading, loaded(Image), error(any Error), stale(Image), notFound
     }
 
-    private var circle: some View { Circle().backgroundStyle(.placeholder) }
-
     @ViewBuilder
     var content: some View {
         switch stage {
-        case .loading: circle
+        case .loading: Circle().backgroundStyle(.placeholder).opacity(0.8)
         case .loaded(let image): RoundAvatar(image: image)
-        case .error(_): circle
-        case .notFound: circle
+        case .error(_): Circle().backgroundStyle(.placeholder)
+        case .notFound: Circle().backgroundStyle(.placeholder)
         case .stale(let image): RoundAvatar(image: image).opacity(0.7)
         }
     }
