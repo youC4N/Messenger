@@ -25,7 +25,7 @@ struct UserAvatar: View {
     }
 
     var body: some View {
-        content.task(id: userID) {
+        content.task(id: userID, priority: .medium) {
             do {
                 if case .loaded(let previous) = stage {
                     withAnimation {
