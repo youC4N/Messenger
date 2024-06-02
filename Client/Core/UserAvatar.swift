@@ -1,6 +1,5 @@
 import SwiftUI
-
-let API_BASE_URL = URL(string: "http://localhost:8080/")!
+import MessengerInterface
 
 struct UserAvatar: View {
     var sessionToken: SessionToken
@@ -39,7 +38,7 @@ struct UserAvatar: View {
                     nextStage = .error(ServerRequestError.recognizedServerError(status: 401, reason: "Invalid session token."))
                 case .notFound:
                     nextStage = .notFound
-                case .success(let data):
+                case .success(let data, contentType: _):
                     guard let image = UIImage(data: data) else {
                         throw ImageDecodeError()
                     }

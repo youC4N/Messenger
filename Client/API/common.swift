@@ -31,6 +31,7 @@ enum ServerRequestError: Error, CustomStringConvertible {
     case binaryServerError(status: Int)
     case textualServerError(status: Int, response: String)
     case recognizedServerError(status: Int, reason: String)
+    case unexpectedResponse(message: String)
 
     var description: String {
         switch self {
@@ -42,6 +43,8 @@ enum ServerRequestError: Error, CustomStringConvertible {
             "Received a server error with a status: \(status) and body: \(response)"
         case .recognizedServerError(status: let status, reason: let reason):
             "Received a server error with a status: \(status) and known reason \(reason)"
+        case .unexpectedResponse(message: let message):
+            message
         }
     }
     

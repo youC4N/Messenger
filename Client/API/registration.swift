@@ -1,23 +1,9 @@
 import Foundation
 import UniformTypeIdentifiers
-
-enum RegistrationResponse {
-    case invalidToken(reason: String)
-    case success(sessionToken: SessionToken, userID: UserID)
-    
-    struct Raw: Decodable {
-        var sessionToken: SessionToken
-        var userID: UserID
-    }
-}
-
-struct FileForUpload {
-    var bytes: Data
-    var contentType: MIMEType
-}
+import MessengerInterface
 
 extension API {
-    func registerUser(registrationToken token: RegistrationToken, username: String, avatar: FileForUpload?) async throws -> RegistrationResponse {
+    func registerUser(registrationToken token: RegistrationToken, username: String, avatar: FileForUpload<Data>?) async throws -> RegistrationResponse {
         var parts: [MultipartPart] = [
             .field(name: "registrationToken", value: token.rawValue),
             .field(name: "username", value: username),
@@ -39,23 +25,18 @@ extension API {
         }
         API.logger.info("registration status code -- \(httpResponse.statusCode)")
         guard httpResponse.statusCode != 400 else {
-            let errorResponse = try JSONDecoder().decode(CommonErrorResponse.self, from: body)
+            let errorResponse = try JSONDecoder().decode(ErrorResponse<RegistrationResponse.ErrorKind>.self, from: body)
             return .invalidToken(reason: errorResponse.reason)
         }
         guard httpResponse.statusCode == 200 else {
             throw ServerRequestError(fromResponse: httpResponse, data: body)
         }
-        let decoded = try JSONDecoder().decode(RegistrationResponse.Raw.self, from: body)
-        return .success(sessionToken: decoded.sessionToken, userID: decoded.userID)
+        let decoded = try JSONDecoder().decode(RegistrationResponse.Success.self, from: body)
+        return .success(decoded)
     }
 }
 
 // MARK: Multipart encoding bits
-
-struct MIMEType: CustomStringConvertible {
-    fileprivate var rawValue: String
-    var description: String { rawValue }
-}
 
 extension UTType {
     var mimeType: MIMEType? {

@@ -1,4 +1,5 @@
 import SwiftUI
+import MessengerInterface
 
 struct UserSearchMatch {
     var id: UserID

@@ -1,11 +1,5 @@
 import Foundation
-
-enum FindUserResponse {
-    case unauthorized
-    case absent
-    case invalidPhoneNumber(reason: String)
-    case found(User)
-}
+import MessengerInterface
 
 extension API {
     func findUser(byPhoneNumber number: PhoneNumber, sessionToken: SessionToken) async throws -> FindUserResponse {

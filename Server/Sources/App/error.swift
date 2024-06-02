@@ -1,5 +1,16 @@
 import RawDawg
 import Vapor
+import MessengerInterface
+
+extension MessengerInterface.ErrorResponse: Content {}
+
+enum CommonErrorKind: String, Codable {
+    case unauthorized
+}
+func unauthorizedResponse(for request: Request) async throws -> Response {
+    try await ErrorResponse(CommonErrorKind.unauthorized, reason: "Unauthorized.")
+        .encodeResponse(status: .unauthorized, for: request)
+}
 
 protocol ErrorContext: Error {
     var cause: any Error { get }

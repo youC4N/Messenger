@@ -1,5 +1,6 @@
 import OSLog
 import SwiftUI
+import MessengerInterface
 
 struct MainChatsView: View {
     @State private var showingSheet = false

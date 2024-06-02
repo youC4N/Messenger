@@ -1,5 +1,6 @@
 import OSLog
 import SwiftUI
+import MessengerInterface
 
 enum AppFlow: Codable, Hashable {
     case registration(registrationToken: RegistrationToken)
@@ -28,7 +29,7 @@ struct FlowDisambiguation: View {
                 )
             }
             .transition(.blurReplace)
-        case .regular(session: let sessionToken, initialUserID: let userID):
+        case .regular(session: let sessionToken, initialUserID: _):
             NavigationStack {
                 MainChatsView(sessionToken: sessionToken) {
                     currentFlow = .login

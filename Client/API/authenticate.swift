@@ -1,43 +1,5 @@
 import Foundation
-
-private struct LoginRequest: Encodable {
-    var code: String
-    var token: OTPToken
-}
-
-enum LoginResponse: Decodable, Hashable {
-    case invalid
-    case expired
-    case registrationRequired(registrationToken: RegistrationToken, phone: PhoneNumber)
-    case existingLogin(sessionToken: SessionToken, userID: UserID)
-
-    enum CodingKeys: String, CodingKey {
-        case type, registrationToken, sessionToken, phone, userID
-    }
-
-    enum Tag: String, Codable {
-        case invalid, expired, registrationRequired = "registration-required", existingLogin = "existing-login"
-    }
-
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        switch try container.decode(Tag.self, forKey: .type) {
-        case .invalid:
-            self = .invalid
-        case .expired:
-            self = .expired
-        case .registrationRequired:
-            let phone = try container.decode(PhoneNumber.self, forKey: .phone)
-            let registrationToken = try container.decode(RegistrationToken.self, forKey: .registrationToken)
-            self = .registrationRequired(registrationToken: registrationToken, phone: phone)
-        case .existingLogin:
-            let sessionToken = try container.decode(SessionToken.self, forKey: .sessionToken)
-            let userID = try container.decode(UserID.self, forKey: .userID)
-            self = .existingLogin(sessionToken: sessionToken, userID: userID)
-        }
-    }
-}
-
+import MessengerInterface
 
 extension API {
     func authenticate(forCode code: String, otpToken token: OTPToken) async throws -> LoginResponse {
@@ -54,11 +16,20 @@ extension API {
         
         API.logger.info("POST /login response: \(httpResponse.statusCode, privacy: .public)")
         guard httpResponse.statusCode == 200 else {
-            let error = ServerRequestError(fromResponse: httpResponse, data: body)
-            
-            API.logger.error("Server error occurred for POST /login \(error, privacy: .public)")
-            throw error
+            switch try? JSONDecoder().decode(ErrorResponse<LoginResponse.ErrorKind>.self, from: body) {
+            case .some(let error) where error.code == .expired:
+                return .expired(reason: error.reason)
+            case .some(let error) where error.code == .invalid:
+                return .invalid(reason: error.reason)
+            default:
+                let error = ServerRequestError(fromResponse: httpResponse, data: body)
+                
+                API.logger.error("Server error occurred for POST /login \(error, privacy: .public)")
+                throw error
+            }
         }
-        return try JSONDecoder().decode(LoginResponse.self, from: body)
+        
+        let decoded = try JSONDecoder().decode(LoginResponse.Success.self, from: body)
+        return .success(decoded)
     }
 }

@@ -9,6 +9,9 @@
       </FileRef>
    </Group>
    <FileRef
+      location = "group:Interface">
+   </FileRef>
+   <FileRef
       location = "group:Client/MessengerClient.xcodeproj">
    </FileRef>
    <FileRef

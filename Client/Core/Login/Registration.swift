@@ -1,3 +1,4 @@
+import MessengerInterface
 import PhotosUI
 import SwiftUI
 
@@ -59,7 +60,7 @@ struct Registration: View {
     @State var username = ""
     var token: RegistrationToken
     var onLoginComplete: (SessionToken, UserID) -> Void
-    
+
     func validate(_ name: String) -> Bool {
         if !name.isEmpty {
             return true
@@ -72,21 +73,21 @@ struct Registration: View {
         guard validate(username) else { return }
 
         Task {
-            let response = await Result {
-                try await API.local.registerUser(
-                    registrationToken: token,
-                    username: username,
-                    avatar: selectedImage.flatMap { avatar in
-                        avatar.contentType.mimeType.map { mimeType in
+            let response = await Result {try await API.local.registerUser(
+                registrationToken: token,
+                username: username,
+                avatar: selectedImage.flatMap { avatar in
+                    avatar.contentType.mimeType.map { mimeType in
                             .init(bytes: avatar.bytes, contentType: mimeType)
-                        }
-                    })
+                    }
+                })
             }
+                
             switch response {
-            case .failure: break // TODO:
+            case .failure(_): break // TODO: Notify user
             case .success(.invalidToken(reason: _)): break // TODO: send the user back to the phone number screen
-            case .success(.success(sessionToken: let sessionToken, userID: let userID)):
-                onLoginComplete(sessionToken, userID)
+            case .success(.success(let payload)):
+                onLoginComplete(payload.sessionToken, payload.userID)
             }
         }
     }

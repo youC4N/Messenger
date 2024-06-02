@@ -1,21 +1,28 @@
 import RawDawg
 import Vapor
+import MessengerInterface
 
-struct User: Content {
-    var id: Int
-    var username: String
+extension FetchPrivateChatsResponse: AsyncResponseEncodable {
+    public func encodeResponse(for request: Request) async throws -> Response {
+        switch self {
+        case .unauthorized:
+            try await unauthorizedResponse(for: request)
+        case .success(let payload):
+            try await payload.encodeResponse(for: request)
+        }
+    }
 }
 
 @Sendable 
-func fetchPrivateChatsRoute(req: Request) async throws -> [User] {
+func fetchPrivateChatsRoute(req: Request) async throws -> FetchPrivateChatsResponse {
     guard let sessionToken: String = req.headers.bearerAuthorization?.token else {
-        throw Abort(.unauthorized, reason: "Invalid session token.")
+        return .unauthorized
     }
     guard let userID = try await sessionUser(from: sessionToken, in: req.db) else {
-        throw Abort(.unauthorized, reason: "Invalid session token.")
+        return .unauthorized
     }
 
-    let rows: [(Int, String, Int, String)] = try await req.db.prepare(
+    let rows: [(UserID, String, UserID, String)] = try await req.db.prepare(
         """
         select 
             participant_a_id,
@@ -31,15 +38,15 @@ func fetchPrivateChatsRoute(req: Request) async throws -> [User] {
         """
     ).fetchAll()
     
-    return rows.map { (aID, aUsername, bID, bUsername) in
+    return .success(rows.map { (aID, aUsername, bID, bUsername) in
         if userID == aID {
             User(id: bID, username: bUsername)
         } else {
             User(id: aID, username: aUsername)
         }
-    }
+    })
 }
 
-func sessionUser(from token: String, in db: Database) async throws -> Int? {
+private func sessionUser(from token: String, in db: Database) async throws -> UserID? {
     try await db.prepare("select user_id from sessions where session_token=\(token)").fetchOptional()
 }

@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "messanger-api",
+    name: "messenger-server",
     platforms: [
         .macOS(.v13),
         .iOS(.v15),  // This doesn't make any sense!
@@ -12,6 +12,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/vapor.git", from: "4.99.3"),
         .package(url: "https://github.com/Malien/raw-dawg.swift", exact: "0.1.1"),
         .package(url: "https://github.com/chrisaljoudi/swift-log-oslog.git", from: "0.2.1"),
+        .package(path: "../Interface")
     ],
     targets: [
         .executableTarget(
@@ -22,6 +23,7 @@ let package = Package(
                 .product(
                     name: "LoggingOSLog", package: "swift-log-oslog",
                     condition: .when(platforms: [.macOS])),
+                .product(name: "MessengerInterface", package: "Interface")
             ],
             swiftSettings: swiftSettings
         ),
