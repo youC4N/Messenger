@@ -35,7 +35,8 @@ struct CodeView: View {
                     )
                 case .success(.existingLogin(sessionToken: let token, userID: let userID)):
                     onLoginComplete(token, userID)
-                case .success(.registrationRequired(registrationToken: let registrationToken, phone: _)):
+                case .success(
+                    .registrationRequired(registrationToken: let registrationToken, phone: _)):
                     onRegistrationRequired(registrationToken)
                 }
             } catch {
@@ -59,17 +60,15 @@ struct CodeView: View {
                 }
             }
 
-            Button(
-                action: handleNextClick,
-                label: {
-                    Text("Next")
-                        .frame(maxWidth: .infinity, minHeight: 47)
-                        .background(
-                            Color.secondary,
-                            in: RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        )
-                }
-            )
+
+            Button(action: handleNextClick) {
+                Text("Next")
+                    .frame(maxWidth: .infinity, minHeight: 47)
+                    .background(
+                        Color.secondary,
+                        in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    )
+            }
         }
         .padding()
         .navigationTitle("Authorization")

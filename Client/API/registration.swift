@@ -4,6 +4,7 @@ import MessengerInterface
 
 extension API {
     func registerUser(registrationToken token: RegistrationToken, username: String, avatar: FileForUpload<Data>?) async throws -> RegistrationResponse {
+        let a = token.rawValue
         var parts: [MultipartPart] = [
             .field(name: "registrationToken", value: token.rawValue),
             .field(name: "username", value: username),

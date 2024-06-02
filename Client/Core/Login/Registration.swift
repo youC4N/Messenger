@@ -65,7 +65,6 @@ struct Registration: View {
         if !name.isEmpty {
             return true
         }
-        // TODO: validate the code
         return false
     }
 
@@ -82,6 +81,7 @@ struct Registration: View {
                     }
                 })
             }
+            let a = 1
                 
             switch response {
             case .failure(_): break // TODO: Notify user

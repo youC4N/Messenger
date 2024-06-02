@@ -14,7 +14,7 @@ struct MainChatsView: View {
         Task {
             do {
                 switch try await API.local.fetchPrivateChats(sessionToken: sessionToken) {
-                case .unauthorized: break // Send user back to the phone number screen
+                case .unauthorized: wrongSession()
                 case .success(let users): allChats = users
                 }
             } catch {

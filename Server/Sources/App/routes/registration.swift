@@ -36,6 +36,7 @@ extension FileForUpload<ByteBuffer>: MultipartPartConvertible {
 @Sendable
 func registrationRoute(req: Request) async throws -> RegistrationResponse {
     let registrationRequest = try req.content.decode(RegistrationRequest<ByteBuffer>.self)
+    
     guard
         let regSesh = try await fetchRegistration(
             byToken: registrationRequest.registrationToken,
