@@ -1,29 +1,50 @@
 import RawDawg
 import Vapor
-// user/:id/avatar
+import MessengerInterface
 
-@Sendable
-func getUserAvatarRoute(req: Request) async throws -> Response {
-    guard let sessionToken: String = req.headers.bearerAuthorization?.token else { throw getUserAvatarError.cantParseSessionToken }
-    guard let _ : String = try await req.db.prepare(
-        """
-        select session_token from sessions where session_token = \(sessionToken);
-        """).fetchOptional() else { throw Abort(.unauthorized) }
-    guard let userID = req.parameters.get("id") else { throw getUserAvatarError.cantParseUserID }
-    let avatarBlob: SQLiteBlob? = try await req.db.prepare("select avatar from users where id = \(userID)").fetchOptional()
-    guard case .some(.loaded(let bytes)) = avatarBlob else { throw getUserAvatarError.noAvatar }
-    let response = Response(status: .ok, body: Response.Body(data: bytes))
-    guard let imageType: String = try await req.db.prepare("select avatar_type from users where id = \(userID)").fetchOptional()
-    else { throw getUserAvatarError.noContentType }
-    response.headers.add(name: .contentType, value: imageType)
-    req.logger.info("added header to response", metadata: ["headers:": "\(response.headers)"])
-    return response
+extension FetchAvatarResponse: AsyncResponseEncodable {
+    public func encodeResponse(for request: Request) async throws -> Response {
+        switch self {
+        case .unauthorized:
+            try await ErrorResponse(Self.ErrorKind.unauthorized, reason: "Unauthorized.")
+                .encodeResponse(status: .unauthorized, for: request)
+        case .notFound:
+            try await ErrorResponse(Self.ErrorKind.notFound, reason: "No avatar image for this user id.")
+                    .encodeResponse(status: .notFound, for: request)
+        case .success(let bytes, contentType: let contentType):
+            Response(
+                status: .ok,
+                headers: ["Content-Type": contentType.description],
+                body: .init(data: bytes)
+            )
+        }
+    }
 }
 
-enum getUserAvatarError: Error {
-    case cantParseSessionToken
-    case cantParseUserID
-    case cantParseAvatar
-    case noAvatar
-    case noContentType
+@Sendable
+func getUserAvatarRoute(req: Request) async throws -> FetchAvatarResponse {
+    guard let sessionToken: String = req.headers.bearerAuthorization?.token else {
+        return .unauthorized
+    }
+    guard try await sessionTokenExists(token: sessionToken, in: req.db) else {
+        return .unauthorized
+    }
+    
+    guard let userID = req.parameters.get("id") else {
+        req.logger.error("getUserAvatarRoute doesn't have :id path parameter")
+        throw Abort(.internalServerError)
+    }
+    
+    let row: (SQLiteBlob, MIMEType)? = try await req.db.prepare(
+        "select avatar, avatar_type from users where id = \(userID)")
+        .fetchOptional()
+    guard let (blob, contentType) = row else {
+        return .notFound
+    }
+    
+    guard case .loaded(let bytes) = blob else {
+        req.logger.error("Retrieved avatar blob which isn't .loaded")
+        throw Abort(.internalServerError)
+    }
+    return .success(bytes, contentType: contentType)
 }

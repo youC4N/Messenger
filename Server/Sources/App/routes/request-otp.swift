@@ -1,29 +1,31 @@
 import RawDawg
 import Vapor
+import MessengerInterface
 
-struct OTPRequest: Content, Sendable {
-    var number: String
-}
-
-struct OTPResponse: Content, Sendable {
-    var otpToken: String
+extension OTPResponse.Success: Content {}
+extension OTPResponse: AsyncResponseEncodable {
+    public func encodeResponse(for request: Request) async throws -> Response {
+        switch self {
+        case .invalidPhoneNumber(reason: let reason):
+            try await ErrorResponse(Self.ErrorKind.invalidPhoneNumber, reason: reason)
+                .encodeResponse(status: .badRequest, for: request)
+        case .success(let success):
+            try await success.encodeResponse(for: request)
+        }
+    }
 }
 
 @Sendable
 func requestOTPRoute(req: Request) async throws -> OTPResponse {
     let otpReq = try req.content.decode(OTPRequest.self)
     let code = generateOTPCode()
-    req.logger.info("Here is your code = \(code)", metadata: ["phoneNumber": "\(otpReq.number)"])
-    let token = nanoid()
-    let normalisedNumber = try normalisedPhoneNumber(for: otpReq.number)
+    req.logger.info("Here is your code = \(code)", metadata: ["phoneNumber": "\(otpReq.phone)"])
+    let token = OTPToken(rawValue: nanoid())
+    guard let normalisedNumber = PhoneNumber(rawValue: otpReq.phone) else {
+        return .invalidPhoneNumber()
+    }
     try await saveOTP(code: code, token: token, phone: normalisedNumber, in: req.db)
-    return OTPResponse(otpToken: token)
-}
-
-enum MyError: Error, AbortError {
-    case invalidPhoneNumber
-    var status: HTTPResponseStatus { .badRequest }
-    var reason: String { "Invalid phone number." }
+    return .success(.init(otpToken: token))
 }
 
 private let otpAlphabet = "0123456789"
@@ -32,23 +34,7 @@ private func generateOTPCode(size: Int = 6) -> String {
     String(otpAlphabet.randomSample(count: size))
 }
 
-func normalisedPhoneNumber(for number: String) throws -> String {
-    let rgReplacingPattern = "[^0-9\\+]"
-    let rgPhoneMatchingPattern = "\\+\\d{12,15}"
-    var regex = try! NSRegularExpression(pattern: rgReplacingPattern, options: .caseInsensitive)
-    let numberRange = NSMakeRange(0, number.count)
-    let rawNumber = regex.stringByReplacingMatches(in: number, range: numberRange, withTemplate: "")
-    regex = try! NSRegularExpression(pattern: rgPhoneMatchingPattern, options: .caseInsensitive)
-    let rawNumberRange = NSMakeRange(0, rawNumber.count)
-    let a = regex.firstMatch(in: rawNumber, range: rawNumberRange)
-    if a != nil {
-        return rawNumber
-    } else {
-        throw MyError.invalidPhoneNumber
-    }
-}
-
-private func saveOTP(code: String, token: String, phone: String, in db: Database) async throws {
+private func saveOTP(code: String, token: OTPToken, phone: PhoneNumber, in db: Database) async throws {
     try await withContext("Inserting otp password") {
         try await db.prepare(
             """

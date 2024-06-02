@@ -1,69 +1,56 @@
 import RawDawg
 import Vapor
 import MultipartKit
+import MessengerInterface
 
-// TODO: expiration check
-struct RegistrationRequest: Content, Sendable {
-    var registrationToken: String
-    var username: String
-    var avatar: ProperFile?
+extension RegistrationResponse.Success: Content {}
+extension RegistrationResponse: AsyncResponseEncodable {
+    public func encodeResponse(for request: Request) async throws -> Response {
+        switch self {
+        case .invalidToken(reason: let reason):
+            try await ErrorResponse(Self.ErrorKind.invalidToken, reason: reason)
+                .encodeResponse(status: .badRequest, for: request)
+        case .success(let payload):
+            try await payload.encodeResponse(for: request)
+        }
+    }
 }
 
 /// Cause Vapor's `File` is a goddamn joke. **Only works for multipart decoding!**
-struct ProperFile: MultipartPartConvertible, Codable {
-    var data: ByteBuffer
-    var filename: String?
-    var contentType: HTTPMediaType
-    
-    var multipart: MultipartPart? {
+extension FileForUpload<ByteBuffer>: MultipartPartConvertible {
+    public var multipart: MultipartPart? {
         MultipartPart(
             headers: ["Content-Type": contentType.description],
-            body: data
+            body: bytes
         )
     }
     
-    init?(multipart: MultipartKit.MultipartPart) {
+    public init?(multipart: MultipartKit.MultipartPart) {
         guard let contentType = multipart.headers.contentType else {
             return nil
         }
-        self.data = multipart.body
-        self.filename = multipart.filename
-        self.contentType = contentType
+        self.init(bytes: multipart.body, contentType: MIMEType(rawValue: contentType.description))
     }
-    
-    init(from decoder: any Decoder) throws {
-        throw DecodingError.dataCorrupted(.init(
-            codingPath: decoder.codingPath,
-            debugDescription: "ProperFile is only to be deserialized via MultipartKit's MultipartPartConvertible mechanism"
-        ))
-    }
-    
-    func encode(to encoder: any Encoder) throws {
-        throw EncodingError.invalidValue(self, .init(
-            codingPath: encoder.codingPath,
-            debugDescription: "Why'd you ever try to serialize this? It is only here to make the convenient Content conformances happy"
-        ))
-    }
-}
-
-struct RegistrationResponse: Content, Sendable {
-    var sessionToken: String
-    var userID: Int
 }
 
 @Sendable
 func registrationRoute(req: Request) async throws -> RegistrationResponse {
-    let registrationRequest = try req.content.decode(RegistrationRequest.self)
+    let registrationRequest = try req.content.decode(RegistrationRequest<ByteBuffer>.self)
     guard
-        let userPhoneNumber = try await fetchPhoneNumber(
-            fromRegistration: registrationRequest.registrationToken,
+        let regSesh = try await fetchRegistration(
+            byToken: registrationRequest.registrationToken,
             in: req.db
         )
-    else { throw Abort(.badRequest, reason: "Invalid registration token.") }
+    else { return .invalidToken() }
+    guard regSesh.expiresAt > Date.now else {
+        req.logger.warning("Tried to register a new user with expired token")
+        try await deleteRegistrationSession(byToken: registrationRequest.registrationToken, in: req.db)
+        return .invalidToken()
+    }
     
     let userID = try await createUser(
         username: registrationRequest.username,
-        phone: userPhoneNumber,
+        phone: regSesh.phone,
         avatar: registrationRequest.avatar,
         in: req
     )
@@ -71,71 +58,53 @@ func registrationRoute(req: Request) async throws -> RegistrationResponse {
         "New user registered",
         metadata: [
             "userID": "\(userID)", "name": "\(registrationRequest.username)",
-            "phone": "\(userPhoneNumber)", "uploadedAvatar": "\(registrationRequest.avatar != nil)"
+            "phone": "\(regSesh.phone)", "uploadedAvatar": "\(registrationRequest.avatar != nil)"
         ]
     )
+    try await deleteRegistrationSession(byToken: registrationRequest.registrationToken, in: req.db)
 
     let sessionToken = try await createSession(for: userID, in: req)
-    return RegistrationResponse(sessionToken: sessionToken, userID: userID)
+    return .success(.init(sessionToken: sessionToken, userID: userID))
 }
 
-private func fetchPhoneNumber(fromRegistration token: String, in db: Database) async throws
-    -> String?
+struct RegistrationSession: Decodable {
+    var phone: PhoneNumber
+    var expiresAt: Date
+    
+    enum CodingKeys: String, CodingKey {
+        case phone, expiresAt = "expires_at"
+    }
+}
+
+private func deleteRegistrationSession(byToken token: RegistrationToken, in db: Database) async throws {
+    try await withContext("Deleting stale registration session") {
+        try await db.prepare("delete from registration_tokens where token=\(token)").run()
+    }
+}
+
+private func fetchRegistration(byToken token: RegistrationToken, in db: Database) async throws
+    -> RegistrationSession?
 {
     try await withContext("Retrieving phone given registrationToken") {
         try await db.prepare(
-            "select phone from registration_tokens where token = \(token)"
+            "select phone, expires_at from registration_tokens where token = \(token)"
         ).fetchOptional()
     }
 }
 
-private func createUser(username: String, phone: String, avatar: ProperFile?, in req: Request) async throws -> Int {
+private func createUser(username: String, phone: PhoneNumber, avatar: FileForUpload<ByteBuffer>?, in req: Request) async throws -> UserID {
     req.logger.info("Trying to create user", metadata:
                     ["username": "\(username)",
                      "phone": "\(phone)",
-                     "avatarType": "\(avatar?.contentType.serialize()))"])
+                     "avatarType": "\(avatar?.contentType.rawValue))"])
     return try await withContext("Saving new user") {
         try await req.db.prepare(
             """
             insert into users (first_name, phone_number, avatar, avatar_type)
-            values (\(username), \(phone), \(avatar?.data), \(avatar?.contentType))
+            values (\(username), \(phone), \(avatar?.bytes), \(avatar?.contentType))
             returning id
             """
         ).fetchOne()
-    }
-}
-
-extension HTTPMediaType: SQLPrimitiveDecodable, SQLPrimitiveEncodable {
-    /// Yoinked verbatim implementation from the Vapor's internal `HTTPMediaType` init
-    init?(parse headerValue: String) {
-        let directives = headerValue.components(separatedBy: [",", ";"])
-        guard let value = directives.first else {
-            /// not a valid header value
-            return nil
-        }
-
-        /// parse out type and subtype
-        let typeParts = value.split(separator: "/", maxSplits: 2)
-        guard typeParts.count == 2 else {
-            /// the type was not form `foo/bar`
-            return nil
-        }
-
-        self.init(
-            type: String(typeParts[0]).trimmingCharacters(in: .whitespaces),
-            subType: String(typeParts[1]).trimmingCharacters(in: .whitespaces)
-        )
-    }
-    
-    public init?(fromSQL primitive: SQLiteValue) {
-        guard case .text(let string) = primitive else {
-            return nil
-        }
-        self.init(parse: string)
-    }
-
-    public func encode() -> SQLiteValue {
-        .text(self.serialize())
     }
 }
 

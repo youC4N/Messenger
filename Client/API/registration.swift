@@ -1,20 +1,6 @@
 import Foundation
 import UniformTypeIdentifiers
-
-enum RegistrationResponse {
-    case invalidToken(reason: String)
-    case success(sessionToken: SessionToken, userID: UserID)
-    
-    struct Raw: Decodable {
-        var sessionToken: SessionToken
-        var userID: UserID
-    }
-}
-
-struct FileForUpload {
-    var bytes: Data
-    var contentType: MIMEType
-}
+import MessengerInterface
 
 extension API {
     func registerUser(registrationToken token: RegistrationToken, username: String, avatar: FileForUpload?) async throws -> RegistrationResponse {
@@ -45,17 +31,12 @@ extension API {
         guard httpResponse.statusCode == 200 else {
             throw ServerRequestError(fromResponse: httpResponse, data: body)
         }
-        let decoded = try JSONDecoder().decode(RegistrationResponse.Raw.self, from: body)
-        return .success(sessionToken: decoded.sessionToken, userID: decoded.userID)
+        let decoded = try JSONDecoder().decode(RegistrationResponse.Success.self, from: body)
+        return .success(decoded)
     }
 }
 
 // MARK: Multipart encoding bits
-
-struct MIMEType: CustomStringConvertible {
-    fileprivate var rawValue: String
-    var description: String { rawValue }
-}
 
 extension UTType {
     var mimeType: MIMEType? {

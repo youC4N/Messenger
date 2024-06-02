@@ -1,17 +1,5 @@
 import Foundation
-
-private struct OTPRequest: Codable {
-    var number: PhoneNumber
-}
-
-enum OTPResponse {
-    case invalidPhoneNumber(reason: String)
-    case success(otpToken: OTPToken)
-    
-    fileprivate struct Raw: Codable, Hashable {
-        var otpToken: OTPToken
-    }
-}
+import MessengerInterface
 
 extension API {
     func requestOTP(forPhoneNumber phone: PhoneNumber) async throws -> OTPResponse {
@@ -36,7 +24,7 @@ extension API {
             throw error
         }
 
-        let decoded = try JSONDecoder().decode(OTPResponse.Raw.self, from: body)
-        return .success(otpToken: decoded.otpToken)
+        let decoded = try JSONDecoder().decode(OTPResponse.Success.self, from: body)
+        return .success(decoded)
     }
 }

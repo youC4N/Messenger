@@ -1,14 +1,5 @@
 import Foundation
-
-struct User: Equatable, Identifiable, Decodable {
-    var id: UserID
-    var username: String
-}
-
-enum FetchPrivateChatsResponse {
-    case unauthorized
-    case success([User])
-}
+import MessengerInterface
 
 extension API {
     func fetchPrivateChats(sessionToken: SessionToken) async throws -> FetchPrivateChatsResponse {

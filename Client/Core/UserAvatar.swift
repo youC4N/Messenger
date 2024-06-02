@@ -1,7 +1,5 @@
 import SwiftUI
 
-let API_BASE_URL = URL(string: "http://localhost:8080/")!
-
 struct UserAvatar: View {
     var sessionToken: SessionToken
     var userID: UserID

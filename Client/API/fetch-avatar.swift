@@ -1,10 +1,5 @@
 import Foundation
-
-enum FetchAvatarResponse {
-    case unauthorized
-    case notFound
-    case success(Data)
-}
+import MessengerInterface
 
 extension API {
     func fetchAvatar(ofUser userID: UserID, sessionToken: SessionToken) async throws -> FetchAvatarResponse {

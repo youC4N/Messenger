@@ -36,10 +36,6 @@ extension Request {
     }
 }
 
-enum MessangerError: Error {
-    case serverError
-}
-
 func nanoid(
     alphabet: String = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-",
     size: Int = 21
