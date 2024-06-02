@@ -60,7 +60,7 @@ struct CodeView: View {
             }
 
             Button(
-                action: {},
+                action: handleNextClick,
                 label: {
                     Text("Next")
                         .frame(maxWidth: .infinity, minHeight: 47)

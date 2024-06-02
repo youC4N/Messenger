@@ -34,7 +34,7 @@ func findUserRoute(req: Request) async throws -> FindUserResponse {
     guard let number: String = try req.query.get(at: "phone") else {
         throw Abort(.badRequest, reason: "Missing phone query parameter.")
     }
-    guard let normNumber = PhoneNumber(rawValue: number) else {
+    guard let normNumber = PhoneNumber(percentEncoded: number) else {
         return .invalidPhoneNumber()
     }
 

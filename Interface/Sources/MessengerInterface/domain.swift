@@ -39,6 +39,17 @@ public struct RegistrationToken: StringNewtype {
 public struct PhoneNumber: RawRepresentable, Codable, Equatable, Hashable, Comparable, Sendable, CustomStringConvertible {
     public var rawValue: String
     
+    public var urlEncoded: String {
+        self.rawValue.replacingOccurrences(of: "+", with: "%2B")
+    }
+    
+    public init?(percentEncoded: String) {
+        guard let decoded = percentEncoded.removingPercentEncoding else {
+            return nil
+        }
+        self.init(rawValue: decoded)
+    }
+    
     public init?(rawValue: RawValue) {
         let rgReplacingPattern = "[^0-9\\+]"
         let rgPhoneMatchingPattern = "\\+\\d{12,15}"

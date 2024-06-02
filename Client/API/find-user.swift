@@ -5,7 +5,7 @@ extension API {
     func findUser(byPhoneNumber number: PhoneNumber, sessionToken: SessionToken) async throws -> FindUserResponse {
         let url = endpoint
             .appending(component: "user")
-            .appending(queryItems: [.init(name: "phone", value: number.rawValue)])
+            .appending(queryItems: [.init(name: "phone", value: number.urlEncoded)])
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")

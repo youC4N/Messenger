@@ -60,7 +60,7 @@ private func multipartEncode(_ values: [MultipartPart]) -> (body: Data, contentT
     for part in values {
         switch part {
         case .field(name: let name, value: let value):
-            data.append(contentsOf: "--\(boundary)\r\n".utf8)
+            data.append(contentsOf: "\r\n--\(boundary)\r\n".utf8)
             data.append(contentsOf: "Content-Disposition: form-data; name=\(String(reflecting: name))\r\n\r\n".utf8)
             data.append(contentsOf: value.utf8)
         case .file(name: let name, bytes: let bytes, contentType: let contentType, filename: let filename):
