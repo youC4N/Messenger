@@ -68,8 +68,8 @@ public enum RegistrationResponse {
     }
     
     public struct Success: Codable {
-        var sessionToken: SessionToken
-        var userID: UserID
+        public var sessionToken: SessionToken
+        public var userID: UserID
         
         public init(sessionToken: SessionToken, userID: UserID) {
             self.sessionToken = sessionToken

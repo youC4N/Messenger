@@ -6,7 +6,7 @@ extension API {
         var request = URLRequest(url: endpoint.appending(component: "otp"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(OTPRequest(number: phone))
+        request.httpBody = try JSONEncoder().encode(OTPRequest(phone: phone))
         let (body, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse else {
             throw ServerRequestError.nonHTTPResponse(got: type(of: response))
@@ -14,7 +14,7 @@ extension API {
         
         API.logger.info("POST /otp response: \(httpResponse.statusCode, privacy: .public)")
         guard httpResponse.statusCode != 400 else {
-            let errorResponse = try JSONDecoder().decode(CommonErrorResponse.self, from: body)
+            let errorResponse = try JSONDecoder().decode(ErrorResponse<OTPResponse.ErrorKind>.self, from: body)
             return .invalidPhoneNumber(reason: errorResponse.reason)
         }
         guard httpResponse.statusCode == 200 else {

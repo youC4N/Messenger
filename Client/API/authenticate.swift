@@ -16,11 +16,20 @@ extension API {
         
         API.logger.info("POST /login response: \(httpResponse.statusCode, privacy: .public)")
         guard httpResponse.statusCode == 200 else {
-            let error = ServerRequestError(fromResponse: httpResponse, data: body)
-            
-            API.logger.error("Server error occurred for POST /login \(error, privacy: .public)")
-            throw error
+            switch try? JSONDecoder().decode(ErrorResponse<LoginResponse.ErrorKind>.self, from: body) {
+            case .some(let error) where error.code == .expired:
+                return .expired(reason: error.reason)
+            case .some(let error) where error.code == .invalid:
+                return .invalid(reason: error.reason)
+            default:
+                let error = ServerRequestError(fromResponse: httpResponse, data: body)
+                
+                API.logger.error("Server error occurred for POST /login \(error, privacy: .public)")
+                throw error
+            }
         }
-        return try JSONDecoder().decode(LoginResponse.self, from: body)
+        
+        let decoded = try JSONDecoder().decode(LoginResponse.Success.self, from: body)
+        return .success(decoded)
     }
 }

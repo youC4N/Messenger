@@ -3,7 +3,7 @@ import UniformTypeIdentifiers
 import MessengerInterface
 
 extension API {
-    func registerUser(registrationToken token: RegistrationToken, username: String, avatar: FileForUpload?) async throws -> RegistrationResponse {
+    func registerUser(registrationToken token: RegistrationToken, username: String, avatar: FileForUpload<Data>?) async throws -> RegistrationResponse {
         var parts: [MultipartPart] = [
             .field(name: "registrationToken", value: token.rawValue),
             .field(name: "username", value: username),
@@ -25,7 +25,7 @@ extension API {
         }
         API.logger.info("registration status code -- \(httpResponse.statusCode)")
         guard httpResponse.statusCode != 400 else {
-            let errorResponse = try JSONDecoder().decode(CommonErrorResponse.self, from: body)
+            let errorResponse = try JSONDecoder().decode(ErrorResponse<RegistrationResponse.ErrorKind>.self, from: body)
             return .invalidToken(reason: errorResponse.reason)
         }
         guard httpResponse.statusCode == 200 else {
