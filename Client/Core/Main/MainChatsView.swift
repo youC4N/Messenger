@@ -27,18 +27,20 @@ struct MainChatsView: View {
         List {
             let chats = allChats ?? []
             ForEach(chats) { chat in
-                HStack {
-                    UserAvatar(sessionToken: sessionToken, userID: chat.id)
-                        .frame(width: 48, height: 48)
-                        .padding(.trailing, 8)
+                NavigationLink(destination: MainVideoPlayerView(chat: chat.id, sessionToken: sessionToken)){
+                    HStack {
+                        UserAvatar(sessionToken: sessionToken, userID: chat.id)
+                            .frame(width: 48, height: 48)
+                            .padding(.trailing, 8)
                         
-
-                    Text(chat.username)
-                        .fontWeight(.bold)
-                        .font(.title3)
-                        .minimumScaleFactor(0.01)
-                        .foregroundStyle(.black)
-                    Spacer()
+                        
+                        Text(chat.username)
+                            .fontWeight(.bold)
+                            .font(.title3)
+                            .minimumScaleFactor(0.01)
+                            .foregroundStyle(.black)
+                        Spacer()
+                    }
                 }
             }
         }

@@ -1,5 +1,7 @@
 import MessengerInterface
 import SwiftUI
+import AVKit
+import AVFoundation
 
 struct MainVideoPlayerView: View {
     var chat: UserID
@@ -10,7 +12,9 @@ struct MainVideoPlayerView: View {
     }
 
     var body: some View {
-        Text("Video")
+        let path = "https://drive.google.com/uc?export=download&id=1L4gWGi9WMr_lHA1Xrzd6xX1NK5Mma38T"
+        let url = URL(string: path)!
+        VideoPlayer(player: AVPlayer(url: url))
         Button {
             Task {
                 do {
