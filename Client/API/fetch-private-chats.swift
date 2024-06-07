@@ -3,7 +3,7 @@ import MessengerInterface
 
 extension API {
     func fetchPrivateChats(sessionToken: SessionToken) async throws -> FetchPrivateChatsResponse {
-        var request = URLRequest(url: endpoint.appending(components: "private-chats"))
+        var request = URLRequest(url: endpoint.appending(components: "private-chat"))
         request.httpMethod = "GET"
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         let (body, httpResponse) = try await URLSession.shared.data(for: request)

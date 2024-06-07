@@ -23,8 +23,8 @@ func createNewChat(for req: Request) async throws -> Response {
         try await req.db.prepare(
         """
         insert into
-            private_chats(participant_a_id, participant_b_id, message_count)
-            values(\(participant_a), \(participant_b), '0')
+            private_chats(participant_a_id, participant_b_id)
+            values(\(participant_a), \(participant_b))
         """).run()
     } catch {
         throw Abort(.internalServerError, reason: "Couldn't insert new chat for ids: a = \(participant_a), b = \(participant_b)")

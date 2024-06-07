@@ -29,17 +29,29 @@ struct MainChatsView: View {
             ForEach(chats) { chat in
                 HStack {
                     UserAvatar(sessionToken: sessionToken, userID: chat.id)
+                        .frame(width: 48, height: 48)
                         .padding(.trailing, 8)
+                        
 
                     Text(chat.username)
                         .fontWeight(.bold)
-                        .font(.system(size: 50))
+                        .font(.title3)
                         .minimumScaleFactor(0.01)
                         .foregroundStyle(.black)
                     Spacer()
                 }
             }
         }
+//        .task {
+//            do {
+//                switch try await API.local.fetchPrivateChats(sessionToken: sessionToken) {
+//                case .unauthorized: wrongSession()
+//                case .success(let users): allChats = users
+//                }
+//            } catch {
+//                logger.error("Couldn't fetch chats \(error, privacy: .public)")
+//            }
+//        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
