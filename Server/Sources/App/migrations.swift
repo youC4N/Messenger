@@ -63,18 +63,35 @@ private let migrations = [
     );
     """,
     """
-        alter table users add column avatar blob null;
+    alter table users add column avatar blob null;
     """,
     """
-        alter table users add column avatar_type text null;
+    alter table users add column avatar_type text null;
     """,
     """
-        alter table private_chats
-            drop column message_count;
-        alter table private_chats
-            add column last_message_id integer null references private_messages(id);
+    alter table private_chats
+        drop column message_count;
+    alter table private_chats
+        add column last_message_id integer null references private_messages(id);
 
-        create index private_chats_last_message_id on private_chats(last_message_id);
+    create index private_chats_last_message_id on private_chats(last_message_id);
+    """,
+    """
+    create table video_uploads (
+        id integer primary key autoincrement,
+        file_path text not null,
+        created_at text not null default (datetime('now', 'subsec'))
+    );
+    alter table private_messages
+        drop column video_blob;
+    alter table private_messages
+        add column upload_id not null references video_uploads(id);
+    alter table private_messages
+        add column author_id not null references users(id);
+    create unique index private_messages_upload_id on private_messages(upload_id);
+    create unique index private_messages_order_in_chat on private_messages(chat_id, message_order);
+    -- Don't really think we need this one. Although, who knows
+    -- create index private_messages_author_id on private_messages(author_id);
     """,
 ]
 
