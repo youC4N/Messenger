@@ -163,9 +163,10 @@ public struct Message: Codable {
 public enum NewMessageResponse {
     case unauthorized
     case invalidRecipient(reason: String)
+    case unsupportedMediaFormat(reason: String)
     case success(Message)
 
     public enum ErrorKind: String, Codable {
-        case unauthorized, invalidRecipient
+        case unauthorized, unsupportedMediaFormat, invalidRecipient
     }
 }
