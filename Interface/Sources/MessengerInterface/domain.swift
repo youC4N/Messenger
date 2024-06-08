@@ -9,6 +9,15 @@ public struct UserID: IntegralNewtype {
     }
 }
 
+public struct MessageID: IntegralNewtype {
+    public typealias IntegerLiteralType = Int
+    public var rawValue: Int
+
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+}
+
 public struct SessionToken: StringNewtype {
     public typealias StringLiteralType = String
     public var rawValue: String

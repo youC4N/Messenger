@@ -145,3 +145,27 @@ public enum FetchAvatarResponse {
         case unauthorized, notFound
     }
 }
+
+// MARK: Send message
+
+public struct Message: Codable {
+    public var id: MessageID
+    public var sentAt: Date
+    public var author: UserID
+
+    public init(id: MessageID, sentAt: Date, author: UserID) {
+        self.id = id
+        self.sentAt = sentAt
+        self.author = author
+    }
+}
+
+public enum NewMessageResponse {
+    case unauthorized
+    case invalidRecipient(reason: String)
+    case success(Message)
+
+    public enum ErrorKind: String, Codable {
+        case unauthorized, invalidRecipient
+    }
+}

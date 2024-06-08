@@ -33,8 +33,8 @@ extension InfalibleNewtype {
     }
 }
 
-public protocol IntegralNewtype: InfalibleNewtype, ExpressibleByIntegerLiteral
-where RawValue: ExpressibleByIntegerLiteral, RawValue.IntegerLiteralType == Self.IntegerLiteralType
+public protocol IntegralNewtype: InfalibleNewtype, ExpressibleByIntegerLiteral, LosslessStringConvertible
+where RawValue: ExpressibleByIntegerLiteral, RawValue.IntegerLiteralType == Self.IntegerLiteralType, RawValue: LosslessStringConvertible
 {
 }
 
@@ -43,15 +43,29 @@ extension IntegralNewtype {
         let a = RawValue(integerLiteral: value)
         self.init(rawValue: a)
     }
+    
+    public init?(_ description: String) {
+        guard let rawValue = RawValue(description) else {
+            return nil
+        }
+        self.init(rawValue: rawValue)
+    }
 }
 
 public protocol StringNewtype: InfalibleNewtype, ExpressibleByStringLiteral
-where RawValue: ExpressibleByStringLiteral, RawValue.StringLiteralType == Self.StringLiteralType {
+where RawValue: ExpressibleByStringLiteral, RawValue.StringLiteralType == Self.StringLiteralType, RawValue: LosslessStringConvertible {
 }
 
 extension StringNewtype {
     public init(stringLiteral value: Self.StringLiteralType) {
         let a = RawValue(stringLiteral: value)
         self.init(rawValue: a)
+    }
+    
+    public init?(_ description: String) {
+        guard let rawValue = RawValue(description) else {
+            return nil
+        }
+        self.init(rawValue: rawValue)
     }
 }
