@@ -1,7 +1,7 @@
-import Vapor
-import NIO
 import Foundation
+import NIO
 import RawDawg
+import Vapor
 
 enum newMessageResponse: Content, Codable {
     case unauthorized
@@ -32,7 +32,8 @@ func createNewMessageRoute(for req: Request) async throws -> newMessageResponse 
     let fileManager = FileManager.default
     let videoDirectory = DirectoryConfiguration.detect().workingDirectory + "video"
     if !fileManager.fileExists(atPath: videoDirectory) {
-        try fileManager.createDirectory(atPath: videoDirectory, withIntermediateDirectories: true, attributes: nil)
+        try fileManager.createDirectory(
+            atPath: videoDirectory, withIntermediateDirectories: true, attributes: nil)
     }
 
     // Save the video data to a file

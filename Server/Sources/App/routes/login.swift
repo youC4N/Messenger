@@ -1,15 +1,15 @@
+import MessengerInterface
 import RawDawg
 import Vapor
-import MessengerInterface
 
 extension LoginResponse.Success: Content {}
 extension LoginResponse: AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
         return switch self {
-        case .invalid(reason: let reason):
+        case .invalid(let reason):
             try await ErrorResponse(Self.ErrorKind.invalid, reason: reason)
                 .encodeResponse(status: .badRequest, for: request)
-        case .expired(reason: let reason):
+        case .expired(let reason):
             try await ErrorResponse(Self.ErrorKind.expired, reason: reason)
                 .encodeResponse(status: .badRequest, for: request)
         case .success(let payload):
@@ -96,7 +96,9 @@ func fetchUserID(byPhone phone: PhoneNumber, in db: Database) async throws -> Us
     }
 }
 
-func createRegistrationSession(token: RegistrationToken, phone: PhoneNumber, in db: Database) async throws {
+func createRegistrationSession(token: RegistrationToken, phone: PhoneNumber, in db: Database)
+    async throws
+{
     try await withContext("Saving registration token") {
         try await db.prepare(
             """

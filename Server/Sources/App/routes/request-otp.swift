@@ -1,12 +1,12 @@
+import MessengerInterface
 import RawDawg
 import Vapor
-import MessengerInterface
 
 extension OTPResponse.Success: Content {}
 extension OTPResponse: AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
         switch self {
-        case .invalidPhoneNumber(reason: let reason):
+        case .invalidPhoneNumber(let reason):
             try await ErrorResponse(Self.ErrorKind.invalidPhoneNumber, reason: reason)
                 .encodeResponse(status: .badRequest, for: request)
         case .success(let success):
@@ -34,7 +34,9 @@ private func generateOTPCode(size: Int = 6) -> String {
     String(otpAlphabet.randomSample(count: size))
 }
 
-private func saveOTP(code: String, token: OTPToken, phone: PhoneNumber, in db: Database) async throws {
+private func saveOTP(code: String, token: OTPToken, phone: PhoneNumber, in db: Database)
+    async throws
+{
     try await withContext("Inserting otp password") {
         try await db.prepare(
             """

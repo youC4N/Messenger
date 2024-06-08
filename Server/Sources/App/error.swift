@@ -1,6 +1,6 @@
+import MessengerInterface
 import RawDawg
 import Vapor
-import MessengerInterface
 
 extension MessengerInterface.ErrorResponse: Content {}
 

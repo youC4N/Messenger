@@ -53,9 +53,9 @@ func routes(_ app: Application) {
     app.get("user", use: findUserRoute)
     app.get("private-chat", use: fetchPrivateChatsRoute)
     app.on(.POST, "registration", body: .collect(maxSize: "10mb"), use: registrationRoute)
-    
+
     app.get("user", ":id", "avatar", use: getUserAvatarRoute)
-    
+
     app.post("chat", ":idB", use: createNewChat)
     app.post("private_chat", "idB", "video", use: createNewMessageRoute)
 }

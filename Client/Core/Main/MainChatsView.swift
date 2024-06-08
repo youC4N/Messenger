@@ -6,7 +6,6 @@ struct MainChatsView: View {
     @State private var showingSheet = false
     @State var openedChat: UserID?
     var sessionToken: SessionToken
-    // TODO: every time empty array with users
     @State var wrongSession: () -> Void
 
     @State var allChats: [User]?
@@ -46,16 +45,16 @@ struct MainChatsView: View {
                 }
             }
         }
-                .task {
-                    do {
-                        switch try await API.local.fetchPrivateChats(sessionToken: sessionToken) {
-                        case .unauthorized: wrongSession()
-                        case .success(let users): allChats = users
-                        }
-                    } catch {
-                        logger.error("Couldn't fetch chats \(error, privacy: .public)")
-                    }
+        .task {
+            do {
+                switch try await API.local.fetchPrivateChats(sessionToken: sessionToken) {
+                case .unauthorized: wrongSession()
+                case .success(let users): allChats = users
                 }
+            } catch {
+                logger.error("Couldn't fetch chats \(error, privacy: .public)")
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -83,27 +82,12 @@ struct MainChatsView: View {
                     })
             }
         }
-        
+
         .navigationDestination(item: $openedChat) { partisipant_b in
             MainVideoPlayerView(chat: partisipant_b, sessionToken: sessionToken)
         }
     }
 }
-
-enum MYError: Error {
-    case invalidURL
-    case invalidResponse
-    case invalidData
-    case invalidGetUsers
-    case noUserID
-    case noAvatar
-    case unknownURLresponse
-    case unfinished
-}
-
-//#Preview {
-//    // MainChatsView(showingSheet: _, openedChat: _, sessionToken: _, wrongSession: _, allChats: _)
-//}
 
 #Preview {
     MainChatsView(sessionToken: "", wrongSession: {})

@@ -64,8 +64,7 @@ private let migrations = [
     """,
     """
         alter table users add column avatar blob null;
-    """
-    ,
+    """,
     """
         alter table users add column avatar_type text null;
     """,
@@ -74,9 +73,9 @@ private let migrations = [
             drop column message_count;
         alter table private_chats
             add column last_message_id integer null references private_messages(id);
-    
+
         create index private_chats_last_message_id on private_chats(last_message_id);
-    """
+    """,
 ]
 
 func migrate(db: Database, logger: Logger) async throws {

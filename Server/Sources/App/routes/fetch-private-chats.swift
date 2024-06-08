@@ -1,6 +1,6 @@
+import MessengerInterface
 import RawDawg
 import Vapor
-import MessengerInterface
 
 extension FetchPrivateChatsResponse: AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
@@ -13,7 +13,7 @@ extension FetchPrivateChatsResponse: AsyncResponseEncodable {
     }
 }
 
-@Sendable 
+@Sendable
 func fetchPrivateChatsRoute(req: Request) async throws -> FetchPrivateChatsResponse {
     guard let sessionToken: String = req.headers.bearerAuthorization?.token else {
         return .unauthorized
@@ -37,16 +37,18 @@ func fetchPrivateChatsRoute(req: Request) async throws -> FetchPrivateChatsRespo
         where participant_a_id = \(userID) or participant_b_id = \(userID)
         """
     ).fetchAll()
-    
-    return .success(rows.map { (aID, aUsername, bID, bUsername) in
-        if userID == aID {
-            User(id: bID, username: bUsername)
-        } else {
-            User(id: aID, username: aUsername)
-        }
-    })
+
+    return .success(
+        rows.map { (aID, aUsername, bID, bUsername) in
+            if userID == aID {
+                User(id: bID, username: bUsername)
+            } else {
+                User(id: aID, username: aUsername)
+            }
+        })
 }
 
 func sessionUser(from token: String, in db: Database) async throws -> UserID? {
-    try await db.prepare("select user_id from sessions where session_token=\(token)").fetchOptional()
+    try await db.prepare("select user_id from sessions where session_token=\(token)")
+        .fetchOptional()
 }

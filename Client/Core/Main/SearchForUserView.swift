@@ -1,5 +1,5 @@
-import SwiftUI
 import MessengerInterface
+import SwiftUI
 
 struct UserSearchMatch {
     var id: UserID
@@ -31,14 +31,17 @@ struct SearchForUserView: View {
         }
         Task {
             do {
-                let response = try await API.local.findUser(byPhoneNumber: phone, sessionToken: sessionToken)
+                let response = try await API.local.findUser(
+                    byPhoneNumber: phone, sessionToken: sessionToken)
                 switch response {
                 case .unauthorized:
                     wrongSession()
                 case .absent:
                     match = nil
-                case .invalidPhoneNumber(reason: let reason):
-                    logger.warning("Invalid phone number \(phone.description, privacy: .private), as told by server: \(reason, privacy: .public)")
+                case .invalidPhoneNumber(let reason):
+                    logger.warning(
+                        "Invalid phone number \(phone.description, privacy: .private), as told by server: \(reason, privacy: .public)"
+                    )
                     match = nil
                 case .found(let user):
                     match = UserSearchMatch(
@@ -75,7 +78,10 @@ struct SearchForUserView: View {
                     TextField("number", text: $phoneNumber)
                         .padding(.leading, 10)
                         .frame(maxWidth: .infinity, maxHeight: 47)
-                        .background(Color.secondary, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .background(
+                            Color.secondary,
+                            in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        )
                         .focused($focusedField, equals: true)
                         .keyboardType(.numbersAndPunctuation)
                         .onSubmit(handleSubmit)
@@ -89,8 +95,7 @@ struct SearchForUserView: View {
                 Section {
                     Button {
                         startedChat(match.id)
-                    }
-                    label: {
+                    } label: {
                         UserSearchCard(match: match, sessionToken: sessionToken)
                     }
                 }

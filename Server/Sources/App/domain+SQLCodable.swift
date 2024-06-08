@@ -10,7 +10,7 @@ extension NewtypeSQLCodable {
         }
         self.init(rawValue: Int(int))
     }
-    
+
     public init?(fromSQL primitive: SQLiteValue) where RawValue == String {
         guard case .text(let string) = primitive else {
             return nil
@@ -21,7 +21,7 @@ extension NewtypeSQLCodable {
     public func encode() -> RawDawg.SQLiteValue where RawValue == Int {
         .integer(Int64(rawValue))
     }
-    
+
     public func encode() -> RawDawg.SQLiteValue where RawValue == String {
         .text(rawValue)
     }

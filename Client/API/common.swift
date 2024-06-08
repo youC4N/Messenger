@@ -3,10 +3,11 @@ import OSLog
 
 struct API {
     static let local = API(base: URL(string: "http://localhost:8080")!)
-    static let logger = Logger(subsystem: "com.github.youC4N.videomessenger", category: "Networking")
-    
+    static let logger = Logger(
+        subsystem: "com.github.youC4N.videomessenger", category: "Networking")
+
     let endpoint: URL
-    
+
     init(base: URL) {
         self.endpoint = base
     }
@@ -37,17 +38,17 @@ enum ServerRequestError: Error, CustomStringConvertible {
         switch self {
         case .nonHTTPResponse(let got):
             "Received a non-HTTP response of type \(got)"
-        case .binaryServerError(status: let status):
+        case .binaryServerError(let status):
             "Received a server error with a status: \(status) and binary body. Or is it empty? ¯\\_(ツ)_/¯"
-        case .textualServerError(status: let status, response: let response):
+        case .textualServerError(let status, let response):
             "Received a server error with a status: \(status) and body: \(response)"
-        case .recognizedServerError(status: let status, reason: let reason):
+        case .recognizedServerError(let status, let reason):
             "Received a server error with a status: \(status) and known reason \(reason)"
-        case .unexpectedResponse(message: let message):
+        case .unexpectedResponse(let message):
             message
         }
     }
-    
+
     init(fromResponse res: HTTPURLResponse, data: Data) {
         guard let text = String(data: data, encoding: .utf8) else {
             self = .binaryServerError(status: res.statusCode)
@@ -56,7 +57,8 @@ enum ServerRequestError: Error, CustomStringConvertible {
         struct RecognizedServerError: Decodable {
             var reason: String
         }
-        guard let recognized = try? JSONDecoder().decode(RecognizedServerError.self, from: data) else {
+        guard let recognized = try? JSONDecoder().decode(RecognizedServerError.self, from: data)
+        else {
             self = .textualServerError(status: res.statusCode, response: text)
             return
         }

@@ -8,10 +8,10 @@ let package = Package(
     products: [
         .library(
             name: "MessengerInterface",
-            targets: ["MessengerInterface"]),
+            targets: ["MessengerInterface"])
     ],
     targets: [
         .target(
-            name: "MessengerInterface"),
+            name: "MessengerInterface")
     ]
 )

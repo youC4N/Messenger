@@ -1,6 +1,6 @@
+import MessengerInterface
 import RawDawg
 import Vapor
-import MessengerInterface
 
 extension FetchAvatarResponse: AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
@@ -9,9 +9,11 @@ extension FetchAvatarResponse: AsyncResponseEncodable {
             try await ErrorResponse(Self.ErrorKind.unauthorized, reason: "Unauthorized.")
                 .encodeResponse(status: .unauthorized, for: request)
         case .notFound:
-            try await ErrorResponse(Self.ErrorKind.notFound, reason: "No avatar image for this user id.")
-                    .encodeResponse(status: .notFound, for: request)
-        case .success(let bytes, contentType: let contentType):
+            try await ErrorResponse(
+                Self.ErrorKind.notFound, reason: "No avatar image for this user id."
+            )
+            .encodeResponse(status: .notFound, for: request)
+        case .success(let bytes, let contentType):
             Response(
                 status: .ok,
                 headers: ["Content-Type": contentType.description],
@@ -29,19 +31,20 @@ func getUserAvatarRoute(req: Request) async throws -> FetchAvatarResponse {
     guard try await sessionTokenExists(token: sessionToken, in: req.db) else {
         return .unauthorized
     }
-    
+
     guard let userID = req.parameters.get("id") else {
         req.logger.error("getUserAvatarRoute doesn't have :id path parameter")
         throw Abort(.internalServerError)
     }
-    
+
     let row: (SQLiteBlob, MIMEType)? = try await req.db.prepare(
-        "select avatar, avatar_type from users where id = \(userID)")
-        .fetchOptional()
+        "select avatar, avatar_type from users where id = \(userID)"
+    )
+    .fetchOptional()
     guard let (blob, contentType) = row else {
         return .notFound
     }
-    
+
     guard case .loaded(let bytes) = blob else {
         req.logger.error("Retrieved avatar blob which isn't .loaded")
         throw Abort(.internalServerError)

@@ -1,6 +1,6 @@
+import MessengerInterface
 import OSLog
 import SwiftUI
-import MessengerInterface
 
 enum AppFlow: Codable, Hashable {
     case registration(registrationToken: RegistrationToken)

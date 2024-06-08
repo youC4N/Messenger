@@ -1,5 +1,5 @@
-import SwiftUI
 import OSLog
+import SwiftUI
 
 let logger = Logger(subsystem: "com.github.youC4N.videomessenger", category: "UI")
 
@@ -8,7 +8,7 @@ struct MessengerApp: App {
     var body: some Scene {
         WindowGroup {
             //FlowDisambiguation()
-            NavigationStack{
+            NavigationStack {
                 MainChatsView(sessionToken: "2QflOn_NKjI-iBJDa9Wty", wrongSession: {})
             }
         }

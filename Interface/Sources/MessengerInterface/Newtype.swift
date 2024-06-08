@@ -12,23 +12,23 @@ public protocol InfalibleNewtype: Newtype {
     init(rawValue: RawValue)
 }
 
-public extension Newtype {
-    func encode(to encoder: any Encoder) throws {
+extension Newtype {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(self.rawValue)
     }
 
-    var description: String {
+    public var description: String {
         self.rawValue.description
     }
 
-    static func < (lhs: Self, rhs: Self) -> Bool {
+    public static func < (lhs: Self, rhs: Self) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
 }
 
-public extension InfalibleNewtype {
-    init(from decoder: any Decoder) throws {
+extension InfalibleNewtype {
+    public init(from decoder: any Decoder) throws {
         self.init(rawValue: try decoder.singleValueContainer().decode(RawValue.self))
     }
 }
@@ -38,20 +38,19 @@ where RawValue: ExpressibleByIntegerLiteral, RawValue.IntegerLiteralType == Self
 {
 }
 
-public extension IntegralNewtype {
-    init(integerLiteral value: Self.IntegerLiteralType) {
+extension IntegralNewtype {
+    public init(integerLiteral value: Self.IntegerLiteralType) {
         let a = RawValue(integerLiteral: value)
         self.init(rawValue: a)
     }
 }
 
 public protocol StringNewtype: InfalibleNewtype, ExpressibleByStringLiteral
-where RawValue: ExpressibleByStringLiteral, RawValue.StringLiteralType == Self.StringLiteralType
-{
+where RawValue: ExpressibleByStringLiteral, RawValue.StringLiteralType == Self.StringLiteralType {
 }
 
-public extension StringNewtype {
-    init(stringLiteral value: Self.StringLiteralType) {
+extension StringNewtype {
+    public init(stringLiteral value: Self.StringLiteralType) {
         let a = RawValue(stringLiteral: value)
         self.init(rawValue: a)
     }

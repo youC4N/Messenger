@@ -11,15 +11,16 @@ extension API {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw ServerRequestError.nonHTTPResponse(got: type(of: response))
         }
-        
+
         API.logger.info("POST /otp response: \(httpResponse.statusCode, privacy: .public)")
         guard httpResponse.statusCode != 400 else {
-            let errorResponse = try JSONDecoder().decode(ErrorResponse<OTPResponse.ErrorKind>.self, from: body)
+            let errorResponse = try JSONDecoder().decode(
+                ErrorResponse<OTPResponse.ErrorKind>.self, from: body)
             return .invalidPhoneNumber(reason: errorResponse.reason)
         }
         guard httpResponse.statusCode == 200 else {
             let error = ServerRequestError(fromResponse: httpResponse, data: body)
-            
+
             API.logger.error("Server error occurred for POST /login \(error, privacy: .public)")
             throw error
         }

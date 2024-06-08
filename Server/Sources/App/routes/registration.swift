@@ -1,13 +1,13 @@
+import MessengerInterface
+import MultipartKit
 import RawDawg
 import Vapor
-import MultipartKit
-import MessengerInterface
 
 extension RegistrationResponse.Success: Content {}
 extension RegistrationResponse: AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
         switch self {
-        case .invalidToken(reason: let reason):
+        case .invalidToken(let reason):
             try await ErrorResponse(Self.ErrorKind.invalidToken, reason: reason)
                 .encodeResponse(status: .badRequest, for: request)
         case .success(let payload):
@@ -24,7 +24,7 @@ extension FileForUpload<ByteBuffer>: MultipartPartConvertible {
             body: bytes
         )
     }
-    
+
     public init?(multipart: MultipartKit.MultipartPart) {
         guard let contentType = multipart.headers.contentType else {
             return nil
@@ -36,7 +36,7 @@ extension FileForUpload<ByteBuffer>: MultipartPartConvertible {
 @Sendable
 func registrationRoute(req: Request) async throws -> RegistrationResponse {
     let registrationRequest = try req.content.decode(RegistrationRequest<ByteBuffer>.self)
-    
+
     guard
         let regSesh = try await fetchRegistration(
             byToken: registrationRequest.registrationToken,
@@ -45,10 +45,11 @@ func registrationRoute(req: Request) async throws -> RegistrationResponse {
     else { return .invalidToken() }
     guard regSesh.expiresAt > Date.now else {
         req.logger.warning("Tried to register a new user with expired token")
-        try await deleteRegistrationSession(byToken: registrationRequest.registrationToken, in: req.db)
+        try await deleteRegistrationSession(
+            byToken: registrationRequest.registrationToken, in: req.db)
         return .invalidToken()
     }
-    
+
     let userID = try await createUser(
         username: registrationRequest.username,
         phone: regSesh.phone,
@@ -59,7 +60,7 @@ func registrationRoute(req: Request) async throws -> RegistrationResponse {
         "New user registered",
         metadata: [
             "userID": "\(userID)", "name": "\(registrationRequest.username)",
-            "phone": "\(regSesh.phone)", "uploadedAvatar": "\(registrationRequest.avatar != nil)"
+            "phone": "\(regSesh.phone)", "uploadedAvatar": "\(registrationRequest.avatar != nil)",
         ]
     )
     try await deleteRegistrationSession(byToken: registrationRequest.registrationToken, in: req.db)
@@ -71,13 +72,16 @@ func registrationRoute(req: Request) async throws -> RegistrationResponse {
 struct RegistrationSession: Decodable {
     var phone: PhoneNumber
     var expiresAt: Date
-    
+
     enum CodingKeys: String, CodingKey {
-        case phone, expiresAt = "expires_at"
+        case phone
+        case expiresAt = "expires_at"
     }
 }
 
-private func deleteRegistrationSession(byToken token: RegistrationToken, in db: Database) async throws {
+private func deleteRegistrationSession(byToken token: RegistrationToken, in db: Database)
+    async throws
+{
     try await withContext("Deleting stale registration session") {
         try await db.prepare("delete from registration_tokens where token=\(token)").run()
     }
@@ -93,11 +97,16 @@ private func fetchRegistration(byToken token: RegistrationToken, in db: Database
     }
 }
 
-private func createUser(username: String, phone: PhoneNumber, avatar: FileForUpload<ByteBuffer>?, in req: Request) async throws -> UserID {
-    req.logger.info("Trying to create user", metadata:
-                    ["username": "\(username)",
-                     "phone": "\(phone)",
-                     "avatarType": "\(avatar?.contentType.rawValue))"])
+private func createUser(
+    username: String, phone: PhoneNumber, avatar: FileForUpload<ByteBuffer>?, in req: Request
+) async throws -> UserID {
+    req.logger.info(
+        "Trying to create user",
+        metadata: [
+            "username": "\(username)",
+            "phone": "\(phone)",
+            "avatarType": "\(avatar?.contentType.rawValue))",
+        ])
     return try await withContext("Saving new user") {
         try await req.db.prepare(
             """

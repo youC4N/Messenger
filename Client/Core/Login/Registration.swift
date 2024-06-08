@@ -72,19 +72,20 @@ struct Registration: View {
         guard validate(username) else { return }
 
         Task {
-            let response = await Result {try await API.local.registerUser(
-                registrationToken: token,
-                username: username,
-                avatar: selectedImage.flatMap { avatar in
-                    avatar.contentType.mimeType.map { mimeType in
+            let response = await Result {
+                try await API.local.registerUser(
+                    registrationToken: token,
+                    username: username,
+                    avatar: selectedImage.flatMap { avatar in
+                        avatar.contentType.mimeType.map { mimeType in
                             .init(bytes: avatar.bytes, contentType: mimeType)
-                    }
-                })
+                        }
+                    })
             }
-                
+
             switch response {
-            case .failure(_): break // TODO: Notify user
-            case .success(.invalidToken(reason: _)): break // TODO: send the user back to the phone number screen
+            case .failure(_): break  // TODO: Notify user
+            case .success(.invalidToken(reason: _)): break  // TODO: send the user back to the phone number screen
             case .success(.success(let payload)):
                 onLoginComplete(payload.sessionToken, payload.userID)
             }
@@ -102,16 +103,20 @@ struct Registration: View {
 
         Task {
             do {
-                let mimeTypes = selectedItem.supportedContentTypes.compactMap { $0.preferredMIMEType }.map(\.description)
+                let mimeTypes = selectedItem.supportedContentTypes.compactMap {
+                    $0.preferredMIMEType
+                }.map(\.description)
                 logger.info("Selected gallery item: \(String(describing: mimeTypes))")
-                guard let data = try await selectedItem.loadTransferable(type: AvatarPhoto.self) else {
+                guard let data = try await selectedItem.loadTransferable(type: AvatarPhoto.self)
+                else {
                     logger.error("Couldn't find suitable conversion for AvatarPhoto")
                     return
                 }
                 withAnimation {
                     selectedImage = data
                 }
-                logger.info("Transferred gallery image into AvatarPhoto \(data.contentType), \(data.bytes)")
+                logger.info(
+                    "Transferred gallery image into AvatarPhoto \(data.contentType), \(data.bytes)")
             } catch {
                 logger.error("While transferring to AvatarPhoto, error occurred: \(error)")
             }
@@ -124,8 +129,8 @@ struct Registration: View {
                 selection: $selectedItem,
                 matching: .images,
                 preferredItemEncoding: .current,
-                photoLibrary: .shared())
-            {
+                photoLibrary: .shared()
+            ) {
                 AvatarSelection(selectedImage: selectedImage?.image)
                     .frame(minWidth: 80, maxWidth: .infinity, minHeight: 80, maxHeight: .infinity)
                     .aspectRatio(1, contentMode: .fit)

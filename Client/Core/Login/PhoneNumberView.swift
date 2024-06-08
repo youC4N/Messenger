@@ -1,5 +1,5 @@
-import SwiftUI
 import MessengerInterface
+import SwiftUI
 
 struct PasswordRequest: Codable {
     let phoneNumber: String
@@ -49,7 +49,7 @@ struct PhoneNumberView: View {
                         Task {
                             do {
                                 switch try await API.local.requestOTP(forPhoneNumber: validPhone) {
-                                case .invalidPhoneNumber(reason: _): break // TODO: Display an error to the user
+                                case .invalidPhoneNumber(reason: _): break  // TODO: Display an error to the user
                                 case .success(let payload): self.otpToken = payload.otpToken
                                 }
                             } catch let e {
