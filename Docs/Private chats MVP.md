@@ -26,7 +26,7 @@ create index private_chats_b_last_message on private_chats(participant_b_id, las
 create table private_messages (
     id integer primary key autoincrement,
     chat_id integer not null references private_chats(id) on delete cascade,
-    video_blob blob not null,
+    video_url text not null,
     message_order integer not null,
     created_at text not null default (datetime('now', 'subsec'))
 );
@@ -101,7 +101,7 @@ Look up an existing, or create a new chat.
 { error: "Unauthorized" }
 ```
 
-## POST `/private_chat/:chatID/send`
+## POST `/private_chat/:/send`
 **Required authorization**
 
 Send a video message to the chat

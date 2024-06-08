@@ -57,4 +57,5 @@ func routes(_ app: Application) {
     app.get("user", ":id", "avatar", use: getUserAvatarRoute)
     
     app.post("chat", ":idB", use: createNewChat)
+    app.post("private_chat", "idB", "video", use: createNewMessageRoute)
 }

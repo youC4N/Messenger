@@ -47,6 +47,6 @@ func fetchPrivateChatsRoute(req: Request) async throws -> FetchPrivateChatsRespo
     })
 }
 
-private func sessionUser(from token: String, in db: Database) async throws -> UserID? {
+func sessionUser(from token: String, in db: Database) async throws -> UserID? {
     try await db.prepare("select user_id from sessions where session_token=\(token)").fetchOptional()
 }

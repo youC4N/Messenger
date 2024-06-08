@@ -81,7 +81,6 @@ struct Registration: View {
                     }
                 })
             }
-            let a = 1
                 
             switch response {
             case .failure(_): break // TODO: Notify user

@@ -1,6 +1,6 @@
+import MessengerInterface
 import OSLog
 import SwiftUI
-import MessengerInterface
 
 struct MainChatsView: View {
     @State private var showingSheet = false
@@ -8,6 +8,7 @@ struct MainChatsView: View {
     var sessionToken: SessionToken
     // TODO: every time empty array with users
     @State var wrongSession: () -> Void
+
     @State var allChats: [User]?
 
     fileprivate func handleRefresh() {
@@ -22,18 +23,19 @@ struct MainChatsView: View {
             }
         }
     }
-    
+
     var body: some View {
-        List {
+        ScrollView {
             let chats = allChats ?? []
             ForEach(chats) { chat in
-                NavigationLink(destination: MainVideoPlayerView(chat: chat.id, sessionToken: sessionToken)){
+                NavigationLink(
+                    destination: MainVideoPlayerView(chat: chat.id, sessionToken: sessionToken)
+                ) {
                     HStack {
                         UserAvatar(sessionToken: sessionToken, userID: chat.id)
                             .frame(width: 48, height: 48)
                             .padding(.trailing, 8)
-                        
-                        
+
                         Text(chat.username)
                             .fontWeight(.bold)
                             .font(.title3)
@@ -44,16 +46,16 @@ struct MainChatsView: View {
                 }
             }
         }
-//        .task {
-//            do {
-//                switch try await API.local.fetchPrivateChats(sessionToken: sessionToken) {
-//                case .unauthorized: wrongSession()
-//                case .success(let users): allChats = users
-//                }
-//            } catch {
-//                logger.error("Couldn't fetch chats \(error, privacy: .public)")
-//            }
-//        }
+                .task {
+                    do {
+                        switch try await API.local.fetchPrivateChats(sessionToken: sessionToken) {
+                        case .unauthorized: wrongSession()
+                        case .success(let users): allChats = users
+                        }
+                    } catch {
+                        logger.error("Couldn't fetch chats \(error, privacy: .public)")
+                    }
+                }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -81,6 +83,7 @@ struct MainChatsView: View {
                     })
             }
         }
+        
         .navigationDestination(item: $openedChat) { partisipant_b in
             MainVideoPlayerView(chat: partisipant_b, sessionToken: sessionToken)
         }
@@ -96,4 +99,12 @@ enum MYError: Error {
     case noAvatar
     case unknownURLresponse
     case unfinished
+}
+
+//#Preview {
+//    // MainChatsView(showingSheet: _, openedChat: _, sessionToken: _, wrongSession: _, allChats: _)
+//}
+
+#Preview {
+    MainChatsView(sessionToken: "", wrongSession: {})
 }
