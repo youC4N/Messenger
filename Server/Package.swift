@@ -13,6 +13,7 @@ let package = Package(
         .package(url: "https://github.com/Malien/raw-dawg.swift", exact: "0.1.1"),
         .package(url: "https://github.com/chrisaljoudi/swift-log-oslog.git", from: "0.2.1"),
         .package(path: "../Interface"),
+        .package(url: "https://github.com/apple/swift-system.git", revision: "318d2159d1441c8daadd1fb19e457f5ece598de4")
     ],
     targets: [
         .executableTarget(

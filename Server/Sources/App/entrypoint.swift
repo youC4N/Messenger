@@ -95,5 +95,5 @@ func routes(_ app: Application) {
 
     app.get("user", ":id", "avatar", use: getUserAvatarRoute)
 
-    app.on(.POST, "private-chat", "idB", "video", body: .stream, use: createNewMessageRoute)
+    app.on(.POST, "private-chat", ":idB", "send", body: .stream, use: sendMessageRoute)
 }

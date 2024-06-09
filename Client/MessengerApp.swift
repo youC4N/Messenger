@@ -7,10 +7,10 @@ let logger = Logger(subsystem: "com.github.youC4N.videomessenger", category: "UI
 struct MessengerApp: App {
     var body: some Scene {
         WindowGroup {
-            //FlowDisambiguation()
-            NavigationStack {
-                MainChatsView(sessionToken: "2QflOn_NKjI-iBJDa9Wty", wrongSession: {})
-            }
+            FlowDisambiguation()
+//            NavigationStack {
+//                MainChatsView(sessionToken: "2QflOn_NKjI-iBJDa9Wty", wrongSession: {})
+//            }
         }
     }
 }

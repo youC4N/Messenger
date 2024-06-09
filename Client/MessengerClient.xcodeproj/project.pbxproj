@@ -27,6 +27,7 @@
 		C440525E2C0BDA8900D51BDC /* fetch-avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C440525D2C0BDA8900D51BDC /* fetch-avatar.swift */; };
 		C45A115A2C0B8D22005BB2D1 /* UserAvatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45A11592C0B8D22005BB2D1 /* UserAvatar.swift */; };
 		C479FE602BEA7479005145CA /* PhoneNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */; };
+		C4AF36792C14EA40003A79B5 /* send-message.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AF36782C14EA40003A79B5 /* send-message.swift */; };
 		C4E157222C0C6B9900CDFDBC /* MessengerInterface in Frameworks */ = {isa = PBXBuildFile; productRef = C4E157212C0C6B9900CDFDBC /* MessengerInterface */; };
 		C4E157252C0C712800CDFDBC /* MessengerInterface in Frameworks */ = {isa = PBXBuildFile; productRef = C4E157242C0C712800CDFDBC /* MessengerInterface */; };
 /* End PBXBuildFile section */
@@ -53,6 +54,7 @@
 		C440525D2C0BDA8900D51BDC /* fetch-avatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "fetch-avatar.swift"; sourceTree = "<group>"; };
 		C45A11592C0B8D22005BB2D1 /* UserAvatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAvatar.swift; sourceTree = "<group>"; };
 		C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberField.swift; sourceTree = "<group>"; };
+		C4AF36782C14EA40003A79B5 /* send-message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "send-message.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +142,7 @@
 				C44052592C0BCAED00D51BDC /* fetch-private-chats.swift */,
 				C440525B2C0BD5EB00D51BDC /* find-user.swift */,
 				C440525D2C0BDA8900D51BDC /* fetch-avatar.swift */,
+				C4AF36782C14EA40003A79B5 /* send-message.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -246,6 +249,7 @@
 				855F07912C0B58B20096D967 /* SearchForUserView.swift in Sources */,
 				C440525A2C0BCAED00D51BDC /* fetch-private-chats.swift in Sources */,
 				85FC07CB2BE93B3100576055 /* CodeView.swift in Sources */,
+				C4AF36792C14EA40003A79B5 /* send-message.swift in Sources */,
 				C44052542C0BB2EF00D51BDC /* authenticate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

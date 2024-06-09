@@ -50,7 +50,7 @@ struct MainVideoPlayerView: View {
                 })
         )
         .fullScreenCover(isPresented: $showNextView) {
-            CreateVideoView(userBID: chat)
+            CreateVideoView(recipient: chat, sessionToken: sessionToken)
         }
     }
 }

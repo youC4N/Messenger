@@ -11,3 +11,4 @@ dev.sqlite*
 .env.*
 ! .env.example
 .vscode
+/data

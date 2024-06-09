@@ -1,9 +1,9 @@
 import MessengerInterface
 import RawDawg
 
-protocol NewtypeSQLCodable: RawRepresentable, SQLPrimitiveDecodable, SQLPrimitiveEncodable {}
+protocol SQLNewtype: RawRepresentable, SQLPrimitiveDecodable, SQLPrimitiveEncodable {}
 
-extension NewtypeSQLCodable {
+extension SQLNewtype {
     public init?(fromSQL primitive: SQLiteValue) where RawValue == Int {
         guard case .integer(let int) = primitive else {
             return nil
@@ -27,9 +27,10 @@ extension NewtypeSQLCodable {
     }
 }
 
-extension UserID: NewtypeSQLCodable {}
-extension SessionToken: NewtypeSQLCodable {}
-extension OTPToken: NewtypeSQLCodable {}
-extension RegistrationToken: NewtypeSQLCodable {}
-extension PhoneNumber: NewtypeSQLCodable {}
-extension MIMEType: NewtypeSQLCodable {}
+extension UserID: SQLNewtype {}
+extension SessionToken: SQLNewtype {}
+extension OTPToken: SQLNewtype {}
+extension RegistrationToken: SQLNewtype {}
+extension PhoneNumber: SQLNewtype {}
+extension MIMEType: SQLNewtype {}
+extension MessageID: SQLNewtype {}

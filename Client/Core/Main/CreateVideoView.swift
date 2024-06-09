@@ -4,19 +4,58 @@ import MessengerInterface
 import PhotosUI
 import SwiftUI
 
-enum NewMessageResponse: Codable {
-    case unauthorized
-    case success
-}
-
 struct TempVideo: Transferable {
     let fileURL: URL
+    let type: VideoType
+    
+    enum VideoType {
+        case mpeg4, quicktime
+        
+        init?(utType: UTType) {
+            switch utType {
+            case .mpeg4Movie: self = .mpeg4
+            case .quickTimeMovie: self = .quicktime
+            default: return nil
+            }
+        }
+        
+        var uttype: UTType {
+            switch self {
+            case .mpeg4: .mpeg4Movie
+            case .quicktime: .quickTimeMovie
+            }
+        }
+        
+        var `extension`: String {
+            switch self {
+            case .mpeg4: "mp4"
+            case .quicktime: "mov"
+            }
+        }
+    }
+    
     static var transferRepresentation: some TransferRepresentation {
         FileRepresentation(contentType: .mpeg4Movie) {
             SentTransferredFile($0.fileURL)
         } importing: {
-            TempVideo(fileURL: $0.file)
+            try copyToAppContainer(file: $0.file, fileType: .mpeg4)
         }
+        FileRepresentation(contentType: .quickTimeMovie) {
+            SentTransferredFile($0.fileURL)
+        } importing: {
+            try copyToAppContainer(file: $0.file, fileType: .quicktime)
+        }
+    }
+    
+    static func copyToAppContainer(file source: URL, fileType: VideoType) throws -> Self {
+        logger.info("Copying temporary video asset to the app container \(source, privacy: .public)")
+        let filename = "\(UUID()).\(fileType.extension)"
+        let target = FileManager.default
+            .temporaryDirectory
+            .appending(component: filename, directoryHint: .notDirectory)
+        try FileManager.default.copyItem(at: source, to: target)
+        logger.info("Copied temporary video asset to \(target, privacy: .public)")
+        return .init(fileURL: target, type: fileType)
     }
 }
 
@@ -28,7 +67,21 @@ struct CreateVideoView: View {
     @State private var selectedVideo: TempVideo?
     @State private var offset = CGSize.zero
     @State private var showNextView = false
-    var userBID: UserID
+    var recipient: UserID
+    var sessionToken: SessionToken
+    
+    func handleUploadClick() {
+        guard let selectedVideo else { return }
+        
+        Task { () async in
+            do {
+                let response = try await API.local.sendMessage(to: recipient, videoFile: selectedVideo.fileURL, sessionToken: sessionToken)
+                logger.info("Message send reponse: \(String(reflecting: response))")
+            } catch {
+                logger.error("Error occurred while sending the video: \(error)")
+            }
+        }
+    }
 
     var body: some View {
         VStack {
@@ -49,7 +102,7 @@ struct CreateVideoView: View {
             Button(action: { showVideoPicker = true }) {
                 Image(systemName: "plus")
             }
-            Button(action: {}) {
+            Button(action: handleUploadClick) {
                 Text("Send Video")
             }
         }
@@ -67,10 +120,17 @@ struct CreateVideoView: View {
 
             Task {
                 do {
-                    logger.info("Extracting video from photo started")
+                    let types = selectedItem.supportedContentTypes.map { type in
+                        (type.preferredMIMEType, type)
+                    }
+//                    var exportSession = AVAssetExportSession(asset: <#T##AVAsset#>, presetName: AVAssetExportPresetMediumQuality)
+//                    exportSession?.outputFileType = .mp4
+//                    exportSession.
+                    logger.info("Extracting video from photo started \(String(describing: types))")
                     isVideoProcessing = true
                     selectedVideo = try await selectedItem.loadTransferable(type: TempVideo.self)
                     isVideoProcessing = false
+                    logger.info("Transcribed video \(String(describing: selectedVideo))")
                 } catch {
                     logger.error(
                         "Error during extracting video from photo -- \(error.localizedDescription)")
@@ -112,5 +172,5 @@ struct CreateVideoView: View {
 }
 
 #Preview {
-    CreateVideoView(userBID: 3)
+    CreateVideoView(recipient: 3, sessionToken: "NOPE")
 }
