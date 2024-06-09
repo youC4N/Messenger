@@ -62,13 +62,13 @@ func sendMessageRoute(for req: Request) async throws -> NewMessageResponse {
     guard req.headers.contentType == .hevcVideo else {
         return .unsupportedMediaFormat(reason: "Unexpected file Content-Type. Only \"video/mp4; codecs=dvhe\" video streams are allowed.")
     }
-    guard let sessionToken = req.headers.bearerAuthorization?.token else {
+    guard let sessionToken = req.headers.bearerAuthorization else {
         return .unauthorized
     }
     guard let authorID = try await sessionUser(from: sessionToken, in: req.db) else {
         return .unauthorized
     }
-    guard let userBID: UserID = req.parameters.get("idB") else {
+    guard let userBID: UserID = req.parameters.get("otherParticipantID") else {
         req.logger.error("createNewMessageRoute doesn't have :idB path parameter")
         throw Abort(.badRequest)
     }

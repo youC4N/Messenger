@@ -89,11 +89,12 @@ func nanoid(
 func routes(_ app: Application) {
     app.post("otp", use: requestOTPRoute)
     app.post("login", use: loginRoute)
-    app.get("user", use: findUserRoute)
-    app.get("private-chat", use: fetchPrivateChatsRoute)
     app.on(.POST, "registration", body: .collect(maxSize: "10mb"), use: registrationRoute)
-
+    
+    app.get("user", use: findUserRoute)
     app.get("user", ":id", "avatar", use: getUserAvatarRoute)
 
-    app.on(.POST, "private-chat", ":idB", "send", body: .stream, use: sendMessageRoute)
+    app.get("private-chat", use: fetchPrivateChatsRoute)
+    app.on(.POST, "private-chat", ":otherParticipantID", "send", body: .stream, use: sendMessageRoute)
+    app.get("private-chat", ":otherParticipantID", "message", ":messageID", "video", use: fetchVideoRoute)
 }

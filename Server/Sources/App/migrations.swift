@@ -93,6 +93,10 @@ private let migrations = [
     -- Don't really think we need this one. Although, who knows
     -- create index private_messages_author_id on private_messages(author_id);
     """,
+    """
+    alter table video_uploads
+        add column file_size integer null;
+    """
 ]
 
 func migrate(db: Database, logger: Logger) async throws {

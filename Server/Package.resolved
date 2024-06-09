@@ -1,5 +1,5 @@
 {
-  "originHash" : "fc0f51b26a298e0b5d4ee749eb9c7d579b03a94bd1677220956e583d1b71c6f8",
+  "originHash" : "a5af4b0798f7591f2ba313ba6953307466c064238753005e7a640fb6da1a9b99",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Malien/raw-dawg.swift",
       "state" : {
-        "revision" : "1480098244014728638f3d4ace1e44d85af26799",
-        "version" : "0.0.5"
+        "revision" : "81169d396e6e367fda58b091d6e541e07dff9ef1",
+        "version" : "0.1.1"
       }
     },
     {
@@ -116,6 +116,15 @@
       "state" : {
         "revision" : "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
         "version" : "1.5.4"
+      }
+    },
+    {
+      "identity" : "swift-log-oslog",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/chrisaljoudi/swift-log-oslog.git",
+      "state" : {
+        "revision" : "176d41d46429e79c806333025b226e0c50a0c602",
+        "version" : "0.2.2"
       }
     },
     {
@@ -186,8 +195,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-system.git",
       "state" : {
-        "revision" : "025bcb1165deab2e20d4eaba79967ce73013f496",
-        "version" : "1.2.1"
+        "revision" : "318d2159d1441c8daadd1fb19e457f5ece598de4"
       }
     },
     {
