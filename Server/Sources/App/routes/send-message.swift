@@ -176,7 +176,11 @@ private func persistUpload(stream: Request.Body, into filePath: FilePath, keepTr
     let streamLength = try await withUploadCleanup(upload: upload, in: db, logger: logger) {
         try await FileSystem.shared.withFileHandle(forWritingAt: filePath, options: .newFile(replaceExisting: false)) { file in
             try await withFileCleanup(filePath) {
-                try await collectStream(into: file, atPath: filePath, stream: stream)
+                let streamLength = try await collectStream(into: file, atPath: filePath, stream: stream)
+                
+                try await db.prepare("update video_uploads set file_size = \(streamLength) where id = \(uploadID)").run()
+                
+                return streamLength
             }
         }
     }
