@@ -33,7 +33,8 @@ enum Entrypoint {
         app.middleware = .init()
         app.middleware.use(App.ErrorMiddleware(env: env))
         let db = try Database(filename: dbpath)
-        try await db.execute("""
+        try await db.execute(
+            """
             pragma foreign_keys = on;
             pragma journal_mode = wal;
             """)
@@ -90,11 +91,14 @@ func routes(_ app: Application) {
     app.post("otp", use: requestOTPRoute)
     app.post("login", use: loginRoute)
     app.on(.POST, "registration", body: .collect(maxSize: "10mb"), use: registrationRoute)
-    
+
     app.get("user", use: findUserRoute)
     app.get("user", ":id", "avatar", use: getUserAvatarRoute)
 
     app.get("private-chat", use: fetchPrivateChatsRoute)
-    app.on(.POST, "private-chat", ":otherParticipantID", "send", body: .stream, use: sendMessageRoute)
-    app.get("private-chat", ":otherParticipantID", "message", ":messageID", "video", use: fetchVideoRoute)
+    app.on(
+        .POST, "private-chat", ":otherParticipantID", "send", body: .stream, use: sendMessageRoute)
+    app.get(
+        "private-chat", ":otherParticipantID", "message", ":messageID", "video",
+        use: fetchVideoRoute)
 }

@@ -96,7 +96,7 @@ private let migrations = [
     """
     alter table video_uploads
         add column file_size integer null;
-    """
+    """,
 ]
 
 func migrate(db: Database, logger: Logger) async throws {

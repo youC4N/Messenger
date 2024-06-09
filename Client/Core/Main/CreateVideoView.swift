@@ -64,6 +64,10 @@ struct CreateVideoView: View {
     @State private var showVideoPicker = false
     @State private var selectedItem: PhotosPickerItem?
     @State private var isVideoProcessing = false
+//    @State private var selectedVideo: TempVideo? = TempVideo(
+//        fileURL: URL(string: "http://localhost:8080/private-chat/2/message/3/video?sessionToken=hgFZ8uE4H5qOPoynrksN0")!,
+//        type: .quicktime
+//    )
     @State private var selectedVideo: TempVideo?
     @State private var offset = CGSize.zero
     @State private var showNextView = false
