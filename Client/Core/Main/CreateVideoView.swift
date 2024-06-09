@@ -123,9 +123,6 @@ struct CreateVideoView: View {
                     let types = selectedItem.supportedContentTypes.map { type in
                         (type.preferredMIMEType, type)
                     }
-//                    var exportSession = AVAssetExportSession(asset: <#T##AVAsset#>, presetName: AVAssetExportPresetMediumQuality)
-//                    exportSession?.outputFileType = .mp4
-//                    exportSession.
                     logger.info("Extracting video from photo started \(String(describing: types))")
                     isVideoProcessing = true
                     selectedVideo = try await selectedItem.loadTransferable(type: TempVideo.self)

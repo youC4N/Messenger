@@ -25,6 +25,7 @@ let package = Package(
                     name: "LoggingOSLog", package: "swift-log-oslog",
                     condition: .when(platforms: [.macOS])),
                 .product(name: "MessengerInterface", package: "Interface"),
+                .product(name: "SystemPackage", package: "swift-system")
             ],
             swiftSettings: swiftSettings
         ),
