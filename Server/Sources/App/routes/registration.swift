@@ -79,7 +79,7 @@ struct RegistrationSession: Decodable {
     }
 }
 
-private func deleteRegistrationSession(byToken token: RegistrationToken, in db: Database)
+private func deleteRegistrationSession(byToken token: RegistrationToken, in db: SharedConnection)
     async throws
 {
     try await withContext("Deleting stale registration session") {
@@ -87,7 +87,7 @@ private func deleteRegistrationSession(byToken token: RegistrationToken, in db: 
     }
 }
 
-private func fetchRegistration(byToken token: RegistrationToken, in db: Database) async throws
+private func fetchRegistration(byToken token: RegistrationToken, in db: SharedConnection) async throws
     -> RegistrationSession?
 {
     try await withContext("Retrieving phone given registrationToken") {

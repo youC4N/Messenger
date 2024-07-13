@@ -30,9 +30,10 @@ enum Entrypoint {
             withIntermediateDirectories: true)
 
         let app = try await Application.make(env)
+        app.http.server.configuration.address = .hostname("0.0.0.0", port: 8080)
         app.middleware = .init()
         app.middleware.use(App.ErrorMiddleware(env: env))
-        let db = try Database(filename: dbpath)
+        let db = try SharedConnection(filename: dbpath)
         try await db.execute(
             """
             pragma foreign_keys = on;
@@ -40,7 +41,7 @@ enum Entrypoint {
             """)
         try await migrate(db: db, logger: app.logger)
 
-        app.storage[Database.self] = db
+        app.storage[SharedConnection.self] = db
         app.storage[VideoStorageDirectoryKey.self] = videoStoragePath
         defer { app.shutdown() }
         routes(app)
@@ -50,8 +51,8 @@ enum Entrypoint {
 
 // MARK: Common functionality
 
-extension Database: StorageKey {
-    public typealias Value = Database
+extension SharedConnection: StorageKey {
+    public typealias Value = SharedConnection
 }
 
 struct VideoStorageDirectoryKey: StorageKey {
@@ -59,8 +60,8 @@ struct VideoStorageDirectoryKey: StorageKey {
 }
 
 extension Request {
-    var db: Database {
-        self.application.storage[Database.self]!
+    var db: SharedConnection {
+        self.application.storage[SharedConnection.self]!
     }
     var videoStorageDirectory: FilePath {
         self.application.storage[VideoStorageDirectoryKey.self]!
@@ -94,10 +95,13 @@ func routes(_ app: Application) {
 
     app.get("user", use: findUserRoute)
     app.get("user", ":id", "avatar", use: getUserAvatarRoute)
+    
+    app.get("private-chats", ":idB", "messages", use: fetchPrivateMessagesRoute)
 
     app.get("private-chat", use: fetchPrivateChatsRoute)
     app.on(
         .POST, "private-chat", ":otherParticipantID", "send", body: .stream, use: sendMessageRoute)
+    
     app.get(
         "private-chat", ":otherParticipantID", "message", ":messageID", "video",
         use: fetchVideoRoute)

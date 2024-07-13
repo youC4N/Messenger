@@ -80,7 +80,7 @@ func createSession(for userId: UserID, in req: Request) async throws -> SessionT
     return SessionToken(rawValue: session)
 }
 
-func deleteOTP(token: OTPToken, in db: Database) async throws {
+func deleteOTP(token: OTPToken, in db: SharedConnection) async throws {
     try await withContext("Deleting OTP given token") {
         try await db.prepare(
             "delete from one_time_passwords where token = \(token)"
@@ -88,7 +88,7 @@ func deleteOTP(token: OTPToken, in db: Database) async throws {
     }
 }
 
-func fetchUserID(byPhone phone: PhoneNumber, in db: Database) async throws -> UserID? {
+func fetchUserID(byPhone phone: PhoneNumber, in db: SharedConnection) async throws -> UserID? {
     try await withContext("Retriving user id given phone number") {
         try await db.prepare(
             "select id from users where phone_number = \(phone)"
@@ -96,7 +96,7 @@ func fetchUserID(byPhone phone: PhoneNumber, in db: Database) async throws -> Us
     }
 }
 
-func createRegistrationSession(token: RegistrationToken, phone: PhoneNumber, in db: Database)
+func createRegistrationSession(token: RegistrationToken, phone: PhoneNumber, in db: SharedConnection)
     async throws
 {
     try await withContext("Saving registration token") {

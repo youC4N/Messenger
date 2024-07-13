@@ -56,7 +56,7 @@ func findUserRoute(req: Request) async throws -> FindUserResponse {
     return .found(.init(id: userID, username: username))
 }
 
-func sessionTokenExists(token: String, in db: Database) async throws -> Bool {
+func sessionTokenExists(token: String, in db: SharedConnection) async throws -> Bool {
     try await db.prepare(
         "select exists (select 1 from sessions where session_token = \(token))"
     )

@@ -48,10 +48,10 @@ func fetchPrivateChatsRoute(req: Request) async throws -> FetchPrivateChatsRespo
         })
 }
 
-func sessionUser(from token: SessionToken, in db: Database) async throws -> UserID? {
+func sessionUser(from token: SessionToken, in db: SharedConnection) async throws -> UserID? {
     try await db.prepare("select user_id from sessions where session_token=\(token)")
         .fetchOptional()
 }
-func sessionUser(from token: BearerAuthorization, in db: Database) async throws -> UserID? {
+func sessionUser(from token: BearerAuthorization, in db: SharedConnection) async throws -> UserID? {
     try await sessionUser(from: SessionToken(rawValue: token.token), in: db)
 }

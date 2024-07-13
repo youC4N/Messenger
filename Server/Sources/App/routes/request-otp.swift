@@ -34,7 +34,7 @@ private func generateOTPCode(size: Int = 6) -> String {
     String(otpAlphabet.randomSample(count: size))
 }
 
-private func saveOTP(code: String, token: OTPToken, phone: PhoneNumber, in db: Database)
+private func saveOTP(code: String, token: OTPToken, phone: PhoneNumber, in db: SharedConnection)
     async throws
 {
     try await withContext("Inserting otp password") {

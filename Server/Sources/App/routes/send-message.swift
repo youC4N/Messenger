@@ -6,6 +6,7 @@ import SystemPackage
 import Vapor
 
 extension Message: Content {}
+
 extension NewMessageResponse: AsyncResponseEncodable {
     public func encodeResponse(for request: Request) async throws -> Response {
         switch self {
@@ -127,7 +128,7 @@ struct UploadID: IntegralNewtype, SQLNewtype {
     var rawValue: Int
 }
 
-private func upsertChat(_ aID: UserID, _ bID: UserID, in db: Database) async throws -> ChatID {
+private func upsertChat(_ aID: UserID, _ bID: UserID, in db: SharedConnection) async throws -> ChatID {
     assert(aID != bID, "Cannot create chats when a participant is the same as b participant")
     guard aID < bID else {
         return try await upsertChat(bID, aID, in: db)
@@ -154,7 +155,7 @@ private func upsertChat(_ aID: UserID, _ bID: UserID, in db: Database) async thr
 }
 
 private func createMessage(
-    in chat: ChatID, authoredBy author: UserID, withUpload upload: UploadID, in db: Database
+    in chat: ChatID, authoredBy author: UserID, withUpload upload: UploadID, in db: SharedConnection
 ) async throws -> Message {
     try await withContext("Inserting new message into chat \(chat)") {
         let lastMessageOrder: Int =
@@ -183,7 +184,7 @@ private func createMessage(
 }
 
 private func persistUpload(
-    stream: Request.Body, into filePath: FilePath, keepTrackIn db: Database, logger: Logger
+    stream: Request.Body, into filePath: FilePath, keepTrackIn db: SharedConnection, logger: Logger
 ) async throws -> Upload {
     let (uploadID, createdAt): (UploadID, Date) = try await db.prepare(
         """
@@ -226,7 +227,7 @@ struct Upload {
 }
 
 private func withUploadCleanup<T>(
-    upload: Upload, in db: Database, logger: Logger, block: () async throws -> T
+    upload: Upload, in db: SharedConnection, logger: Logger, block: () async throws -> T
 ) async throws -> T {
     do {
         return try await block()

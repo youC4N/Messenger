@@ -12,6 +12,8 @@
 		8515B1EE2BD2D36F00A7AD8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */; };
 		8515B1F12BD2D36F00A7AD8A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8515B1F02BD2D36F00A7AD8A /* Preview Assets.xcassets */; };
 		853CC70C2BE1511F00B88C89 /* PhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853CC70B2BE1511F00B88C89 /* PhoneNumberView.swift */; };
+		8542AD182C15A2E6002B06FA /* fetch-private-messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8542AD172C15A2E6002B06FA /* fetch-private-messages.swift */; };
+		8542AD1A2C17037D002B06FA /* video-url.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8542AD192C17037D002B06FA /* video-url.swift */; };
 		855F07912C0B58B20096D967 /* SearchForUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855F07902C0B58B20096D967 /* SearchForUserView.swift */; };
 		859638B62BF8F19B0029EC85 /* Registration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859638B52BF8F19B0029EC85 /* Registration.swift */; };
 		85B438F72C1362E600EE9AB3 /* CreateVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B438F62C1362E600EE9AB3 /* CreateVideoView.swift */; };
@@ -39,6 +41,8 @@
 		8515B1ED2BD2D36F00A7AD8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8515B1F02BD2D36F00A7AD8A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		853CC70B2BE1511F00B88C89 /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
+		8542AD172C15A2E6002B06FA /* fetch-private-messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "fetch-private-messages.swift"; sourceTree = "<group>"; };
+		8542AD192C17037D002B06FA /* video-url.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "video-url.swift"; sourceTree = "<group>"; };
 		855F07902C0B58B20096D967 /* SearchForUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchForUserView.swift; sourceTree = "<group>"; };
 		859638B52BF8F19B0029EC85 /* Registration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Registration.swift; sourceTree = "<group>"; };
 		85B438F62C1362E600EE9AB3 /* CreateVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateVideoView.swift; sourceTree = "<group>"; };
@@ -135,12 +139,14 @@
 		C44052502C0BB2C900D51BDC /* API */ = {
 			isa = PBXGroup;
 			children = (
+				8542AD192C17037D002B06FA /* video-url.swift */,
 				C44052512C0BB2E300D51BDC /* common.swift */,
 				C44052532C0BB2EF00D51BDC /* authenticate.swift */,
 				C44052552C0BB46300D51BDC /* request-otp.swift */,
 				C44052572C0BC05700D51BDC /* registration.swift */,
 				C44052592C0BCAED00D51BDC /* fetch-private-chats.swift */,
 				C440525B2C0BD5EB00D51BDC /* find-user.swift */,
+				8542AD172C15A2E6002B06FA /* fetch-private-messages.swift */,
 				C440525D2C0BDA8900D51BDC /* fetch-avatar.swift */,
 				C4AF36782C14EA40003A79B5 /* send-message.swift */,
 			);
@@ -232,6 +238,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8542AD1A2C17037D002B06FA /* video-url.swift in Sources */,
 				8506BDBD2BEA95A8002F2DC1 /* MainVideoPlayerView.swift in Sources */,
 				C44052562C0BB46300D51BDC /* request-otp.swift in Sources */,
 				85FC07CD2BE9424400576055 /* MainChatsView.swift in Sources */,
@@ -241,6 +248,7 @@
 				85B438F72C1362E600EE9AB3 /* CreateVideoView.swift in Sources */,
 				C44052522C0BB2E300D51BDC /* common.swift in Sources */,
 				C440525C2C0BD5EB00D51BDC /* find-user.swift in Sources */,
+				8542AD182C15A2E6002B06FA /* fetch-private-messages.swift in Sources */,
 				C440525E2C0BDA8900D51BDC /* fetch-avatar.swift in Sources */,
 				C44052582C0BC05700D51BDC /* registration.swift in Sources */,
 				85FC07D52BEA56C700576055 /* FlowDisambiguation.swift in Sources */,

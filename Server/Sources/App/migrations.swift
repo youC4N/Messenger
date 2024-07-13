@@ -99,7 +99,7 @@ private let migrations = [
     """,
 ]
 
-func migrate(db: Database, logger: Logger) async throws {
+func migrate(db: SharedConnection, logger: Logger) async throws {
     try await db.prepare(
         """
         create table if not exists migrations (

@@ -159,6 +159,15 @@ public struct Message: Codable {
         self.author = author
     }
 }
+public struct MYMessage: Codable, Equatable {
+    public var id: MessageID
+    public var author: UserID
+
+    public init(id: MessageID, author: UserID) {
+        self.id = id
+        self.author = author
+    }
+}
 
 public enum NewMessageResponse {
     case unauthorized
@@ -169,4 +178,16 @@ public enum NewMessageResponse {
     public enum ErrorKind: String, Codable {
         case unauthorized, unsupportedMediaFormat, invalidRecipient
     }
+}
+
+// MARK: Fetch private chats
+
+
+//
+
+
+
+public enum FetchPrivateMessagesResponse {
+    case unauthorized
+    case success([MYMessage])
 }

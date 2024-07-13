@@ -28,7 +28,7 @@ struct MainChatsView: View {
             let chats = allChats ?? []
             ForEach(chats) { chat in
                 NavigationLink(
-                    destination: MainVideoPlayerView(chat: chat.id, sessionToken: sessionToken)
+                    destination: MainVideoPlayerView(chat: chat.id, sessionToken: sessionToken, wrongSession: wrongSession)
                 ) {
                     HStack {
                         UserAvatar(sessionToken: sessionToken, userID: chat.id)
@@ -84,7 +84,7 @@ struct MainChatsView: View {
         }
 
         .navigationDestination(item: $openedChat) { partisipant_b in
-            MainVideoPlayerView(chat: partisipant_b, sessionToken: sessionToken)
+            MainVideoPlayerView(chat: partisipant_b, sessionToken: sessionToken, wrongSession: wrongSession)
         }
     }
 }
