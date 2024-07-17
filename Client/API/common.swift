@@ -2,7 +2,7 @@ import Foundation
 import OSLog
 
 struct API {
-    static let local = API(base: URL(string: "http://192.168.3.14:8080")!)
+    static let local = API(base: URL(string: "http://127.0.0.1:8080")!)
     static let logger = Logger(
         subsystem: "com.github.youC4N.videomessenger", category: "Networking")
 

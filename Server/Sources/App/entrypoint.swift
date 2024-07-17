@@ -13,7 +13,9 @@ enum Entrypoint {
         var env = try Environment.detect()
 
         #if canImport(LoggingOSLog)
-            LoggingSystem.bootstrap(LoggingOSLog.init)
+        LoggingSystem.bootstrap {
+            LoggingOSLog(label: $0)
+        }
         #else
             try LoggingSystem.bootstrap(from: &env)
         #endif
