@@ -44,6 +44,16 @@ final class AppTests: XCTestCase {
     }
     
     func testRejectsOTPTokenToInvalidPhoneNumber() async throws {
-        
+        try await self.🛠️.test(
+            .POST, "otp",
+            beforeRequest: { req in
+                try req.content.encode(["phone": "nope"])
+            },
+            afterResponse: { res async throws in
+                XCTAssertEqual(res.status, .badRequest)
+                let body = try res.content.decode(ErrorResponse<OTPResponse.ErrorKind>.self)
+                XCTAssertEqual(body.code, .invalidPhoneNumber)
+            }
+        )
     }
 }
