@@ -59,6 +59,7 @@
 		C45A11592C0B8D22005BB2D1 /* UserAvatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAvatar.swift; sourceTree = "<group>"; };
 		C479FE5F2BEA7478005145CA /* PhoneNumberField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberField.swift; sourceTree = "<group>"; };
 		C4AF36782C14EA40003A79B5 /* send-message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "send-message.swift"; sourceTree = "<group>"; };
+		C4CDA2982C164B8F0060D265 /* video-url.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "video-url.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +142,7 @@
 			children = (
 				8542AD192C17037D002B06FA /* video-url.swift */,
 				C44052512C0BB2E300D51BDC /* common.swift */,
+				C4CDA2982C164B8F0060D265 /* video-url.swift */,
 				C44052532C0BB2EF00D51BDC /* authenticate.swift */,
 				C44052552C0BB46300D51BDC /* request-otp.swift */,
 				C44052572C0BC05700D51BDC /* registration.swift */,

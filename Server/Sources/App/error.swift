@@ -157,7 +157,7 @@ extension SQLiteError: AbortError {
 /// The logging message and the client-facing reason shouldn't be one and the same!
 /// Let's use the same mechanism swift uses for error reporting, aka. `CustomStringConvertible`
 public struct ErrorMiddleware: AsyncMiddleware {
-    var env: Environment
+    var isRelease: Bool
 
     /// Structure of `ErrorMiddleware` default response.
     struct ErrorResponse: Codable {
@@ -205,7 +205,7 @@ public struct ErrorMiddleware: AsyncMiddleware {
 
             default:
                 // In debug mode, provide the error description; otherwise hide it to avoid sensitive data disclosure.
-                reason = env.isRelease ? "Something went wrong." : String(describing: error)
+                reason = self.isRelease ? "Something went wrong." : String(describing: error)
                 status = .internalServerError
                 headers = [:]
                 source = .capture()
