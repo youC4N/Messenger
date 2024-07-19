@@ -8,21 +8,15 @@ Messenger is a comprehensive messaging application built with a client-server ar
 - Server: Contains the server-side application code, handling backend operations.
 - Interface: Contains shared interfaces and protocols used by both client and server.
 - Docs: Documentation for the project, including API references and user guides.
-- VideoMessenger.xcworkspace: The main workspace file for the project.
-- .swift-format: Configuration for Swift code formatting.
-- .gitignore: Git ignore file to exclude specific files and directories from version control.
-- .git: Directory containing Git repository metadata.
-
 
 ### Technologies used: 
 - SQlite3
 - Vapor
-- RawDaug
+- RawDawg
 - SwiftNIO
 - AVFoundation
 - SwiftUI
-- self made Rest API
-
+- Rest API
 
 ### User capabilities:
 
