@@ -4,10 +4,10 @@ Messenger is a comprehensive messaging application built with a client-server ar
 
 ## Project Structure
 
-- Client: Contains the client-side application code.
-- Server: Contains the server-side application code, handling backend operations.
-- Interface: Contains shared interfaces and protocols used by both client and server.
-- Docs: Documentation for the project, including API references and user guides.
+- **Client**: Contains the client-side application code.
+- **Server**: Contains the server-side application code, handling backend operations.
+- **Interface**: Contains shared interfaces and protocols used by both client and server.
+- **Docs**: Documentation for the project, including API references and user guides.
 
 ### Technologies used: 
 - SQlite3
